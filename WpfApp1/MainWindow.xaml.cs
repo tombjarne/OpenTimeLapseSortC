@@ -20,21 +20,53 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Point scrollStartPoint;
-        private Point scrollStartOffset;
+
+        //////////////////////////////////////////////////////////
+        //////                    VARIABLES                 //////
+        //////////////////////////////////////////////////////////
+
+        private Point start;
+        private Point startOffset;
+
+
+        //////////////////////////////////////////////////////////
+        //////                   CONSTRUCTOR                //////
+        //////////////////////////////////////////////////////////
 
         public MainWindow()
         {
             InitializeComponent();
-            this.LoadStuff();
+            this.renderDirectories();
         }
+
+
+        //////////////////////////////////////////////////////////
+        //////                  XAMLFUNCTIONS               //////
+        //////////////////////////////////////////////////////////
+
+        /**
+        * menu1_Click
+        *
+        * fetches currently set Preferences from database and updates UI
+        */
 
         private void menu1_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        void LoadStuff()
+
+        //////////////////////////////////////////////////////////
+        //////                    FUNCTIONS                 //////
+        //////////////////////////////////////////////////////////
+
+        /**
+        * renderDirectories
+        *
+        * fetches currently set Preferences from database and updates UI
+        */
+
+        void renderDirectories()
         {
             //this could be any large object, imagine a diagram...though for this example im just using loads
             //of Rectangles
@@ -42,15 +74,16 @@ namespace WpfApp1
 
         }
 
-
         // create elements
+        // this function needs to be called from service to pass directory length and directory
+        // to render the directory
         private StackPanel CreateStackPanel(SolidColorBrush color)
         {
 
             StackPanel sp = new StackPanel();
             sp.Orientation = Orientation.Vertical;
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 5; i++)
             {
                 Rectangle rect = new Rectangle();
                 rect.Width = 100;
@@ -68,9 +101,9 @@ namespace WpfApp1
             {
                 // Save starting point, used later when determining
                 //how much to scroll.
-                scrollStartPoint = e.GetPosition(this);
-                scrollStartOffset.X = ScrollViewer.HorizontalOffset;
-                scrollStartOffset.Y = ScrollViewer.VerticalOffset;
+                start = e.GetPosition(this);
+                startOffset.X = ScrollViewer.HorizontalOffset;
+                startOffset.Y = ScrollViewer.VerticalOffset;
 
                 // Update the cursor if can scroll or not.
                 this.Cursor = (ScrollViewer.ExtentWidth >
@@ -93,25 +126,26 @@ namespace WpfApp1
                 Point point = e.GetPosition(this);
 
                 // Determine the new amount to scroll.
-                Point delta = new Point(
-                    (point.X > this.scrollStartPoint.X) ?
-                        -(point.X - this.scrollStartPoint.X) :
-                        (this.scrollStartPoint.X - point.X),
 
-                    (point.Y > this.scrollStartPoint.Y) ?
-                        -(point.Y - this.scrollStartPoint.Y) :
-                        (this.scrollStartPoint.Y - point.Y));
+                double x = (point.X > this.start.X) ?
+                        -(point.X - this.start.X) :
+                        (this.start.X - point.X);
+
+                double y = (point.Y > this.start.Y) ?
+                        -(point.Y - this.start.Y) :
+                        (this.start.Y - point.Y);
+
+                Point delta = new Point(x, y);
 
                 // Scroll to the new position.
                 ScrollViewer.ScrollToHorizontalOffset(
-                    this.scrollStartOffset.X + delta.X);
+                    this.startOffset.X + delta.X);
                 ScrollViewer.ScrollToVerticalOffset(
-                    this.scrollStartOffset.Y + delta.Y);
+                    this.startOffset.Y + delta.Y);
             }
 
             base.OnPreviewMouseMove(e);
         }
-
 
 
         protected override void OnPreviewMouseUp(

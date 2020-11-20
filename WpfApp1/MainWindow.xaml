@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" 
+        Height="450" 
+        Width="800" 
+        SizeToContent="WidthAndHeight"
         FontFamily="Montserrat">
 
     <Window.Resources>
@@ -16,7 +19,7 @@
     </Window.Resources>
 
 
-    <Grid Background="#34404D" Height="434" VerticalAlignment="Top">
+    <Grid Background="#34404D" Height="Auto" >
         <Grid x:Name="Name" VerticalAlignment="Top" Height="39">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
