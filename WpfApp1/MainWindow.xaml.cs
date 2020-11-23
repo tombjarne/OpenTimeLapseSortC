@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace WpfApp1
 {
@@ -27,6 +28,15 @@ namespace WpfApp1
 
         private Point start;
         private Point startOffset;
+        //private readonly string fileFilter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png, *.arw, *.raw, .*nef, .*cr2, .*cr3) | *.jpg, *.jpeg, *.jpe, *.jfif, *.png, *.arw, *.raw, .*nef, .*cr2, .*cr3";
+        private readonly string fileFilter = "All files (*.*)|*.*";
+
+
+        //////////////////////////////////////////////////////////
+        //////                    VARIABLES                 //////
+        //////////////////////////////////////////////////////////
+
+        /// Bindings
 
 
         //////////////////////////////////////////////////////////
@@ -36,7 +46,7 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
-            this.renderDirectories();
+            //this.renderDirectories();
         }
 
 
@@ -52,6 +62,22 @@ namespace WpfApp1
 
         private void menu1_Click(object sender, RoutedEventArgs e)
         {
+
+        }
+
+        private void import(object sender, RoutedEventArgs e)
+        {
+            CommonOpenFileDialog fileChooser = new CommonOpenFileDialog();
+            fileChooser.InitialDirectory = @"C:\";
+            //fileChooser.Title = "Choose Directory";
+            fileChooser.IsFolderPicker = true;
+
+            if (fileChooser.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                //TODO: fetch needed attributes
+                string filename = fileChooser.FileName;
+                renderDirectories(fileChooser.FileNames ,fileChooser.FileName);
+            }
 
         }
 
@@ -82,12 +108,13 @@ namespace WpfApp1
         * fetches currently set Preferences from database and updates UI
         */
 
-        void renderDirectories()
+        void renderDirectories(IEnumerable<string> images, string dirPath)
         {
             //this could be any large object, imagine a diagram...though for this example im just using loads
             //of Rectangles
-            itemsControl.Items.Add(CreateStackPanel(Brushes.Salmon));
+            directoryControl.Items.Add(CreateStackPanel(Brushes.Salmon));
 
+            //TODO: start new task to notify user how many packages have been copied!
         }
 
         // create elements
@@ -113,19 +140,19 @@ namespace WpfApp1
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
-            if (ScrollViewer.IsMouseOver)
+            if (DirectoryViewer.IsMouseOver)
             {
                 // Save starting point, used later when determining
                 //how much to scroll.
                 start = e.GetPosition(this);
-                startOffset.X = ScrollViewer.HorizontalOffset;
-                startOffset.Y = ScrollViewer.VerticalOffset;
+                startOffset.X = DirectoryViewer.HorizontalOffset;
+                startOffset.Y = DirectoryViewer.VerticalOffset;
 
                 // Update the cursor if can scroll or not.
-                this.Cursor = (ScrollViewer.ExtentWidth >
-                    ScrollViewer.ViewportWidth) ||
-                    (ScrollViewer.ExtentHeight >
-                    ScrollViewer.ViewportHeight) ?
+                this.Cursor = (DirectoryViewer.ExtentWidth >
+                    DirectoryViewer.ViewportWidth) ||
+                    (DirectoryViewer.ExtentHeight >
+                    DirectoryViewer.ViewportHeight) ?
                     Cursors.ScrollAll : Cursors.Arrow;
 
                 this.CaptureMouse();
@@ -154,9 +181,9 @@ namespace WpfApp1
                 Point delta = new Point(x, y);
 
                 // Scroll to the new position.
-                ScrollViewer.ScrollToHorizontalOffset(
+                DirectoryViewer.ScrollToHorizontalOffset(
                     this.startOffset.X + delta.X);
-                ScrollViewer.ScrollToVerticalOffset(
+                DirectoryViewer.ScrollToVerticalOffset(
                     this.startOffset.Y + delta.Y);
             }
 

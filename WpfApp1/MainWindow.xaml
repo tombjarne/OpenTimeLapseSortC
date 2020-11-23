@@ -35,7 +35,7 @@
                     </Style>
                 </Button.Resources>
             </Button>
-            <Button x:Name="import_new_btn" Content="Import new" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}">
+            <Button x:Name="import_btn" Content="Import new" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="import">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
@@ -47,8 +47,8 @@
             <Rectangle HorizontalAlignment="Left" Height="44" Margin="394,0,0,0" Width="667" MouseDown="moveWindow" Fill="#FF34404D"/>
         </Grid>
         <DockPanel Background=" #3D4A59" Margin="0,44,0,0">
-            <ScrollViewer x:Name="ScrollViewer"  Style="{StaticResource ScrollViewerStyle}" Width="398">
-                <ItemsControl x:Name="itemsControl" VerticalAlignment="Center">
+            <ScrollViewer x:Name="DirectoryViewer"  Style="{StaticResource ScrollViewerStyle}" Width="398">
+                <ItemsControl x:Name="directoryControl" VerticalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Vertical"/>
@@ -70,6 +70,15 @@
                 <Label x:Name="directory_headline1" Content="Nothing to import&#xA;" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" Height="49" Width="434" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
                 <Label x:Name="directory_prefix1" Content="Path:" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383" Margin="24,96,0,595" Width="94"/>
                 <Label x:Name="directory_name1" Content="C:/Users/bjarn/Default" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Normal" FontSize="14px" Foreground="#FFFF8383" Margin="71,94,0,590" Width="224"/>
+                <ScrollViewer x:Name="DirectoryDetailViewer"  Style="{StaticResource ScrollViewerStyle}" Width="398">
+                    <ItemsControl x:Name="imageControl" VerticalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </ScrollViewer>
             </Grid>
         </DockPanel>
     </Grid>
