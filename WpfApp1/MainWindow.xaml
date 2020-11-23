@@ -26,16 +26,28 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <Label x:Name="application_name" Grid.Column="0" Content="OpenTimelapseSort" HorizontalAlignment="Left" Margin="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
+            <Label x:Name="application_name" Grid.Column="0" Content="OpenTimelapseSort" HorizontalAlignment="Left" Margin="0,2,0,-2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
             </Label>
-            <Button x:Name="preferences_btn" Content="Preferences" HorizontalAlignment="Left" Margin="290,5,0,5" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Foreground="White" Background="#FF3D4A59" Click="menu1_Click" Width="95"/>
-            <Button x:Name="import_new_btn" Content="Import new" HorizontalAlignment="Left" Margin="190,5,0,5" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95"/>
+            <Button x:Name="preferences_btn" Content="Preferences" HorizontalAlignment="Left" Margin="197,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Foreground="White" Background="#FF3D4A59" Click="menu1_Click" Width="95" BorderBrush="{x:Null}">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button x:Name="import_new_btn" Content="Import new" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
             <Ellipse x:Name="close_btn" HorizontalAlignment="Left" Height="17" Margin="1113,14,0,0" VerticalAlignment="Top" Width="17" Fill="#FFFF5252" MouseDown="closeApplication"/>
             <Ellipse x:Name="minimize_btn" HorizontalAlignment="Left" Height="17" Margin="1091,14,0,0" VerticalAlignment="Top" Width="17" Fill="Coral" MouseDown="minimizeApplication"/>
             <Rectangle HorizontalAlignment="Left" Height="44" Margin="394,0,0,0" Width="667" MouseDown="moveWindow" Fill="#FF34404D"/>
         </Grid>
         <DockPanel Background=" #3D4A59" Margin="0,44,0,0">
-            <ScrollViewer x:Name="ScrollViewer"  Style="{StaticResource ScrollViewerStyle}" Width="270" HorizontalAlignment="Left">
+            <ScrollViewer x:Name="ScrollViewer"  Style="{StaticResource ScrollViewerStyle}" Width="398">
                 <ItemsControl x:Name="itemsControl" VerticalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -48,36 +60,16 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <Label x:Name="directory_headline" Content="Nothing to import&#xD;&#xA;" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" Height="49" Width="434" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
-                <Label x:Name="directory_prefix" Content="Path:" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383" Margin="24,73,0,452" Width="94"/>
-                <Label x:Name="directory_name" Content="C:/Users/bjarn/Default" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Normal" FontSize="14px" Foreground="#FFFF8383" Margin="71,60,0,439" Width="224"/>
-                <Grid Margin="0,0,0,10">
-                    <ScrollViewer x:Name="DirectoryDetailList" Margin="55,114,-407,31">
-
-                    </ScrollViewer>
-                </Grid>
             </Grid>
         </DockPanel>
-        <DockPanel Background=" #3D4A59" Margin="0,44,0,0">
-            <ScrollViewer x:Name="ScrollViewer1"  Style="{StaticResource ScrollViewerStyle}" Width="270" HorizontalAlignment="Left">
-                <ItemsControl x:Name="itemsControl1" VerticalAlignment="Center">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Vertical"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-            </ScrollViewer>
+        <DockPanel Background=" #3D4A59" Margin="401,44,0,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <Label x:Name="directory_headline1" Content="Nothing to import&#xA;" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" Height="49" Width="434" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
-                <Label x:Name="directory_prefix1" Content="Path:" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383" Margin="24,73,0,452" Width="94"/>
-                <Label x:Name="directory_name1" Content="C:/Users/bjarn/Default" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Normal" FontSize="14px" Foreground="#FFFF8383" Margin="71,60,0,439" Width="224"/>
-                <Grid Margin="0,0,0,10">
-                    <ScrollViewer x:Name="DirectoryDetailList1" Margin="55,114,-407,31"/>
-                </Grid>
+                <Label x:Name="directory_headline1" Content="Nothing to import&#xA;" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" Height="49" Width="434" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
+                <Label x:Name="directory_prefix1" Content="Path:" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383" Margin="24,96,0,595" Width="94"/>
+                <Label x:Name="directory_name1" Content="C:/Users/bjarn/Default" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Normal" FontSize="14px" Foreground="#FFFF8383" Margin="71,94,0,590" Width="224"/>
             </Grid>
         </DockPanel>
     </Grid>

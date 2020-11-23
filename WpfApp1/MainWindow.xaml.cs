@@ -99,7 +99,7 @@ namespace WpfApp1
             StackPanel sp = new StackPanel();
             sp.Orientation = Orientation.Vertical;
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 15; i++)
             {
                 Rectangle rect = new Rectangle();
                 rect.Width = 100;
