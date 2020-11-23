@@ -60,6 +60,22 @@ namespace WpfApp1
         //////                    FUNCTIONS                 //////
         //////////////////////////////////////////////////////////
 
+
+        private void closeApplication(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void minimizeApplication(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void moveWindow(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
         /**
         * renderDirectories
         *
