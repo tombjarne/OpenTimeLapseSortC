@@ -1,0 +1,34 @@
+﻿<Window x:Class="OpenTimelapseSort.Views.Preferences"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OpenTimelapseSort"
+        mc:Ignorable="d"
+        Title="MainWindow" 
+        Height="550" 
+        Width="850" 
+        FontFamily="Montserrat"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        BorderThickness="0">
+    <Grid Background="#34404D" Height="Auto" >
+        <Grid x:Name="Name" VerticalAlignment="Top" Height="39">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Label x:Name="window_name" Grid.Column="0" Content="Preferences" HorizontalAlignment="Left" Margin="0,2,0,-2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
+            </Label>
+            <Ellipse x:Name="minimize_btn" HorizontalAlignment="Left" Height="17" Margin="821,14,0,0" VerticalAlignment="Top" Width="17" Fill="Coral" MouseDown="minimizeApplication"/>
+            <Rectangle HorizontalAlignment="Left" Height="44" Margin="128,0,0,-5" Width="677" MouseDown="moveWindow" Fill="#FF34404D"/>
+        </Grid>
+        <DockPanel Background=" #3D4A59" Margin="0,44,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>
