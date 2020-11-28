@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
+using OpenTimelapseSort.ViewModels;
+
 namespace OpenTimelapseSort.Views
 {
     /// <summary>
@@ -43,6 +45,7 @@ namespace OpenTimelapseSort.Views
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainViewModel();
             //this.renderDirectories();
         }
 
@@ -58,22 +61,9 @@ namespace OpenTimelapseSort.Views
             preferencesWindow.Show();
         }
 
-        // TODO: move to ViewModel
-
         private void import(object sender, RoutedEventArgs e)
         {
-            CommonOpenFileDialog fileChooser = new CommonOpenFileDialog();
-            fileChooser.InitialDirectory = @"C:\";
-            //fileChooser.Title = "Choose Directory";
-            fileChooser.IsFolderPicker = true;
-
-            if (fileChooser.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                //TODO: fetch needed attributes
-                string filename = fileChooser.FileName;
-                renderDirectories(fileChooser.FileNames ,fileChooser.FileName);
-            }
-
+            renderDirectories(MainViewModel.Import());
         }
 
 
@@ -104,39 +94,9 @@ namespace OpenTimelapseSort.Views
         * fetches currently set Preferences from database and updates UI
         */
 
-        void renderDirectories(IEnumerable<string> images, string dirPath)
+        void renderDirectories(StackPanel sp)
         {
-            //this could be any large object, imagine a diagram...though for this example im just using loads
-            //of Rectangles
-
-            // TODO: call ViewModel method!
-
-            directoryControl.Items.Add(CreateStackPanel(Brushes.Salmon));
-
-            //TODO: start new task to notify user how many packages have been copied!
-        }
-
-        // TODO: move to ViewModel
-
-        // create elements
-        // this function needs to be called from service to pass directory length and directory
-        // to render the directory
-        private StackPanel CreateStackPanel(SolidColorBrush color)
-        {
-
-            StackPanel sp = new StackPanel();
-            sp.Orientation = Orientation.Vertical;
-
-            for (int i = 0; i < 15; i++)
-            {
-                Rectangle rect = new Rectangle();
-                rect.Width = 100;
-                rect.Height = 100;
-                rect.Margin = new Thickness(5);
-                rect.Fill = i % 2 == 0 ? Brushes.Black : color;
-                sp.Children.Add(rect);
-            }
-            return sp;
+         directoryControl.Items.Add(sp);
         }
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)

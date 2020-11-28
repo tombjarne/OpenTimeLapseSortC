@@ -1,3 +1,9 @@
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort.csprojAssemblyReference.cache
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\MainWindow.g.cs
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\Preferences.g.cs
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\App.g.cs
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort_MarkupCompile.cache
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort_MarkupCompile.lref
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\OpenTimelapseSort.exe
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\OpenTimelapseSort.deps.json
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\OpenTimelapseSort.runtimeconfig.json
@@ -6,12 +12,6 @@ C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcor
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\OpenTimelapseSort.pdb
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\Microsoft.WindowsAPICodePack.dll
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\Microsoft.WindowsAPICodePack.Shell.dll
-C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort.csprojAssemblyReference.cache
-C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\MainWindow.g.cs
-C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\Preferences.g.cs
-C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\App.g.cs
-C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort_MarkupCompile.cache
-C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort_MarkupCompile.lref
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\MainWindow.baml
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\Preferences.baml
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort.g.resources

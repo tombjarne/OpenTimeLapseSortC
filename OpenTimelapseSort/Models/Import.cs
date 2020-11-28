@@ -17,12 +17,12 @@ namespace OpenTimelapseSort.Models
             importDate = timestamp.ToString();
         }
 
-        public HashSet<Directory> directories;
+        public HashSet<ImageDirectory> directories;
         private DateTime timestamp;
         public String importDate;
         public int length { get; set; }
 
-        public bool tryPush(Directory directory)
+        public bool tryPush(ImageDirectory directory)
         {
             if(directory.getTimestamp() == timestamp)
             {
