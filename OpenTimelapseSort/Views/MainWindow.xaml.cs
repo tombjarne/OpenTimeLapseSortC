@@ -46,6 +46,11 @@ namespace OpenTimelapseSort.Views
         {
             InitializeComponent();
             this.DataContext = new MainViewModel();
+
+            //initialise new MainViewModel
+            //MainViewModel then tries to fetch db entries
+            //RenderComponent(MainViewModel vm = new MainViewModel());
+
             //this.renderDirectories();
         }
 
@@ -63,7 +68,9 @@ namespace OpenTimelapseSort.Views
 
         private void import(object sender, RoutedEventArgs e)
         {
-            renderDirectories(MainViewModel.Import());
+            // TODO: start new task to display progress
+            // Task ImportVisualizer = new Task();
+            RenderComponent(MainViewModel.Import());
         }
 
 
@@ -94,7 +101,7 @@ namespace OpenTimelapseSort.Views
         * fetches currently set Preferences from database and updates UI
         */
 
-        void renderDirectories(StackPanel sp)
+        void RenderComponent(StackPanel sp)
         {
          directoryControl.Items.Add(sp);
         }
