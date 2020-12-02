@@ -1,10 +1,26 @@
-﻿using OpenTimelapseSort.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
+using OpenTimelapseSort.Models;
+using OpenTimelapseSort.Contexts;
+
+/*
+using (var context = new ImportContext())
+{
+    var import = new Import
+    {
+        // fields
+    };
+
+    context.Import.Add(import);
+    context.SaveChanges();
+}
+*/
+
 namespace OpenTimelapseSort.DataServices
 {
+
     class DBService
     {
 
