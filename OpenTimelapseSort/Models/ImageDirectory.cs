@@ -6,18 +6,19 @@ using OpenTimelapseSort.Models;
 
 class ImageDirectory
 {
-    public ImageDirectory(String target, String name)
+
+    private List<Image> imageList = new List<Image>();
+    private DateTime timestamp { get; set; }
+    public String target { get; set; }
+    public String name { get; set; }
+
+    public ImageDirectory(String target, String name, List<Image> imageList) //aggregation - cannot exist without images, therefore supply imageList
     {
         timestamp = DateTime.Today;
         this.target = target;
         this.name = name;
+        this.imageList = imageList;
     }
-
-    private List<Image> imageList = new List<Image>();
-
-    private DateTime timestamp { get; set; }
-    private String target { get; set; }
-    private String name { get; set; }
 
     public DateTime getTimestamp()
     {

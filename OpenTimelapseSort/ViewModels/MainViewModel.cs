@@ -11,6 +11,8 @@ using System.IO;
 using System.ComponentModel;
 using System.Windows.Input;
 using OpenTimelapseSort.Models;
+using OpenTimelapseSort.DataServices;
+using OpenTimelapseSort.Contexts;
 
 namespace OpenTimelapseSort
 {
@@ -24,7 +26,8 @@ namespace OpenTimelapseSort
         private readonly ICommand progressBarInvocation;
         private int importProgress;
 
-        private HashSet<Import> imports;
+        DBService service;
+        HashSet<Import> imports;
 
         public MainViewModel()
         {
@@ -32,14 +35,60 @@ namespace OpenTimelapseSort
             //fetch db entries
             //initialize local values
 
-            int i = 2;
-
-            if (true) // data exists
-            {
-                RenderImports();
-            }
-
+            initialiseDBService();
         }
+
+        private void initialiseDBService()
+        {
+            service = new DBService();
+            using (var database = new ImportContext())
+            {
+                try
+                {
+                    database.Database.EnsureCreated();
+                    InitialiseView();
+                } catch(Exception e)
+                {
+                    Console.WriteLine(e.StackTrace);
+                }
+            }
+        }
+
+        public StackPanel InitialiseView()
+        {
+            imports = service.ReturnImports();
+
+            if(imports.Count > 0)
+            {
+                StackPanel allImports = new StackPanel();
+                foreach (Import import in imports)
+                {
+                    try
+                    {
+                        StackPanel importPanel = new StackPanel();
+                        foreach (ImageDirectory directory in import.directories)
+                        {
+                            StackPanel directoryPanel = new StackPanel();
+                            // add on click event
+                            // add directoryPanel to importPanel
+                            importPanel.Children.Add(directoryPanel);
+                        }
+                        allImports.Children.Add(importPanel);
+                    } catch (Exception e)
+                    {
+                        // Test purposes
+                        Console.WriteLine(e.StackTrace);
+                    }
+                }
+                return allImports;
+
+            } else
+            {
+                StackPanel errorStackPanel = new StackPanel();
+                // add attributes and text to warning
+                return errorStackPanel;
+            }
+        } 
 
         private StackPanel RenderImports()
         {
@@ -72,15 +121,21 @@ namespace OpenTimelapseSort
 
             //TODO: find proper way of returning a stackpanel on else path
 
-            //if (fileChooser.ShowDialog() == CommonFileDialogResult.Ok)
-            //{
+            if (fileChooser.ShowDialog() == CommonFileDialogResult.Ok)
+            {
                 //TODO: fetch needed attributes -> might need to change IEnumerable to something else
                 string filename = fileChooser.FileName;
 
                 IEnumerable<String> files = fileChooser.FileNames;
                 DirectoryReference references = new DirectoryReference(RenderDirectories);
+
+                // instead of files, filename fetch from object that need to be created beginning of this function
+
                 return references(files, filename);
-            //}
+            } else
+            {
+                return new StackPanel(); //TODO: remove, test only
+            }
         }
 
         private static StackPanel RenderDirectories(IEnumerable<String> FileNames, String DirName)
@@ -104,8 +159,6 @@ namespace OpenTimelapseSort
             }
             return sp;
         }
-
-
 
     }
 }

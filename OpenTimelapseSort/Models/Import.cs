@@ -11,17 +11,25 @@ namespace OpenTimelapseSort.Models
         // only one instance per day ( for Import )
         // save Import instances with AUTOINCREMENT ID in database 
 
-        public Import()
-        {
-            timestamp = System.DateTime.Today;
-            importDate = timestamp.ToString();
-        }
-
         public HashSet<ImageDirectory> directories;
-        private DateTime timestamp;
-        public String importDate;
+        public DateTime timestamp { get; set; }
+        public string importDate { get; set; }
+
+        public string name { get; set; } // enable user to change name of import :-)
         public int length { get; set; }
 
+        public Import(HashSet<ImageDirectory> directories, bool fetch)
+        {
+            if (!fetch)
+            {
+                timestamp = System.DateTime.Today;
+                importDate = timestamp.ToString();
+            }
+            this.directories = directories;
+
+        }
+
+        // tryPush will be called during import
         public bool tryPush(ImageDirectory directory)
         {
             if(directory.getTimestamp() == timestamp)

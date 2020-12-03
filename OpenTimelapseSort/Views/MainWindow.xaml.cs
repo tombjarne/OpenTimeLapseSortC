@@ -47,7 +47,6 @@ namespace OpenTimelapseSort.Views
             InitializeComponent();
             this.DataContext = new MainViewModel();
 
-            //initialise new MainViewModel
             //MainViewModel then tries to fetch db entries
             //RenderComponent(MainViewModel vm = new MainViewModel());
 
@@ -59,6 +58,12 @@ namespace OpenTimelapseSort.Views
         //////                  XAMLFUNCTIONS               //////
         //////////////////////////////////////////////////////////
 
+        private void RenderImports(object sender, RoutedEventArgs e)
+        {
+            StackPanel initialValues = new StackPanel();
+            //initialValues = MainViewModel.InitialiseView(); TODO: fix
+            RenderComponent(initialValues);
+        }
 
         private void invokePreferences(object sender, RoutedEventArgs e)
         {

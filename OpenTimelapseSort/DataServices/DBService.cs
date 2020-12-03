@@ -4,6 +4,7 @@ using System.Text;
 
 using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Contexts;
+using OpentimelapseSort.Models;
 
 /*
 using (var context = new ImportContext())
@@ -36,6 +37,60 @@ namespace OpenTimelapseSort.DataServices
             // init a delegate that contains values ( HashSet ) of Directory table
             // init a delegate that contains values ( HashSet ) of Import table
             // return delegate to MainViewModel ( so that it can render HashSet of Imports ( which includes HashSet of Directories ) ) 
+        }
+
+        public void InitializeDBService()
+        {
+            /*
+            using (var preferencesContext = new PreferencesContext())
+            {
+                if (!preferencesContext.Any())
+                {
+
+                }
+            }
+            */
+        }
+
+        public static Preferences ReturnPreferences()
+        {
+            // fetch from DB
+            // save into Object
+            // return Object
+
+            return new Preferences(true, true, 2.0, 1); // TODO: remove, test purpose only
+        }
+
+        public HashSet<Import> ReturnImports()
+        {
+            // fetch from DB
+            // save into Object
+            // return Object
+
+            using (var context = new ImportContext())
+            {
+                HashSet<Import> imports = new HashSet<Import>();
+                HashSet<ImageDirectory> directories = new HashSet<ImageDirectory>(); // images are fetched on click to reduce overhead
+
+                foreach (ImageDirectory directory in context.ImageDirectory)
+                {
+                    ImageDirectory newDirectory = new ImageDirectory(
+                        directory.name,
+                        directory.target,
+                        new List<Image>()
+                    );
+                    directories.Add(newDirectory);
+                }
+
+                foreach (Import import in context.Import) //rename to plural -> Imports?
+                {
+                    Import newImport = new Import(directories, true); //construct newImport
+                    newImport.importDate = import.importDate;
+                    newImport.timestamp = import.timestamp; //convert string to date 
+                }
+
+                return imports;
+            }
         }
 
         /*
