@@ -1,20 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Sqlite;
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using OpenTimelapseSort.Models;
-
+using System.Collections;
 
 namespace OpenTimelapseSort.Contexts
 {
     class ImportContext : DbContext
     {
-        public DbSet<Import> Import { get; set; }
-        public DbSet<ImageDirectory> ImageDirectory { get; set; }
-        public DbSet<Image> Image { get; set; }
+        public DbSet<Import> Imports { get; set; }
+        public DbSet<ImageDirectory> ImageDirectories { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

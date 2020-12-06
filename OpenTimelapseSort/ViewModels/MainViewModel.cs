@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,14 +21,14 @@ namespace OpenTimelapseSort
     {
 
         private delegate StackPanel DirectoryReference(IEnumerable<String> FileNames, String DirName);
-        private delegate StackPanel ImportReference(HashSet<Import> imports, String ImportName);
+        private delegate StackPanel ImportReference(ArrayList imports, String ImportName);
 
         private readonly BackgroundWorker worker;
         private readonly ICommand progressBarInvocation;
         private int importProgress;
 
         DBService service;
-        HashSet<Import> imports;
+        ArrayList imports;
 
         public MainViewModel()
         {
@@ -36,6 +37,7 @@ namespace OpenTimelapseSort
             //initialize local values
 
             initialiseDBService();
+            InitialiseView();
         }
 
         private void initialiseDBService()
@@ -57,6 +59,7 @@ namespace OpenTimelapseSort
         public StackPanel InitialiseView()
         {
             imports = service.ReturnImports();
+            Console.WriteLine(imports);
 
             if(imports.Count > 0)
             {

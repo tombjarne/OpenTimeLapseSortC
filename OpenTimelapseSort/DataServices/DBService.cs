@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 using OpenTimelapseSort.Models;
@@ -61,7 +62,7 @@ namespace OpenTimelapseSort.DataServices
             return new Preferences(true, true, 2.0, 1); // TODO: remove, test purpose only
         }
 
-        public HashSet<Import> ReturnImports()
+        public ArrayList ReturnImports()
         {
             // fetch from DB
             // save into Object
@@ -69,22 +70,22 @@ namespace OpenTimelapseSort.DataServices
 
             using (var context = new ImportContext())
             {
-                HashSet<Import> imports = new HashSet<Import>();
-                HashSet<ImageDirectory> directories = new HashSet<ImageDirectory>(); // images are fetched on click to reduce overhead
+                ArrayList imports = new ArrayList();
+                ArrayList directories = new ArrayList(); // images are fetched on click to reduce overhead
 
-                foreach (ImageDirectory directory in context.ImageDirectory)
+                foreach (ImageDirectory directory in context.ImageDirectories)
                 {
                     ImageDirectory newDirectory = new ImageDirectory(
                         directory.name,
-                        directory.target,
-                        new List<Image>()
+                        directory.target
                     );
                     directories.Add(newDirectory);
                 }
 
-                foreach (Import import in context.Import) //rename to plural -> Imports?
+                foreach (Import import in context.Imports) //rename to plural -> Imports?
                 {
-                    Import newImport = new Import(directories, true); //construct newImport
+                    Import newImport = new Import(true); //construct newImport -> maybe need to move directories...
+                    newImport.initImportList(directories);
                     newImport.importDate = import.importDate;
                     newImport.timestamp = import.timestamp; //convert string to date 
                 }
