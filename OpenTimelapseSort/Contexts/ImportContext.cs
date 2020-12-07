@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections;
 
+using OpenTimelapseSort.Models;
+
 namespace OpenTimelapseSort.Contexts
 {
-    class ImportContext : DbContext
+    public class ImportContext : DbContext
     {
         public DbSet<Import> Imports { get; set; }
         public DbSet<ImageDirectory> ImageDirectories { get; set; }

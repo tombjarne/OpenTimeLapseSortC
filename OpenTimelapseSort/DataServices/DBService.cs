@@ -5,20 +5,6 @@ using System.Text;
 
 using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Contexts;
-using OpentimelapseSort.Models;
-
-/*
-using (var context = new ImportContext())
-{
-    var import = new Import
-    {
-        // fields
-    };
-
-    context.Import.Add(import);
-    context.SaveChanges();
-}
-*/
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -82,9 +68,9 @@ namespace OpenTimelapseSort.DataServices
                     directories.Add(newDirectory);
                 }
 
-                foreach (Import import in context.Imports) //rename to plural -> Imports?
+                foreach (Import import in context.Imports)
                 {
-                    Import newImport = new Import(true); //construct newImport -> maybe need to move directories...
+                    Import newImport = new Import(true);
                     newImport.initImportList(directories);
                     newImport.importDate = import.importDate;
                     newImport.timestamp = import.timestamp; //convert string to date 
