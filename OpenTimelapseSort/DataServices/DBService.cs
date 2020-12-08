@@ -5,15 +5,13 @@ using System.Text;
 
 using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Contexts;
+using OpentimelapseSort.Models;
 
 namespace OpenTimelapseSort.DataServices
 {
 
     class DBService
     {
-
-        //maybe also this?
-        //public delegate HashSet<Import<Directory>> ?
 
         //public delegate HashSet<Import> Directories(HashSet<ImageDirectory> directories); // name is obvious and can be fetched from indexes
         public delegate HashSet<Import> Imports(HashSet<ImageDirectory> directories); // name is obvious and can be fetched from indexes
@@ -48,7 +46,7 @@ namespace OpenTimelapseSort.DataServices
             return new Preferences(true, true, 2.0, 1); // TODO: remove, test purpose only
         }
 
-        public ArrayList ReturnImports()
+        public List<Import> ReturnImports()
         {
             // fetch from DB
             // save into Object
@@ -56,8 +54,8 @@ namespace OpenTimelapseSort.DataServices
 
             using (var context = new ImportContext())
             {
-                ArrayList imports = new ArrayList();
-                ArrayList directories = new ArrayList(); // images are fetched on click to reduce overhead
+                List<Import> imports = new List<Import>();
+                List<ImageDirectory> directories = new List<ImageDirectory>(); // images are fetched on click to reduce overhead
 
                 foreach (ImageDirectory directory in context.ImageDirectories)
                 {

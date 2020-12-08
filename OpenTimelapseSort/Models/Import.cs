@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 public class Import
@@ -8,7 +9,8 @@ public class Import
     // save Import instances with AUTOINCREMENT ID in database 
     [Key]
     public int id { get; set; }
-    public ArrayList directories { get; set; }
+    [Key]
+    public List<ImageDirectory> directories { get; set; }
     public DateTime timestamp { get; set; }
     public string importDate { get; set; }
     public string name { get; set; } // enable user to change name of import :-)
@@ -25,7 +27,7 @@ public class Import
 
     }
 
-    public void initImportList(ArrayList directories)
+    public void initImportList(List<ImageDirectory> directories)
     {
         this.directories = directories;
     }

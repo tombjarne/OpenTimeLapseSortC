@@ -13,7 +13,7 @@ namespace OpenTimelapseSort.DataServices
             Preferences preferences = DBService.ReturnPreferences();
             return true;
         }
-
+		/*
 		int pointer = 0; // marks end of sequence
 		int seqPointer = 0; // marks begin of sequence
 		int runs = preferences.count; // pref count to make a sequence
@@ -42,5 +42,6 @@ namespace OpenTimelapseSort.DataServices
 				seqPointer = i;
 			}
 		}
+		*/
     }
 }

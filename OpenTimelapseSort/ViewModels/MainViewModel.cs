@@ -28,7 +28,7 @@ namespace OpenTimelapseSort
         private int importProgress;
 
         DBService service;
-        ArrayList imports;
+        List<Import> imports;
 
         public MainViewModel()
         {
