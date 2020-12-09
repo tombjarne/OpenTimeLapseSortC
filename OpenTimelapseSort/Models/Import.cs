@@ -9,7 +9,8 @@ public class Import
     // save Import instances with AUTOINCREMENT ID in database 
     [Key]
     public int id { get; set; }
-    [Key]
+
+    // TODO: create own class for directorylist and map with import id
     public List<ImageDirectory> directories { get; set; }
     public DateTime timestamp { get; set; }
     public string importDate { get; set; }
@@ -24,7 +25,7 @@ public class Import
             timestamp = System.DateTime.Today;
             importDate = timestamp.ToString();
         }
-
+        this.fetch = fetch;
     }
 
     public void initImportList(List<ImageDirectory> directories)

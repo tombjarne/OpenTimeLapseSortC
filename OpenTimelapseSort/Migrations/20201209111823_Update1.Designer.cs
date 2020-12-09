@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OpenTimelapseSort.Contexts;
 
 namespace OpenTimelapseSort.Migrations
 {
     [DbContext(typeof(ImportContext))]
-    partial class ImportContextModelSnapshot : ModelSnapshot
+    [Migration("20201209111823_Update1")]
+    partial class Update1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +43,7 @@ namespace OpenTimelapseSort.Migrations
 
                     b.HasIndex("ImageDirectoryid");
 
-                    b.ToTable("Images");
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("ImageDirectory", b =>
@@ -66,7 +68,7 @@ namespace OpenTimelapseSort.Migrations
 
                     b.HasIndex("Importid");
 
-                    b.ToTable("ImageDirectories");
+                    b.ToTable("Directories");
                 });
 
             modelBuilder.Entity("Import", b =>

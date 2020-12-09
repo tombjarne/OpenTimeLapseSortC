@@ -6,6 +6,7 @@ using System.Text;
 using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Contexts;
 using OpentimelapseSort.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -46,6 +47,8 @@ namespace OpenTimelapseSort.DataServices
             return new Preferences(true, true, 2.0, 1); // TODO: remove, test purpose only
         }
 
+        // returns a list of Import Objects fetched from db
+
         public List<Import> ReturnImports()
         {
             // fetch from DB
@@ -78,12 +81,56 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        /*
-         private HashSet<Image> GetImages(HashSet<Image> images) // gets all images related to a passed directory
+        public void SeedDatabase()
         {
+            // init db for test purposes
 
+            using (var context = new ImportContext())
+            {
+
+                Import import = new Import(false)
+                {
+                    name = "Urlaub",
+                    length = 1
+                };
+
+                ImageDirectory directory = new ImageDirectory("/", "Urlaub 1")
+                {
+                    imageList = new List<Image>(0),
+
+                };
+
+                context.Add(directory);
+                context.Add(import);
+                context.SaveChanges();
+            }
         }
 
+        // fetches all images that belong to a directory that already exists and is fetched from db
+
+         private List<Image> GetImages(ImageDirectory directory) // gets all images related to a passed directory
+        {
+            using (var context = new ImportContext())
+            {
+                List<Image> images = new List<Image>();
+                int directoryId = directory.id;
+
+                //TODO: add LINQ statement to select only those images that belong to the submitted directory ( id ) 
+
+                foreach (Image image in context.Images)
+                {
+                    Image newImage = new Image(
+                        image.name,
+                        image.target
+                    );
+                    images.Add(image);
+                }
+
+                return images;
+            }
+        }
+
+        /*
         private HashSet<ImageDirectory> GetDirectories(HashSet<ImageDirectory> directories) // gets all directories related to a passed import
         {
             // loop over all entries and create new objects

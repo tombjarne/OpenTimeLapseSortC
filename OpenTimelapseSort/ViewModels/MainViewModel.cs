@@ -48,6 +48,8 @@ namespace OpenTimelapseSort
                 try
                 {
                     database.Database.EnsureCreated();
+                    
+                    service.SeedDatabase();
                     InitialiseView();
                 } catch(Exception e)
                 {
