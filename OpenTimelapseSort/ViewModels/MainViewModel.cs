@@ -21,14 +21,14 @@ namespace OpenTimelapseSort
     {
 
         private delegate StackPanel DirectoryReference(IEnumerable<String> FileNames, String DirName);
-        private delegate StackPanel ImportReference(ArrayList imports, String ImportName);
+        private delegate StackPanel ImportReference(List<Import> imports, String ImportName);
 
         private readonly BackgroundWorker worker;
         private readonly ICommand progressBarInvocation;
         private int importProgress;
 
-        DBService service;
-        List<Import> imports;
+        private DBService service;
+        private List<Import> imports; // can we replace this with a delegate? 
 
         public MainViewModel()
         {
@@ -37,7 +37,7 @@ namespace OpenTimelapseSort
             //initialize local values
 
             initialiseDBService();
-            InitialiseView();
+            //InitialiseView();
         }
 
         private void initialiseDBService()
@@ -50,7 +50,7 @@ namespace OpenTimelapseSort
                     database.Database.EnsureCreated();
                     
                     service.SeedDatabase();
-                    InitialiseView();
+                    //InitialiseView();
                 } catch(Exception e)
                 {
                     Console.WriteLine(e.StackTrace);
@@ -58,14 +58,56 @@ namespace OpenTimelapseSort
             }
         }
 
+        public static StackPanel TestView()
+        {
+            List<Import> ti = new List<Import>();
+            DBService sv = new DBService();
+            ti = sv.ReturnImports();
+
+            // TEST PURPOSES ONLY
+
+            StackPanel directoryPanel = new StackPanel();
+            for (int i = 0; i < 5; i++)
+            {
+                Rectangle rect2 = new Rectangle();
+                rect2.Width = 100;
+                rect2.Height = 100;
+                rect2.Margin = new Thickness(5);
+                directoryPanel.Children.Add(rect2);
+            }
+
+            return directoryPanel;
+
+        }
+
         public StackPanel InitialiseView()
         {
             imports = service.ReturnImports();
-            Console.WriteLine(imports);
 
-            if(imports.Count > 0)
+            // TEST PURPOSES ONLY
+            /*
+            StackPanel directoryPanel = new StackPanel();
+            for (int i = 0; i < 5; i++)
+            {
+                Rectangle rect2 = new Rectangle();
+                rect2.Width = 100;
+                rect2.Height = 100;
+                rect2.Margin = new Thickness(5);
+                rect2.Fill = Brushes.Blue;
+                directoryPanel.Children.Add(rect2);
+            }
+
+            return directoryPanel;
+            */
+            
+            // TODO: need to fix structure and associations
+            // ensure that directories and imports have right amound of count
+
+            if(imports.Capacity > 0)
             {
                 StackPanel allImports = new StackPanel();
+                StackPanel directoryPanel = new StackPanel();
+
                 foreach (Import import in imports)
                 {
                     try
@@ -73,10 +115,17 @@ namespace OpenTimelapseSort
                         StackPanel importPanel = new StackPanel();
                         foreach (ImageDirectory directory in import.directories)
                         {
-                            StackPanel directoryPanel = new StackPanel();
                             // add on click event
                             // add directoryPanel to importPanel
-                            importPanel.Children.Add(directoryPanel);
+                            //importPanel.Children.Add(directoryPanel);
+
+                            Rectangle rect2 = new Rectangle();
+                            rect2.Width = 100;
+                            rect2.Height = 100;
+                            rect2.Margin = new Thickness(5);
+                            rect2.Fill = Brushes.Blue;
+                            directoryPanel.Children.Add(rect2);
+
                         }
                         allImports.Children.Add(importPanel);
                     } catch (Exception e)
@@ -84,8 +133,18 @@ namespace OpenTimelapseSort
                         // Test purposes
                         Console.WriteLine(e.StackTrace);
                     }
+
+                    allImports.Width = 300;
+                    allImports.Height = 100;
+                    allImports.Margin = new Thickness(5);
+
+                    TextBox importName = new TextBox();
+                    importName.Text = "Test Import";
+                    //allImports.Children.Add(directoryPanel);
+                    //allImports.Children.Add(importName);
+
                 }
-                return allImports;
+                return directoryPanel;
 
             } else
             {
@@ -93,6 +152,7 @@ namespace OpenTimelapseSort
                 // add attributes and text to warning
                 return errorStackPanel;
             }
+            
         } 
 
         private StackPanel RenderImports()
@@ -151,7 +211,6 @@ namespace OpenTimelapseSort
 
             // only provisional
             string [] images = Directory.GetFiles(DirName);
-
 
             for (int i = 0; i < images.Length; i++)
             {

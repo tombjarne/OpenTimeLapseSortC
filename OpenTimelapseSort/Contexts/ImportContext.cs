@@ -18,11 +18,9 @@ namespace OpenTimelapseSort.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // TODO: this makes no sense, needs to be replaced
-
             
             modelBuilder.Entity<Import>().ToTable("Imports");
-            modelBuilder.Entity<ImageDirectory>().ToTable("Directories");
+            modelBuilder.Entity<ImageDirectory>().ToTable("ImageDirectories");
             modelBuilder.Entity<Image>().ToTable("Image");
 
             /*

@@ -46,24 +46,12 @@ namespace OpenTimelapseSort.Views
         {
             InitializeComponent();
             this.DataContext = new MainViewModel();
-
-            //MainViewModel then tries to fetch db entries
-            //RenderComponent(MainViewModel vm = new MainViewModel());
-
-            //this.renderDirectories();
         }
 
 
         //////////////////////////////////////////////////////////
         //////                  XAMLFUNCTIONS               //////
         //////////////////////////////////////////////////////////
-
-        private void RenderImports(object sender, RoutedEventArgs e)
-        {
-            StackPanel initialValues = new StackPanel();
-            //initialValues = MainViewModel.InitialiseView(); TODO: fix
-            RenderComponent(initialValues);
-        }
 
         private void invokePreferences(object sender, RoutedEventArgs e)
         {
@@ -76,6 +64,27 @@ namespace OpenTimelapseSort.Views
             // TODO: start new task to display progress
             // Task ImportVisualizer = new Task();
             RenderComponent(MainViewModel.Import());
+            RenderImports();
+        }
+
+        private void RenderImports()
+        {
+            MainViewModel vm = new MainViewModel();
+            StackPanel directoryPanel = vm.InitialiseView();
+            //StackPanel directoryPanel = new StackPanel();
+            /*
+            for (int i = 0; i < 5; i++)
+            {
+                Rectangle rect2 = new Rectangle();
+                rect2.Width = 400;
+                rect2.Height = 100;
+                rect2.Margin = new Thickness(5);
+                rect2.Fill = Brushes.HotPink;
+                directoryPanel.Children.Add(rect2);
+            }
+            */
+
+            RenderComponent(directoryPanel);
         }
 
 
@@ -108,7 +117,7 @@ namespace OpenTimelapseSort.Views
 
         void RenderComponent(StackPanel sp)
         {
-         directoryControl.Items.Add(sp);
+            directoryControl.Items.Add(sp);
         }
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)

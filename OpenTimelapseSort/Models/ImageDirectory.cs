@@ -14,7 +14,7 @@ public class ImageDirectory
     public String target { get; set; }
     public String name { get; set; }
 
-    public ImageDirectory(String target, String name) //aggregation - cannot exist without images, therefore supply imageList
+    public ImageDirectory(String target, String name)
     {
         timestamp = DateTime.Today;
         this.target = target;

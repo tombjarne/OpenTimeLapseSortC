@@ -14,10 +14,6 @@ namespace OpenTimelapseSort.DataServices
     class DBService
     {
 
-        //public delegate HashSet<Import> Directories(HashSet<ImageDirectory> directories); // name is obvious and can be fetched from indexes
-        public delegate HashSet<Import> Imports(HashSet<ImageDirectory> directories); // name is obvious and can be fetched from indexes
-        public delegate HashSet<Image> Images(HashSet<Image> images); // name is obvious and can be fetched from indexes
-
         public DBService()
         {
             // init a delegate that contains values ( HashSet ) of Directory table
@@ -75,8 +71,10 @@ namespace OpenTimelapseSort.DataServices
                     newImport.initImportList(directories);
                     newImport.importDate = import.importDate;
                     newImport.timestamp = import.timestamp; //convert string to date 
+                    imports.Add(newImport);
                 }
 
+                Console.WriteLine(imports);
                 return imports;
             }
         }
@@ -91,17 +89,17 @@ namespace OpenTimelapseSort.DataServices
                 Import import = new Import(false)
                 {
                     name = "Urlaub",
-                    length = 1
+                    length = 1,
+                    directories = new List<ImageDirectory>(0)
                 };
+                context.Add(import);
+                context.SaveChanges();
 
                 ImageDirectory directory = new ImageDirectory("/", "Urlaub 1")
                 {
                     imageList = new List<Image>(0),
-
                 };
-
                 context.Add(directory);
-                context.Add(import);
                 context.SaveChanges();
             }
         }
