@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:OpenTimelapseSort"
         mc:Ignorable="d"
         Title="MainWindow" 
-        Height="550" 
+        Height="522" 
         Width="402" 
         FontFamily="Montserrat"
         WindowStyle="None"
@@ -23,15 +23,14 @@
             <Ellipse x:Name="minimize_btn" HorizontalAlignment="Left" Height="17" Margin="365,14,0,0" VerticalAlignment="Top" Width="17" Fill="Coral" MouseDown="minimizeApplication"/>
             <Rectangle HorizontalAlignment="Left" Height="44" Margin="128,0,0,-5" Width="228" MouseDown="moveWindow" Fill="#FF34404D"/>
             <Label x:Name="window_name_Copy" Grid.Column="0" Content="Edit your options&#xD;&#xA;" HorizontalAlignment="Left" Margin="17,60,0,-60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="22" Foreground="White"/>
-            <Label x:Name="window_name_Copy1" Grid.Column="0" Content="Interval&#xD;&#xA;" HorizontalAlignment="Left" Margin="36,184,0,-184" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
-            <Label x:Name="window_name_Copy2" Grid.Column="0" Content="Interval Image Count&#xD;&#xA;&#xA;" HorizontalAlignment="Left" Margin="36,269,0,-269" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
+            <Label x:Name="window_name_Copy1" Grid.Column="0" Content="Interval&#xD;&#xA;" HorizontalAlignment="Left" Margin="36,164,0,-164" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
+            <Label x:Name="window_name_Copy2" Grid.Column="0" Content="Interval Image Count&#xD;&#xA;&#xA;" HorizontalAlignment="Left" Margin="36,249,0,-249" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
         </Grid>
-        <CheckBox Content="Autosave" HorizontalAlignment="Left" Margin="56,111,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Foreground="White" FontSize="14" Grid.Row="1" Grid.Column="1"/>
-        <CheckBox Content="Copy*" HorizontalAlignment="Left" Margin="56,146,0,0" VerticalAlignment="Top" Foreground="White" FontSize="14"/>
-        <Slider HorizontalAlignment="Left" Margin="56,225,0,0" VerticalAlignment="Top" Width="245"/>
-        <Slider HorizontalAlignment="Left" Margin="56,300,0,0" VerticalAlignment="Top" Width="245"/>
-        <Button Content="Save Changes" HorizontalAlignment="Left" Margin="56,385,0,0" VerticalAlignment="Top" Height="39" Width="111" Foreground="#FFFF8383" BorderBrush="{x:Null}" Background="#FF657482"/>
-        <Button Content="Delete Preferences" HorizontalAlignment="Left" Margin="192,385,0,0" VerticalAlignment="Top" Height="39" Width="134" Background="#FFFF8383" Foreground="White" BorderBrush="{x:Null}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="56,451,0,0" Text="* note that copy is on by default and will copy the files in full resolution to the new repository. Do not change this setting unless you want your SD card wiped." TextWrapping="Wrap" VerticalAlignment="Top" Height="67" Width="270" Foreground="White"/>
+        <CheckBox Content="Copy*" HorizontalAlignment="Left" Margin="56,126,0,0" VerticalAlignment="Top" Foreground="White" FontSize="14"/>
+        <Slider HorizontalAlignment="Left" Margin="56,205,0,0" VerticalAlignment="Top" Width="245"/>
+        <Slider HorizontalAlignment="Left" Margin="56,280,0,0" VerticalAlignment="Top" Width="245"/>
+        <Button Content="Save Changes" HorizontalAlignment="Left" Margin="56,365,0,0" VerticalAlignment="Top" Height="39" Width="111" Foreground="#FFFF8383" BorderBrush="{x:Null}" Background="#FF657482"/>
+        <Button Content="Delete Preferences" HorizontalAlignment="Left" Margin="192,365,0,0" VerticalAlignment="Top" Height="39" Width="134" Background="#FFFF8383" Foreground="White" BorderBrush="{x:Null}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="56,431,0,0" Text="* note that copy is on by default and will copy the files in full resolution to the new repository. Do not change this setting unless you want your SD card wiped." TextWrapping="Wrap" VerticalAlignment="Top" Height="67" Width="270" Foreground="White"/>
     </Grid>
 </Window>

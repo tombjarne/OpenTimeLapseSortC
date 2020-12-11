@@ -4,13 +4,13 @@ namespace OpentimelapseSort.Models
     class Preferences
     {
 
-        private bool useCopy { get; set; }
+        public bool useCopy { get; set; }
 
-        private bool useAutoDetectInterval { get; set; }
+        public bool useAutoDetectInterval { get; set; }
 
-        private double sequenceInterval { get; set; }
+        public double sequenceInterval { get; set; }
 
-        private int sequenceImageCount { get; set; }
+        public int sequenceImageCount { get; set; }
 
         public Preferences(bool useAutoDetectInterval, bool useCopy, double sequenceInterval, int sequenceImageCount)
         {
@@ -19,6 +19,8 @@ namespace OpentimelapseSort.Models
             this.sequenceInterval = sequenceInterval;
             this.sequenceImageCount = sequenceImageCount;
         }
+
+        public Preferences() { }
     }
 
 }
