@@ -1,8 +1,13 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
 namespace OpentimelapseSort.Models
 {
 
     class Preferences
     {
+        [Key]
+        public int id { get; set; }
 
         public bool useCopy { get; set; }
 
@@ -18,6 +23,7 @@ namespace OpentimelapseSort.Models
             this.useCopy = useCopy;
             this.sequenceInterval = sequenceInterval;
             this.sequenceImageCount = sequenceImageCount;
+            this.id = 0;
         }
 
         public Preferences() { }

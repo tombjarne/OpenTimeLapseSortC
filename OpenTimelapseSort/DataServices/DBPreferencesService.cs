@@ -77,12 +77,12 @@ namespace OpenTimelapseSort.DataServices
             return saveSucceeded;
         }
 
-        private bool SeedPreferencesDatabase()
+        public bool SeedPreferencesDatabase()
         {
             bool seedSucceeded = false;
             try
             {
-                using (var context = new PreferencesContext)
+                using (var context = new PreferencesContext())
                 {
                     Preferences preferences = new Preferences(true, true, 10, 20);
                     context.Add(preferences);
@@ -97,6 +97,26 @@ namespace OpenTimelapseSort.DataServices
             }
 
             return seedSucceeded;
+        }
+
+        public Preferences FetchPreferences()
+        {
+            Preferences pre = new Preferences();
+
+            using (var context = new PreferencesContext())
+            {
+
+                foreach (Preferences preferences in context.Preferences)
+                {
+                    pre = new Preferences(
+                        preferences.useAutoDetectInterval,
+                        preferences.useCopy,
+                        preferences.sequenceInterval,
+                        preferences.sequenceImageCount
+                    );
+                }
+            }
+            return pre;
         }
     }
 }

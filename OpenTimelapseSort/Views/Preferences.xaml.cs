@@ -10,6 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using OpenTimelapseSort.ViewModels;
+
 namespace OpenTimelapseSort.Views
 {
     /// <summary>
@@ -20,6 +22,34 @@ namespace OpenTimelapseSort.Views
         public Preferences()
         {
             InitializeComponent();
+            this.DataContext = new PreferencesViewModel();
+            FetchOnStartup();
+        }
+
+        private void FetchOnStartup()
+        {
+            PreferencesViewModel pvm = new PreferencesViewModel();
+            // TODO: finish and make pretty
+            SetImageSequence(pvm.FetchFromDatabase().sequenceInterval);
+            SetImageSequenceCount(pvm.FetchFromDatabase().sequenceImageCount);
+            SetCopyEnabled(pvm.FetchFromDatabase().useCopy);
+        }
+
+        void SetImageSequence(double value)
+        {
+            Interval.Content = value;
+            IntervalSlider.Value = value;
+        } 
+        
+        void SetImageSequenceCount(double value)
+        {
+            IntervalCount.Content = value;
+            IntervalCountSlider.Value = value;
+        }
+
+        void SetCopyEnabled(bool CopyIsEnabled)
+        {
+            Copy.IsChecked = CopyIsEnabled;
         }
 
         private void minimizeApplication(object sender, RoutedEventArgs e)

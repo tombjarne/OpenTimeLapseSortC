@@ -46,12 +46,23 @@ namespace OpenTimelapseSort.Views
         {
             InitializeComponent();
             this.DataContext = new MainViewModel();
+            FetchOnStartup();
         }
 
 
         //////////////////////////////////////////////////////////
         //////                  XAMLFUNCTIONS               //////
         //////////////////////////////////////////////////////////
+
+        private void FetchOnStartup()
+        {
+            // check for db
+            // if not exists create new one
+            // start subtask to notify user about that
+
+            // fetch entries from db and render them / if there is anything to fetch / also notify user about that
+            // if db did not exist -> start tutorial 
+        }
 
         private void invokePreferences(object sender, RoutedEventArgs e)
         {
