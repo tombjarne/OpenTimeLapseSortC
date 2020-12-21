@@ -2,6 +2,7 @@
 using OpenTimelapseSort.Contexts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace OpenTimelapseSort.DataServices
@@ -38,8 +39,8 @@ namespace OpenTimelapseSort.DataServices
             {
                 // fill with dummy data when database was deleted or something unexpected happened
 
-
                 //TODO maybe move this whole section to SeedDatabase()
+                /*
                 preferences.useAutoDetectInterval = true;
                 preferences.useCopy = true;
                 preferences.sequenceImageCount = 10;
@@ -50,20 +51,30 @@ namespace OpenTimelapseSort.DataServices
                     Console.WriteLine(e.StackTrace);
                     // let user know something weird happened
                 }
+                */
             }
             return preferences;
         }
 
-        private bool SavePreferencesToDataBase(Preferences preferences)
+        public bool SavePreferencesToDataBase(Preferences preferences)
         {
             // save preferences to DB
             bool saveSucceeded = false;
             try
             {
-                using (var context = new ImportContext())
+                using (var context = new PreferencesContext())
                 {
-
-                    context.Add(preferences);
+                    var entity = context.Preferences.FirstOrDefault(item => item.id == 1);
+                    
+                    if (true) // TODO: update statement
+                    {
+                        // TODO: update values
+                        context.Update(preferences);
+                    } 
+                    else
+                    {
+                        context.Add(preferences);
+                    }
                     context.SaveChanges();
                 }
 

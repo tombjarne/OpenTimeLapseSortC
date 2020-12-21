@@ -28,7 +28,7 @@ namespace OpenTimelapseSort
         private int importProgress;
 
         private DBService service;
-        private List<Import> imports; // can we replace this with a delegate? 
+        private List<Import> imports;
 
         public MainViewModel()
         {

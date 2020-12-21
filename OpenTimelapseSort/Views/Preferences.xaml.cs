@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using OpenTimelapseSort.ViewModels;
+using OpenTimelapseSort.Mvvm;
 
 namespace OpenTimelapseSort.Views
 {
@@ -19,21 +20,40 @@ namespace OpenTimelapseSort.Views
     /// </summary>
     public partial class Preferences : Window
     {
+
+        public delegate double SliderCountValueCommand(double value);
+        PreferencesViewModel pvm = new PreferencesViewModel();
+
         public Preferences()
         {
             InitializeComponent();
+
             this.DataContext = new PreferencesViewModel();
             FetchOnStartup();
         }
 
         private void FetchOnStartup()
         {
-            PreferencesViewModel pvm = new PreferencesViewModel();
-            // TODO: finish and make pretty
             SetImageSequence(pvm.FetchFromDatabase().sequenceInterval);
             SetImageSequenceCount(pvm.FetchFromDatabase().sequenceImageCount);
             SetCopyEnabled(pvm.FetchFromDatabase().useCopy);
         }
+
+        void UpdateSliderCountValue(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Slider slider = (Slider)sender;
+            int value = (int)Math.Round(slider.Value, 0);
+            this.IntervalCount.Content = value;
+        }
+
+        void UpdateSliderIntervalValue(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Slider slider = (Slider)sender;
+            double value = Math.Round(slider.Value, 2);
+            this.Interval.Content = value;
+        }
+
+        // TODO: refactor into using delegates? 
 
         void SetImageSequence(double value)
         {
@@ -50,6 +70,11 @@ namespace OpenTimelapseSort.Views
         void SetCopyEnabled(bool CopyIsEnabled)
         {
             Copy.IsChecked = CopyIsEnabled;
+        }
+
+        public void SavePreferences(object sender, RoutedEventArgs e)
+        {
+            pvm.SavePreferences(true, (bool)Copy.IsChecked, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value);
         }
 
         private void minimizeApplication(object sender, RoutedEventArgs e)

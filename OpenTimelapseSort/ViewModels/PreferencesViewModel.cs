@@ -24,6 +24,33 @@ namespace OpenTimelapseSort.ViewModels
             return preferences;
         }
 
+        public bool SavePreferences(bool useAutoDetectInterval, bool copyIsEnabled, double imageInterval, int imageCount)
+        {
+
+            bool success = false;
+
+            using (var database = new PreferencesContext())
+            {
+                try
+                {
+                    database.Database.EnsureCreated();
+                    preferences = new Preferences(
+                        useAutoDetectInterval,
+                        copyIsEnabled,
+                        imageInterval,
+                        imageCount
+                    );
+
+                    success = service.SavePreferencesToDataBase(preferences);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.StackTrace);
+                }
+            }
+            return success;
+        }
+
         private void InitialisePreferencesDB()
         {
             using (var database = new PreferencesContext())
@@ -32,7 +59,7 @@ namespace OpenTimelapseSort.ViewModels
                 {
                     database.Database.EnsureCreated();
 
-                    service.SeedPreferencesDatabase();
+                    //service.SeedPreferencesDatabase();
                     //InitialiseView();
                 }
                 catch (Exception e)
