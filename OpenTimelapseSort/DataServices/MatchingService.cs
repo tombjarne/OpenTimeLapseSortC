@@ -36,7 +36,6 @@ namespace OpenTimelapseSort.DataServices
 			double prevDeviation = 0.0;
 
 			int runs = service.FetchPreferences().sequenceImageCount; // pref count to make a sequence
-			bool seqEnded = false;
 
             if (service.FetchPreferences().useAutoDetectInterval)
             {
@@ -76,7 +75,6 @@ namespace OpenTimelapseSort.DataServices
 
 					if (pointer - seqPointer >= runs) // images do not have same deviation and do fill the length requirement
 					{
-						seqEnded = true;
 						createDir(dirList); // current list will be added due to matching requirements
 					}
 					else // images do not have same deviation and do not fill the minimum length requirement
@@ -86,18 +84,30 @@ namespace OpenTimelapseSort.DataServices
 
 					pointer = i;
 					seqPointer = i;
+					dirList = new List<Image>(); // reinit dirList
 				}
 			}
 		}
 
-		private void addToRandomDir(List<Image> dirList)
+		private void addToRandomDir(List<Image> dirList) // can sometimes only contain a single image
         {
+			//TODO: add to random dir list
+			//TODO: write passed image to directory
 
+			if(dirList.Count > 1)
+            {
+
+            }
+			else
+            {
+
+            }
         }
 
 		private void createDir(List<Image> dirList)
         {
-
+			//TODO: save current list into new directory
+			//TODO: create ImageDirectory instance and pass dirList as imageList
         }
     }
 }
