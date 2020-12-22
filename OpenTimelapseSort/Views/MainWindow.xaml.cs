@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ namespace OpenTimelapseSort.Views
 
         private Point start;
         private Point startOffset;
+        MainViewModel mvm = new MainViewModel();
 
         //////////////////////////////////////////////////////////
         //////                    VARIABLES                 //////
@@ -45,7 +47,6 @@ namespace OpenTimelapseSort.Views
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainViewModel();
             FetchOnStartup();
         }
 
@@ -64,7 +65,7 @@ namespace OpenTimelapseSort.Views
             // if db did not exist -> start tutorial 
         }
 
-        private void invokePreferences(object sender, RoutedEventArgs e)
+        private void InvokePreferences(object sender, RoutedEventArgs e)
         {
             var preferencesWindow = new Preferences();
             preferencesWindow.Show();
@@ -126,10 +127,21 @@ namespace OpenTimelapseSort.Views
         * fetches currently set Preferences from database and updates UI
         */
 
-        void ChooseImportTarget(object sender, RoutedEventArgs e)
+        private void ChooseImportTarget(object sender, RoutedEventArgs e)
         {
-            //MainViewModel mv = new MainViewModel();
-            //mv.Import((string)Import_Target.Text);
+
+            //Show Popup
+            Import_Popup.IsOpen = true;
+
+            Import_Confirm_Btn.Click += (sender, args) =>
+            {
+                InvokeFileChooser(Import_Target.Text);
+            };
+        }
+
+        private void InvokeFileChooser(string target)
+        {
+            RenderComponent(MainViewModel.Import(target));
         }
 
         void RenderComponent(StackPanel sp)

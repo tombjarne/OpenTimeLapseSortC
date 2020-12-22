@@ -29,7 +29,7 @@
             </Grid.ColumnDefinitions>
             <Label x:Name="application_name" Grid.Column="0" Content="OpenTimelapseSort" HorizontalAlignment="Left" Margin="0,2,0,-2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
             </Label>
-            <Button x:Name="preferences_btn" Content="Preferences" HorizontalAlignment="Left" Margin="197,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Foreground="White" Background="#FF3D4A59" Click="invokePreferences" Width="95" BorderBrush="{x:Null}">
+            <Button x:Name="preferences_btn" Content="Preferences" HorizontalAlignment="Left" Margin="197,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Foreground="White" Background="#FF3D4A59" Click="InvokePreferences" Width="95" BorderBrush="{x:Null}">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
@@ -93,13 +93,6 @@
                 </DockPanel>
                 <DockPanel>
                     <Button x:Name="Import_Confirm_Btn" Content="Confirm" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="Import">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button x:Name="Import_Target_Btn" Content="Destination" HorizontalAlignment="Left" Margin="197,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Foreground="White" Background="#FF3D4A59" Click="ChooseImportTarget" Width="95" BorderBrush="{x:Null}">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>

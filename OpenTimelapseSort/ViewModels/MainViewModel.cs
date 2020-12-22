@@ -26,6 +26,7 @@ namespace OpenTimelapseSort
         private int importProgress;
 
         private DBService service;
+        private MatchingService matching;
         private List<Import> imports;
 
         public MainViewModel()
@@ -174,13 +175,11 @@ namespace OpenTimelapseSort
             }
         }
 
-        public void InitImport(string name)
-        {
-            Import(name);
-        }
-
         public static StackPanel Import(string name)
         {
+
+            List<Image> imageList = new List<Image>();
+
             CommonOpenFileDialog fileChooser = new CommonOpenFileDialog();
             fileChooser.InitialDirectory = @"C:\";
             fileChooser.Title = "Choose Directory";
@@ -191,50 +190,69 @@ namespace OpenTimelapseSort
 
             if (fileChooser.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                //TODO: fetch needed attributes -> might need to change IEnumerable to something else
-                string filename = fileChooser.FileName;
-
-                IEnumerable<String> files = fileChooser.FileNames;
-                DirectoryReference references = new DirectoryReference(HandleImport);
+                string chosenDirectory = fileChooser.FileName;
+                IEnumerable<string> files = fileChooser.FileNames;
 
                 // instead of files, filename fetch from object that need to be created beginning of this function
 
                 if (files.Count() > 0)
                 {
-                    return references(files, filename);
+                    StackPanel import = new StackPanel();
+
+                    // TODO: add changable text field to import element
+
+                    string[] images = Directory.GetFiles(fileChooser.FileName);
+                    int length = images.Length;
+
+                    for (int i = 0; i < length; i++)
+                    {
+                        FileInfo info = new FileInfo(images[i]);
+
+                        // Attention: does not support more depth than two! Intended to use with camera folders only!
+                        // TODO: check for file endings!
+                        if((File.Exists(images[i]) && info.Directory != null) && !info.FullName.Contains("")) //file is directory TODO: check for invalid endings
+                        {
+                            string[] subDirImages = Directory.GetFiles(images[i]);
+                            FileInfo subDirInfo = new FileInfo(subDirImages[i]);
+
+                            for(int p = 0; p < length; p++)
+                            {
+                                Image image = new Image(subDirImages[i], subDirInfo.FullName);
+                                imageList.Add(image);
+                            }
+                        } 
+                        else
+                        {
+                            Image image = new Image(images[i], info.FullName);
+                            imageList.Add(image);
+                        }
+                    }
+
+                    //matching.SortImages(imageList);
+
+                    // TODO: sort the created images in the matchingservice!
+                    // TODO: update the images paths in matchingservice according to their sorting and target!
+
+                    // TODO: return new directory and import instances
+                    // TODO: render accordingly to sorted information!
+
+                    RenderDirectory();
+
+                    // TODO: create directory element
+                    // TODO: add "reimport" button to directory
+                    // TODO: add directory to import element
+
+                    return import;
                 } else
                 {
                     return new StackPanel();
+                    // TODO: add "could not import any files" to StackPanel, add listener to autodestruct after 15 seconds
                 }
             } else
             {
-                return new StackPanel(); //TODO: remove, test only
+                return new StackPanel();
+                // TODO: add "could not import any files" to StackPanel, add listener to autodestruct after 15 seconds
             }
-        }
-
-        private static StackPanel HandleImport(IEnumerable<String> FileNames, String DirName)
-        {
-            Debug.WriteLine("FILENAMES: "+FileNames.ToHashSet());
-
-            
-
-            StackPanel import = new StackPanel();
-
-            // TODO: add changable text field to import element
-
-            string [] images = Directory.GetFiles(DirName);
-            int length = images.Length;
-
-            for (int i = 0; i < length; i++)
-            {
-                FileInfo info = new FileInfo(images[i]);
-                ImageDirectory directory = new ImageDirectory(info.FullName, images[i]);
-
-                RenderDirectory();
-
-                // TODO: add directory to import element
-            }
-            return import;
         }
 
         private static StackPanel RenderDirectory()
