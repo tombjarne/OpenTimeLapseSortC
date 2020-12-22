@@ -36,7 +36,7 @@
                     </Style>
                 </Button.Resources>
             </Button>
-            <Button x:Name="import_btn" Content="Import new" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="import">
+            <Button x:Name="import_btn" Content="Import new" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="Import">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
@@ -83,5 +83,31 @@
                 </ScrollViewer>
             </Grid>
         </DockPanel>
+        <!-- Popup Screen Elements -->
+        <Popup Name="Import_Popup" Margin="0,44,0,0">
+            <Grid Background=" #3D4A59" Margin="0,44,0,0">
+                <DockPanel>
+                    <TextBox x:Name="Import_Target">
+                        Default
+                    </TextBox>
+                </DockPanel>
+                <DockPanel>
+                    <Button x:Name="Import_Confirm_Btn" Content="Confirm" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="Import">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button x:Name="Import_Target_Btn" Content="Destination" HorizontalAlignment="Left" Margin="197,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Foreground="White" Background="#FF3D4A59" Click="ChooseImportTarget" Width="95" BorderBrush="{x:Null}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </DockPanel>
+            </Grid>
+        </Popup>
     </Grid>
 </Window>

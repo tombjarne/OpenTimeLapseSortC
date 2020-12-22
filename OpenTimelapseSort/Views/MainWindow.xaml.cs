@@ -70,12 +70,12 @@ namespace OpenTimelapseSort.Views
             preferencesWindow.Show();
         }
 
-        private void import(object sender, RoutedEventArgs e)
+        private void Import(object sender, RoutedEventArgs e)
         {
             // TODO: start new task to display progress
-            // Task ImportVisualizer = new Task();
-            RenderComponent(MainViewModel.Import());
-            RenderImports();
+            //Task ImportVisualizer = new Task();
+            //RenderComponent(MainViewModel.InitImport());
+            //RenderImports();
         }
 
         private void RenderImports()
@@ -126,10 +126,19 @@ namespace OpenTimelapseSort.Views
         * fetches currently set Preferences from database and updates UI
         */
 
+        void ChooseImportTarget(object sender, RoutedEventArgs e)
+        {
+            //MainViewModel mv = new MainViewModel();
+            //mv.Import((string)Import_Target.Text);
+        }
+
         void RenderComponent(StackPanel sp)
         {
             directoryControl.Items.Add(sp);
         }
+
+
+        // TODO: cleanup below this line
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {

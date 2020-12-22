@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using OpenTimelapseSort.Contexts;
+using OpenTimelapseSort.DataServices;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using System.IO;
-using System.ComponentModel;
-using System.Windows.Input;
-using OpenTimelapseSort.Models;
-using OpenTimelapseSort.DataServices;
-using OpenTimelapseSort.Contexts;
 
 namespace OpenTimelapseSort
 {
@@ -176,7 +174,12 @@ namespace OpenTimelapseSort
             }
         }
 
-        public static StackPanel Import()
+        public void InitImport(string name)
+        {
+            Import(name);
+        }
+
+        public static StackPanel Import(string name)
         {
             CommonOpenFileDialog fileChooser = new CommonOpenFileDialog();
             fileChooser.InitialDirectory = @"C:\";
@@ -192,35 +195,60 @@ namespace OpenTimelapseSort
                 string filename = fileChooser.FileName;
 
                 IEnumerable<String> files = fileChooser.FileNames;
-                DirectoryReference references = new DirectoryReference(RenderDirectories);
+                DirectoryReference references = new DirectoryReference(HandleImport);
 
                 // instead of files, filename fetch from object that need to be created beginning of this function
 
-                return references(files, filename);
+                if (files.Count() > 0)
+                {
+                    return references(files, filename);
+                } else
+                {
+                    return new StackPanel();
+                }
             } else
             {
                 return new StackPanel(); //TODO: remove, test only
             }
         }
 
-        private static StackPanel RenderDirectories(IEnumerable<String> FileNames, String DirName)
+        private static StackPanel HandleImport(IEnumerable<String> FileNames, String DirName)
         {
             Debug.WriteLine("FILENAMES: "+FileNames.ToHashSet());
-            StackPanel sp = new StackPanel();
-            sp.Orientation = Orientation.Vertical;
 
-            // only provisional
+            
+
+            StackPanel import = new StackPanel();
+
+            // TODO: add changable text field to import element
+
             string [] images = Directory.GetFiles(DirName);
+            int length = images.Length;
 
-            for (int i = 0; i < images.Length; i++)
+            for (int i = 0; i < length; i++)
             {
-                Rectangle rect = new Rectangle();
-                rect.Width = 100;
-                rect.Height = 100;
-                rect.Margin = new Thickness(5);
-                rect.Fill = i % 2 == 0 ? Brushes.Black : Brushes.Salmon;
-                sp.Children.Add(rect);
+                FileInfo info = new FileInfo(images[i]);
+                ImageDirectory directory = new ImageDirectory(info.FullName, images[i]);
+
+                RenderDirectory();
+
+                // TODO: add directory to import element
             }
+            return import;
+        }
+
+        private static StackPanel RenderDirectory()
+        {
+            // TODO: replace with proper elements 
+
+            StackPanel sp = new StackPanel();
+            Rectangle rect = new Rectangle();
+            rect.Width = 100;
+            rect.Height = 100;
+            rect.Margin = new Thickness(5);
+            rect.Fill = Brushes.Salmon;
+            sp.Children.Add(rect);
+
             return sp;
         }
 

@@ -53,8 +53,6 @@ namespace OpenTimelapseSort.Views
             this.Interval.Content = value;
         }
 
-        // TODO: refactor into using delegates? 
-
         void SetImageSequence(double value)
         {
             Interval.Content = value;
@@ -74,22 +72,24 @@ namespace OpenTimelapseSort.Views
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
-            pvm.SavePreferences(true, (bool)Copy.IsChecked, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value);
+            if(pvm.SavePreferences(true, (bool)Copy.IsChecked, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value))
+            {
+                App.Current.Windows[1].Close();
+            }
+            else
+            {
+                // TODO: print that something went wrong
+            }
         }
 
         private void minimizeApplication(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            App.Current.Windows[1].Close();
         }
 
         private void moveWindow(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
-        }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }
