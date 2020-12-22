@@ -40,7 +40,7 @@ namespace OpenTimelapseSort.DataServices
 
             if (service.FetchPreferences().useAutoDetectInterval)
             {
-				currDeviation = service.FetchPreferences().sequenceInterval;
+				prevDeviation = service.FetchPreferences().sequenceInterval;
             }
 
 			List<Image> dirList = new List<Image>();
@@ -49,27 +49,37 @@ namespace OpenTimelapseSort.DataServices
 			for (int i = 0; i < imageList.Count; i++)
 			{
 
-				// TODO: find way to calculate deviation - also support users input
+                // TODO: find way to calculate deviation - also support users input
+                if (i > 0)
+                {
+					//prevDeviation = imageList[i].fileTime - imageList[i - 1].fileTime;
+
+					if (i < imageList.Count)
+                    {
+						//currDeviation = imageList[i + 1].fileTime - imageList[i].fileTime;
+					}
+					else
+                    {
+						currDeviation = prevDeviation;
+                    }
+				}
 
 				if (currDeviation == prevDeviation)
 				{
-					if (pointer - seqPointer >= runs && seqEnded)
-					{
-						createDir(dirList); // puts files into sequence
-						dirList = new List<Image>();
-					}
-					pointer += 1; // equals i 
+				
 					dirList.Add(imageList[i]);
+					pointer += 1; // marks last image in current sequence that fits previous deviations
 
 				}
 				else
 				{
 
-					if (pointer - seqPointer >= runs)
+					if (pointer - seqPointer >= runs) // images do not have same deviation and do fill the length requirement
 					{
 						seqEnded = true;
+						createDir(dirList); // current list will be added due to matching requirements
 					}
-					else
+					else // images do not have same deviation and do not fill the minimum length requirement
 					{
 						addToRandomDir(dirList);
 					}
