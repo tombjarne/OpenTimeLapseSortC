@@ -21,6 +21,10 @@ namespace OpenTimelapseSort
         private delegate StackPanel DirectoryReference(IEnumerable<String> FileNames, String DirName);
         private delegate StackPanel ImportReference(List<Import> imports, String ImportName);
 
+        public delegate StackPanel ImageDirectoryCallBack(StackPanel directory);
+        public delegate StackPanel ImportCallBack(StackPanel import);
+        public delegate int ImportCountCallBack(int currentNumber);
+
         private readonly BackgroundWorker worker;
         private readonly ICommand progressBarInvocation;
         private int importProgress;
@@ -227,6 +231,14 @@ namespace OpenTimelapseSort
                             imageList.Add(image);
                         }
                     }
+
+                    // call matching service with counter callback for progressbar update
+                    // on file handled call the delegate function in matching service and therefore update its screen value
+
+                    // create another delegate that notifies when a directory in matching has been finished
+                    // delegate function is passed to matching service
+                    // delegate function holds function call to callback from partial class -> renders element
+
 
                     //matching.SortImages(imageList);
 

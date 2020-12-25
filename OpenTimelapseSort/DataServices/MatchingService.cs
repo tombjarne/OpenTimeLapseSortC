@@ -8,6 +8,8 @@ namespace OpenTimelapseSort.DataServices
     class MatchingService
     {
 		DBPreferencesService service = new DBPreferencesService();
+		List<ImageDirectory> directories = new List<ImageDirectory>(); // each directory will receive their images in the matching function
+		List<Import> imports = new List<Import>(); // does it need to be a list?
 
 		public bool UseAutoDetection()
         {
@@ -108,6 +110,9 @@ namespace OpenTimelapseSort.DataServices
         {
 			//TODO: save current list into new directory
 			//TODO: create ImageDirectory instance and pass dirList as imageList
+			ImageDirectory directory = new ImageDirectory("test", "name"); // use updated values or random numbers
+			directory.imageList = dirList;
+			directories.Add(directory);
         }
     }
 }

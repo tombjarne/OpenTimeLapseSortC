@@ -31,6 +31,7 @@ namespace OpenTimelapseSort.Views
 
         private Point start;
         private Point startOffset;
+
         MainViewModel mvm = new MainViewModel();
 
         //////////////////////////////////////////////////////////
