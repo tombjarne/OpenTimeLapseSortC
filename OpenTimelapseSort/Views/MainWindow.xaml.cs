@@ -1,45 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 using OpenTimelapseSort.ViewModels;
+using OpenTimelapseSort.Mvvm;
+using System;
 
 namespace OpenTimelapseSort.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window 
     {
 
         //////////////////////////////////////////////////////////
         //////                    VARIABLES                 //////
         //////////////////////////////////////////////////////////
 
-        private Point start;
-        private Point startOffset;
-
-        MainViewModel mvm = new MainViewModel();
-
-        //////////////////////////////////////////////////////////
-        //////                    VARIABLES                 //////
-        //////////////////////////////////////////////////////////
-
-        /// Bindings
-
+        //public ICommand PrintCommand => new DelegateCommand(HandlePopup);
 
         //////////////////////////////////////////////////////////
         //////                   CONSTRUCTOR                //////
@@ -47,8 +24,11 @@ namespace OpenTimelapseSort.Views
 
         public MainWindow()
         {
+            DataContext = new MainViewModel(RenderComponent);
+
+            SetScreenSize();
             InitializeComponent();
-            FetchOnStartup();
+            //FetchOnStartup();
         }
 
 
@@ -72,40 +52,6 @@ namespace OpenTimelapseSort.Views
             preferencesWindow.Show();
         }
 
-        private void Import(object sender, RoutedEventArgs e)
-        {
-            // TODO: start new task to display progress
-            //Task ImportVisualizer = new Task();
-            //RenderComponent(MainViewModel.InitImport());
-            //RenderImports();
-        }
-
-        private void RenderImports()
-        {
-            MainViewModel vm = new MainViewModel();
-            StackPanel directoryPanel = vm.InitialiseView();
-            //StackPanel directoryPanel = new StackPanel();
-            /*
-            for (int i = 0; i < 5; i++)
-            {
-                Rectangle rect2 = new Rectangle();
-                rect2.Width = 400;
-                rect2.Height = 100;
-                rect2.Margin = new Thickness(5);
-                rect2.Fill = Brushes.HotPink;
-                directoryPanel.Children.Add(rect2);
-            }
-            */
-
-            RenderComponent(directoryPanel);
-        }
-
-
-        //////////////////////////////////////////////////////////
-        //////                    FUNCTIONS                 //////
-        //////////////////////////////////////////////////////////
-
-
         private void closeApplication(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -121,28 +67,47 @@ namespace OpenTimelapseSort.Views
             this.DragMove();
         }
 
-
-        /**
-        * renderDirectories
-        *
-        * fetches currently set Preferences from database and updates UI
-        */
-
-        private void ChooseImportTarget(object sender, RoutedEventArgs e)
+        private void InvokeTargetChooser(object sender, RoutedEventArgs e)
         {
+            // make invokeable only once
+            CommonOpenFileDialog targetChooser = new CommonOpenFileDialog();
+            targetChooser.InitialDirectory = @"C:\";
+            targetChooser.Title = "Choose Import Target";
+            targetChooser.IsFolderPicker = true;
+            targetChooser.Multiselect = false;
 
-            //Show Popup
-            Import_Popup.IsOpen = true;
+            //TODO: find proper way of returning a stackpanel on else path
 
-            Import_Confirm_Btn.Click += (sender, args) =>
+            if (targetChooser.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                InvokeFileChooser(Import_Target.Text);
-            };
+                Import_Target.Text = targetChooser.FileName;
+            }
+        }
+
+        // sets popup to visible or invisible
+        private void ChooseImportTarget(object sender, RoutedEventArgs e)
+        { 
+            //Import_Popup.IsOpen = false;
+        }
+
+        private void ConfirmImportSettings(object sender, RoutedEventArgs e)
+        {
+            InvokeFileChooser(Import_Target.Text);
+        }
+
+        //////////////////////////////////////////////////////////
+        //////                    FUNCTIONS                 //////
+        //////////////////////////////////////////////////////////
+
+        public bool HandlePopup(object obj)
+        {
+            return !Import_Popup.IsOpen;
         }
 
         private void InvokeFileChooser(string target)
         {
-            RenderComponent(MainViewModel.Import(target));
+            var mainViewModel = DataContext as MainViewModel;
+            RenderComponent(mainViewModel?.Import(Import_Target.Text));
         }
 
         void RenderComponent(StackPanel sp)
@@ -150,56 +115,11 @@ namespace OpenTimelapseSort.Views
             directoryControl.Items.Add(sp);
         }
 
-
-        // TODO: cleanup below this line
-
-        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        void SetScreenSize()
         {
-            if (DirectoryViewer.IsMouseOver)
-            {
-                bool extent = DirectoryViewer.ExtentWidth > DirectoryViewer.ViewportWidth || DirectoryViewer.ExtentHeight > DirectoryViewer.ViewportHeight;
-
-                start = e.GetPosition(this);
-                startOffset.X = DirectoryViewer.HorizontalOffset;
-                startOffset.Y = DirectoryViewer.VerticalOffset;
-
-                this.Cursor = extent ? Cursors.ScrollAll : Cursors.Arrow;
-                this.CaptureMouse();
-            }
-            base.OnPreviewMouseDown(e);
+            //set width and height according to system specs
+            //maybe also adjust text size
         }
 
-
-        protected override void OnPreviewMouseMove(MouseEventArgs e)
-        {
-            if (this.IsMouseCaptured)
-            {
-                Point point = e.GetPosition(this);
-                Point delta;
-
-                double x = (point.X > this.start.X) ? -(point.X - this.start.X) : (this.start.X - point.X);
-                double y = (point.Y > this.start.Y) ? -(point.Y - this.start.Y) : (this.start.Y - point.Y);
-
-                delta = new Point(x, y);
-
-                DirectoryViewer.ScrollToHorizontalOffset(this.startOffset.X + delta.X);
-                DirectoryViewer.ScrollToVerticalOffset(this.startOffset.Y + delta.Y);
-            }
-
-            base.OnPreviewMouseMove(e);
-        }
-
-
-        protected override void OnPreviewMouseUp(
-            MouseButtonEventArgs e)
-        {
-            if (this.IsMouseCaptured)
-            {
-                this.Cursor = Cursors.Arrow;
-                this.ReleaseMouseCapture();
-            }
-
-            base.OnPreviewMouseUp(e);
-        }
     }
 }

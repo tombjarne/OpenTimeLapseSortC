@@ -2,11 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Controls;
 
 namespace OpenTimelapseSort.DataServices
 {
     class MatchingService
     {
+		public delegate StackPanel RenderNewDirectoryCallback(StackPanel directory);
+		public delegate StackPanel RenderExistingDirectoryCallback(StackPanel directory);
+
+		public delegate StackPanel ImportCallBack(StackPanel import);
+
 		DBPreferencesService service = new DBPreferencesService();
 		List<ImageDirectory> directories = new List<ImageDirectory>(); // each directory will receive their images in the matching function
 		List<Import> imports = new List<Import>(); // does it need to be a list?
@@ -27,6 +33,8 @@ namespace OpenTimelapseSort.DataServices
             Preferences preferences = DBService.ReturnPreferences();
             return true;
         }
+
+		//public void SortImages(List<Image> images, RenderNewDirectoryCallback rndc, RenderExistingDirectoryCallback redc)
 
 		public void SortImages(List<Image> imageList)
         {
@@ -69,6 +77,7 @@ namespace OpenTimelapseSort.DataServices
 				{
 				
 					dirList.Add(imageList[i]);
+					// count(i)
 					pointer += 1; // marks last image in current sequence that fits previous deviations
 
 				}
@@ -98,7 +107,7 @@ namespace OpenTimelapseSort.DataServices
 
 			if(dirList.Count > 1)
             {
-
+				//redc(dirList);
             }
 			else
             {
@@ -113,6 +122,7 @@ namespace OpenTimelapseSort.DataServices
 			ImageDirectory directory = new ImageDirectory("test", "name"); // use updated values or random numbers
 			directory.imageList = dirList;
 			directories.Add(directory);
+			//rndc(directory);
         }
     }
 }

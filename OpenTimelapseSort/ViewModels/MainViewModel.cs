@@ -25,21 +25,24 @@ namespace OpenTimelapseSort
         public delegate StackPanel ImportCallBack(StackPanel import);
         public delegate int ImportCountCallBack(int currentNumber);
 
+        public delegate void InitFetch(StackPanel panel);
+
         private readonly BackgroundWorker worker;
         private readonly ICommand progressBarInvocation;
-        private int importProgress;
 
         private DBService service;
         private MatchingService matching;
         private List<Import> imports;
 
-        public MainViewModel()
+        public MainViewModel(InitFetch fetch)
         {
             //init db service 
+            //service = new DBService();
+            //service.
+
             //fetch db entries
             //initialize local values
-
-            initialiseDBService();
+            //initialiseDBService();
             //InitialiseView();
         }
 
@@ -166,20 +169,7 @@ namespace OpenTimelapseSort
             return new StackPanel();
         }
 
-        public int ImportProgress
-        {
-            get { return this.importProgress; }
-            private set
-            {
-                if (this.importProgress != value)
-                {
-                    this.importProgress = value;
-                    //this.OnPropertyChanged(() => this.ImportProgress);
-                }
-            }
-        }
-
-        public static StackPanel Import(string name)
+        public StackPanel Import(string name)
         {
 
             List<Image> imageList = new List<Image>();
@@ -232,6 +222,8 @@ namespace OpenTimelapseSort
                         }
                     }
 
+                    // matching.SortImages(List<Image> images, RenderElement)
+
                     // call matching service with counter callback for progressbar update
                     // on file handled call the delegate function in matching service and therefore update its screen value
 
@@ -265,6 +257,12 @@ namespace OpenTimelapseSort
                 return new StackPanel();
                 // TODO: add "could not import any files" to StackPanel, add listener to autodestruct after 15 seconds
             }
+        }
+
+        // function that renders directories or imports
+        public void RenderElement(StackPanel panel, ImageDirectoryCallBack callback)
+        {
+            callback(panel);
         }
 
         private static StackPanel RenderDirectory()

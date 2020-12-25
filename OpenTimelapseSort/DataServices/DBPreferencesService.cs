@@ -1,60 +1,13 @@
 ﻿using OpentimelapseSort.Models;
 using OpenTimelapseSort.Contexts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace OpenTimelapseSort.DataServices
 {
     class DBPreferencesService
     {
-        public DBPreferencesService()
-        {
-
-        }
-
-        private Preferences ReturnPreferences()
-        {
-            //create Preferences objects
-            Preferences preferences = new Preferences();
-
-            try
-            {
-                using (var context = new PreferencesContext())
-                {
-                    //TODO: remove foreach
-                    //TODO: rework get setting of values - attributes should not be public
-                    foreach (Preferences preference in context.Preferences)
-                    {
-                        preferences = new Preferences(
-                            preference.useAutoDetectInterval,
-                            preference.useCopy,
-                            preference.sequenceInterval,
-                            preference.sequenceImageCount
-                        );
-                    }
-                }
-            } catch (Exception e)
-            {
-                // fill with dummy data when database was deleted or something unexpected happened
-
-                //TODO maybe move this whole section to SeedDatabase()
-                /*
-                preferences.useAutoDetectInterval = true;
-                preferences.useCopy = true;
-                preferences.sequenceImageCount = 10;
-                preferences.sequenceInterval = 5;
-
-                if (!SavePreferencesToDataBase(preferences))
-                {
-                    Console.WriteLine(e.StackTrace);
-                    // let user know something weird happened
-                }
-                */
-            }
-            return preferences;
-        }
+        public DBPreferencesService() {}
 
         public bool SavePreferencesToDataBase(Preferences preferences)
         {
@@ -116,15 +69,21 @@ namespace OpenTimelapseSort.DataServices
 
             using (var context = new PreferencesContext())
             {
-
-                foreach (Preferences preferences in context.Preferences)
+                try
                 {
-                    pre = new Preferences(
-                        preferences.useAutoDetectInterval,
-                        preferences.useCopy,
-                        preferences.sequenceInterval,
-                        preferences.sequenceImageCount
-                    );
+                    foreach (Preferences preferences in context.Preferences)
+                    {
+                        pre = new Preferences(
+                            preferences.useAutoDetectInterval,
+                            preferences.useCopy,
+                            preferences.sequenceInterval,
+                            preferences.sequenceImageCount
+                        );
+                    }
+                }
+                catch (Exception e)
+                {
+                    // notify on exception
                 }
             }
             return pre;
