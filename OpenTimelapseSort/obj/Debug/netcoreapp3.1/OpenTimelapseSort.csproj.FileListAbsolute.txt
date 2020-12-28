@@ -1,4 +1,3 @@
-C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort.csprojAssemblyReference.cache
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\MainWindow.g.cs
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\Preferences.g.cs
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\App.g.cs

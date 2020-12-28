@@ -22,7 +22,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid Background="#34404D" Height="Auto" >
+    <Grid x:Name="Pane" Background="#34404D" Height="Auto" >
         <Grid x:Name="MenuBar" VerticalAlignment="Top" Height="39">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
@@ -36,7 +36,7 @@
                     </Style>
                 </Button.Resources>
             </Button>
-            <Button x:Name="import_btn" Content="Import new" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="ChooseImportTarget">
+            <Button x:Name="import_btn" Content="Import new" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="InvokeImportPopup">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
@@ -84,22 +84,63 @@
             </Grid>
         </DockPanel>
         <!-- Popup Screen Elements -->
-        <Popup Name="Import_Popup" IsOpen="True" PlacementTarget="{Binding ElementName=RightPanel}" Placement="Center">
+        <Popup Name="Import_Popup" Width="Auto" Height="250" IsOpen="False" PlacementTarget="{Binding ElementName=Pane}" Placement="Center">
             <Grid Background="#34404D">
-                <DockPanel>
-                    <TextBox x:Name="Import_Target" Background="#34404D">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <DockPanel Margin="15" Grid.Row="0" Background="#34404D">
+                    <Label x:Name="import_headline1" Content="New Import" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
+                    <TextBlock x:Name="Import_Target" Grid.Column="0" HorizontalAlignment="Left" Margin="0,2,0,-2" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
                         Default
-                    </TextBox>
+                    </TextBlock>
                 </DockPanel>
-                <DockPanel>
-                    <Button x:Name="Choose_Directory_Btn" Content="Choose Import Destination" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="InvokeTargetChooser">
+                <DockPanel Margin="15" Grid.Row="1">
+                    <Button x:Name="Choose_Directory_Btn" Content="Choose" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="InvokeTargetChooser">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
                             </Style>
                         </Button.Resources>
                     </Button>
-                    <Button x:Name="Import_Confirm_Btn" Content="Confirm" HorizontalAlignment="Left" Margin="296,7,0,3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FFFF8383" Foreground="#FF3D4A59" Width="95" BorderBrush="{x:Null}" Click="ConfirmImportSettings">
+                    <Button x:Name="Import_Abort_Btn" Content="Cancel" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FF3D4A59" Foreground="#FFFF8383" Width="95" BorderBrush="{x:Null}" Click="InvokeImportPopup">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button x:Name="Import_Confirm_Btn" IsEnabled="False" Content="Confirm" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FFFF8383" Foreground="#FF3D4A59" Width="95" BorderBrush="{x:Null}" Click="ConfirmImportSettings">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </DockPanel>
+            </Grid>
+        </Popup>
+        <Popup Name="Warning_Popup" Width="Auto" Height="250" IsOpen="False" PlacementTarget="{Binding ElementName=Pane}" Placement="Center">
+            <Grid Background="#34404D">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <DockPanel Margin="15" Grid.Row="0" Background="#34404D">
+                    <Label x:Name="Error_Head" Content="" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
+                    <TextBlock x:Name="Error_Desc" Grid.Column="0" HorizontalAlignment="Left" Margin="0,2,0,-2" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
+                      
+                    </TextBlock>
+                </DockPanel>
+                <DockPanel Margin="15" Grid.Row="1">
+                    <Button x:Name="Error_Btn" Content="Ok" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FFFF8383" Foreground="#FF3D4A59" Width="95" BorderBrush="{x:Null}">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>

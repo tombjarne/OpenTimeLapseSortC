@@ -6,6 +6,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using OpenTimelapseSort.ViewModels;
 using OpenTimelapseSort.Mvvm;
 using System;
+using System.IO;
 
 namespace OpenTimelapseSort.Views
 {
@@ -17,6 +18,7 @@ namespace OpenTimelapseSort.Views
         //////////////////////////////////////////////////////////
 
         //public ICommand PrintCommand => new DelegateCommand(HandlePopup);
+        //private delegate void WarningReference(string errorHeadline, string errorDetails);
 
         //////////////////////////////////////////////////////////
         //////                   CONSTRUCTOR                //////
@@ -54,7 +56,34 @@ namespace OpenTimelapseSort.Views
 
         private void closeApplication(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            var mainViewModel = DataContext as MainViewModel;
+            if (mainViewModel?.PerformAutoSave() == true)
+            {
+                if (App.Current.Windows[1].IsActive)
+                {
+                    App.Current.Windows[1].Close();
+                }
+
+                this.Close();
+            }
+            else
+            {
+                InvokeWarningPopup("Could not perform autosave", "Could not save your latest changes", ForceClose);
+            }
+        }
+
+        private void InvokeWarningPopup(string errorHeadline, string errorDetails, Action callback)
+        {
+            Warning_Popup.IsOpen = true;
+            Error_Head.Content = errorHeadline;
+            Error_Desc.Text = errorDetails;
+
+            // TODO: find way to pass functions as Click events generically
+        }
+
+        private void ForceClose()
+        {
+
         }
 
         private void minimizeApplication(object sender, RoutedEventArgs e)
@@ -69,30 +98,52 @@ namespace OpenTimelapseSort.Views
 
         private void InvokeTargetChooser(object sender, RoutedEventArgs e)
         {
-            // make invokeable only once
             CommonOpenFileDialog targetChooser = new CommonOpenFileDialog();
-            targetChooser.InitialDirectory = @"C:\";
+            targetChooser.InitialDirectory = @"C:\users";
             targetChooser.Title = "Choose Import Target";
             targetChooser.IsFolderPicker = true;
             targetChooser.Multiselect = false;
 
-            //TODO: find proper way of returning a stackpanel on else path
-
             if (targetChooser.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                Import_Target.Text = targetChooser.FileName;
+                if(targetChooser.FileName != "Default" && 
+                    !targetChooser.FileName.Contains("Windows"))
+                {
+                    if (Directory.Exists(targetChooser.FileName))
+                    {
+                        Import_Target.Text = targetChooser.FileName;
+                        Import_Confirm_Btn.IsEnabled = true;
+                    }
+                    else
+                    {
+                        Import_Target.Text = "Invalid location.";
+                    }
+                } else
+                {
+                    Import_Target.Text = "Not able to import from this location.";
+                }
             }
         }
 
-        // sets popup to visible or invisible
-        private void ChooseImportTarget(object sender, RoutedEventArgs e)
+        private void InvokeImportPopup(object sender, RoutedEventArgs e)
         { 
-            //Import_Popup.IsOpen = false;
+            Import_Popup.IsOpen = !Import_Popup.IsOpen;
         }
 
         private void ConfirmImportSettings(object sender, RoutedEventArgs e)
         {
-            InvokeFileChooser(Import_Target.Text);
+            if (Directory.Exists(Import_Target.Text))
+            {
+                Import_Target.Text = Import_Target.Text;
+                Import_Confirm_Btn.IsEnabled = true;
+                Import_Popup.IsOpen = false;
+                PassFilesToBeSorted(Import_Target.Text);
+            }
+            else
+            {
+                Import_Confirm_Btn.IsEnabled = false;
+                Import_Target.Text = "Location unreachable, did you delete something?";
+            }
         }
 
         //////////////////////////////////////////////////////////
@@ -104,7 +155,7 @@ namespace OpenTimelapseSort.Views
             return !Import_Popup.IsOpen;
         }
 
-        private void InvokeFileChooser(string target)
+        private void PassFilesToBeSorted(string target)
         {
             var mainViewModel = DataContext as MainViewModel;
             RenderComponent(mainViewModel?.Import(Import_Target.Text));
@@ -120,6 +171,5 @@ namespace OpenTimelapseSort.Views
             //set width and height according to system specs
             //maybe also adjust text size
         }
-
     }
 }

@@ -64,6 +64,17 @@ namespace OpenTimelapseSort
             }
         }
 
+        public bool PerformAutoSave()
+        {
+            // collect currently active instances and try to save them into database
+
+
+            // empty memory before closing
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            return false;
+        }
+
         public static StackPanel TestView()
         {
             List<Import> ti = new List<Import>();
@@ -173,90 +184,74 @@ namespace OpenTimelapseSort
         {
 
             List<Image> imageList = new List<Image>();
+            IEnumerable<string> files = Directory.EnumerateFiles(name);
 
-            CommonOpenFileDialog fileChooser = new CommonOpenFileDialog();
-            fileChooser.InitialDirectory = @"C:\";
-            fileChooser.Title = "Choose Directory";
-            fileChooser.IsFolderPicker = true;
-            fileChooser.Multiselect = true;
+            // instead of files, filename fetch from object that need to be created beginning of this function
 
-            //TODO: find proper way of returning a stackpanel on else path
-
-            if (fileChooser.ShowDialog() == CommonFileDialogResult.Ok)
+            if (files.Count() > 0)
             {
-                string chosenDirectory = fileChooser.FileName;
-                IEnumerable<string> files = fileChooser.FileNames;
+                StackPanel import = new StackPanel();
 
-                // instead of files, filename fetch from object that need to be created beginning of this function
+                // TODO: add changable text field to import element
 
-                if (files.Count() > 0)
+                string[] images = Directory.GetFiles(name);
+                int length = images.Length;
+
+                for (int i = 0; i < length; i++)
                 {
-                    StackPanel import = new StackPanel();
+                    FileInfo info = new FileInfo(images[i]);
 
-                    // TODO: add changable text field to import element
-
-                    string[] images = Directory.GetFiles(fileChooser.FileName);
-                    int length = images.Length;
-
-                    for (int i = 0; i < length; i++)
+                    // Attention: does not support more depth than two! Intended to use with camera folders only!
+                    // TODO: check for file endings!
+                    if((File.Exists(images[i]) && info.Directory != null) && !info.FullName.Contains("")) //file is directory TODO: check for invalid endings
                     {
-                        FileInfo info = new FileInfo(images[i]);
+                        string[] subDirImages = Directory.GetFiles(images[i]);
+                        FileInfo subDirInfo = new FileInfo(subDirImages[i]);
 
-                        // Attention: does not support more depth than two! Intended to use with camera folders only!
-                        // TODO: check for file endings!
-                        if((File.Exists(images[i]) && info.Directory != null) && !info.FullName.Contains("")) //file is directory TODO: check for invalid endings
+                        for(int p = 0; p < length; p++)
                         {
-                            string[] subDirImages = Directory.GetFiles(images[i]);
-                            FileInfo subDirInfo = new FileInfo(subDirImages[i]);
-
-                            for(int p = 0; p < length; p++)
-                            {
-                                Image image = new Image(subDirImages[i], subDirInfo.FullName);
-                                imageList.Add(image);
-                            }
-                        } 
-                        else
-                        {
-                            Image image = new Image(images[i], info.FullName);
+                            Image image = new Image(subDirImages[i], subDirInfo.FullName);
                             imageList.Add(image);
                         }
+                    } 
+                    else
+                    {
+                        Image image = new Image(images[i], info.FullName);
+                        imageList.Add(image);
                     }
-
-                    // matching.SortImages(List<Image> images, RenderElement)
-
-                    // call matching service with counter callback for progressbar update
-                    // on file handled call the delegate function in matching service and therefore update its screen value
-
-                    // create another delegate that notifies when a directory in matching has been finished
-                    // delegate function is passed to matching service
-                    // delegate function holds function call to callback from partial class -> renders element
-
-
-                    //matching.SortImages(imageList);
-
-                    // TODO: sort the created images in the matchingservice!
-                    // TODO: update the images paths in matchingservice according to their sorting and target!
-
-                    // TODO: return new directory and import instances
-                    // TODO: render accordingly to sorted information!
-
-                    RenderDirectory();
-
-                    // TODO: create directory element
-                    // TODO: add "reimport" button to directory
-                    // TODO: add directory to import element
-
-                    return import;
-                } else
-                {
-                    return new StackPanel();
-                    // TODO: add "could not import any files" to StackPanel, add listener to autodestruct after 15 seconds
                 }
+
+                // matching.SortImages(List<Image> images, RenderElement)
+
+                // call matching service with counter callback for progressbar update
+                // on file handled call the delegate function in matching service and therefore update its screen value
+
+                // create another delegate that notifies when a directory in matching has been finished
+                // delegate function is passed to matching service
+                // delegate function holds function call to callback from partial class -> renders element
+
+
+                //matching.SortImages(imageList);
+
+                // TODO: sort the created images in the matchingservice!
+                // TODO: update the images paths in matchingservice according to their sorting and target!
+
+                // TODO: return new directory and import instances
+                // TODO: render accordingly to sorted information!
+
+                RenderDirectory();
+
+                // TODO: create directory element
+                // TODO: add "reimport" button to directory
+                // TODO: add directory to import element
+
+                return import;
             } else
             {
                 return new StackPanel();
                 // TODO: add "could not import any files" to StackPanel, add listener to autodestruct after 15 seconds
             }
+            
         }
 
         // function that renders directories or imports
