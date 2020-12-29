@@ -8,10 +8,7 @@ namespace OpenTimelapseSort.DataServices
 {
     class MatchingService
     {
-		public delegate StackPanel RenderNewDirectoryCallback(StackPanel directory);
-		public delegate StackPanel RenderExistingDirectoryCallback(StackPanel directory);
-
-		public delegate StackPanel ImportCallBack(StackPanel import);
+		public delegate void RenderDelegate(object obj);
 
 		DBPreferencesService service = new DBPreferencesService();
 		List<ImageDirectory> directories = new List<ImageDirectory>(); // each directory will receive their images in the matching function
@@ -36,7 +33,7 @@ namespace OpenTimelapseSort.DataServices
 
 		//public void SortImages(List<Image> images, RenderNewDirectoryCallback rndc, RenderExistingDirectoryCallback redc)
 
-		public void SortImages(List<Image> imageList)
+		public void SortImages(List<Image> imageList, RenderDelegate render)
         {
 			// TODO: implement logic
 
@@ -86,7 +83,7 @@ namespace OpenTimelapseSort.DataServices
 
 					if (pointer - seqPointer >= runs) // images do not have same deviation and do fill the length requirement
 					{
-						createDir(dirList); // current list will be added due to matching requirements
+						createDir(dirList, render); // current list will be added due to matching requirements
 					}
 					else // images do not have same deviation and do not fill the minimum length requirement
 					{
@@ -115,14 +112,17 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-		private void createDir(List<Image> dirList)
+		private void createDir(List<Image> dirList, RenderDelegate render)
         {
 			//TODO: save current list into new directory
 			//TODO: create ImageDirectory instance and pass dirList as imageList
 			ImageDirectory directory = new ImageDirectory("test", "name"); // use updated values or random numbers
 			directory.imageList = dirList;
 			directories.Add(directory);
+			render(directory);
 			//rndc(directory);
         }
+
+		// add functionality to implement import rendering
     }
 }

@@ -62,9 +62,12 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
             </Grid>
-            <ProgressBar Width="748" DockPanel.Dock="Bottom" Height="706" Background="#FF34404D" BorderBrush="{x:Null}" Value="{Binding CurrentProgress, Mode=OneWay}" />
         </DockPanel>
-        <DockPanel x:Name="RightPanel" Background=" #3D4A59" Margin="401,44,0,37">
+        <Grid  DockPanel.Dock="Bottom" >
+            <ProgressBar x:Name="Progress_Bar" Maximum="10" Value="{Binding Path=ProgressValue, Mode=TwoWay}" Background="#FF34404D" BorderBrush="{x:Null}" Width="650" Height="38" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="414,0,0,0" />
+            <TextBox x:Name="Progress_Value" Text="{Binding Path=ProgressValue, Mode=TwoWay}" HorizontalAlignment="Left" Margin="1064,712,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Height="38"/>
+        </Grid>
+        <DockPanel x:Name="RightPanel" Background=" #3D4A59" Margin="397,44,0,37">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -136,11 +139,37 @@
                 <DockPanel Margin="15" Grid.Row="0" Background="#34404D">
                     <Label x:Name="Error_Head" Content="" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
                     <TextBlock x:Name="Error_Desc" Grid.Column="0" HorizontalAlignment="Left" Margin="0,2,0,-2" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
-                      
+
                     </TextBlock>
                 </DockPanel>
                 <DockPanel Margin="15" Grid.Row="1">
                     <Button x:Name="Error_Btn" Content="Ok" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FFFF8383" Foreground="#FF3D4A59" Width="95" BorderBrush="{x:Null}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </DockPanel>
+            </Grid>
+        </Popup>
+        <Popup Name="Import_Progress_Popup" Width="Auto" Height="350" IsOpen="False" PlacementTarget="{Binding ElementName=Pane}" Placement="Center">
+            <Grid Background="#34404D">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <DockPanel Margin="15" Grid.Row="0" Background="#34404D">
+                    <Label Content="Images found" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="#FFFF8383" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
+                    <TextBlock x:Name="Import_Progress_Count" Grid.Column="0" HorizontalAlignment="Left" Margin="0,2,0,-2" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
+                        Processing...
+                    </TextBlock>
+                </DockPanel>
+                <DockPanel Margin="15" Grid.Row="1">
+                    <Button x:Name="Import_Progress_Btn" IsEnabled="False" Content="Begin Import" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FFFF8383" Foreground="#FF3D4A59" Width="195" BorderBrush="{x:Null}">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>

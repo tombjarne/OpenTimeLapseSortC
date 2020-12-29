@@ -61,3 +61,4 @@ C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcor
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\e_sqlite3.dll
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\Humanizer.dll
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort.csprojAssemblyReference.cache

@@ -7,18 +7,27 @@ using OpenTimelapseSort.ViewModels;
 using OpenTimelapseSort.Mvvm;
 using System;
 using System.IO;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace OpenTimelapseSort.Views
 {
-    public partial class MainWindow : Window 
+    public partial class MainWindow : Window
     {
 
         //////////////////////////////////////////////////////////
         //////                    VARIABLES                 //////
         //////////////////////////////////////////////////////////
 
-        //public ICommand PrintCommand => new DelegateCommand(HandlePopup);
         //private delegate void WarningReference(string errorHeadline, string errorDetails);
+
+
+        ObservableCollection<ImageDirectory> directories = new ObservableCollection<ImageDirectory>();
+        MainViewModel mainViewModel = new MainViewModel();
+
 
         //////////////////////////////////////////////////////////
         //////                   CONSTRUCTOR                //////
@@ -26,13 +35,13 @@ namespace OpenTimelapseSort.Views
 
         public MainWindow()
         {
-            DataContext = new MainViewModel(RenderComponent);
-
-            SetScreenSize();
             InitializeComponent();
+            //this.DataContext = new MainViewModel(RenderComponent);
+            this.DataContext = new MainViewModel();
+            DataContext = this;
+            SetScreenSize();
             //FetchOnStartup();
         }
-
 
         //////////////////////////////////////////////////////////
         //////                  XAMLFUNCTIONS               //////
@@ -68,22 +77,27 @@ namespace OpenTimelapseSort.Views
             }
             else
             {
-                InvokeWarningPopup("Could not perform autosave", "Could not save your latest changes", ForceClose);
+                this.Close();
+                //InvokeWarningPopup("Could not perform autosave", "Could not save your latest changes", ForceClose);
             }
         }
 
-        private void InvokeWarningPopup(string errorHeadline, string errorDetails, Action callback)
+        private ICommand GetDelegateCommand(Action<object> callback)
+        {
+
+            var errorCommand = new DelegateCommand(callback);
+            return errorCommand;
+        }
+
+        private void InvokeWarningPopup(string errorHeadline, string errorDetails, Action<object> callback)
         {
             Warning_Popup.IsOpen = true;
             Error_Head.Content = errorHeadline;
             Error_Desc.Text = errorDetails;
 
+            //Error_Btn.Click += new RoutedEventHandler(callback);
+
             // TODO: find way to pass functions as Click events generically
-        }
-
-        private void ForceClose()
-        {
-
         }
 
         private void minimizeApplication(object sender, RoutedEventArgs e)
@@ -137,7 +151,15 @@ namespace OpenTimelapseSort.Views
                 Import_Target.Text = Import_Target.Text;
                 Import_Confirm_Btn.IsEnabled = true;
                 Import_Popup.IsOpen = false;
-                PassFilesToBeSorted(Import_Target.Text);
+
+                Import_Progress_Popup.IsOpen = true;
+
+                //var mainViewModel = DataContext as MainViewModel;
+
+                mainViewModel.Import(Import_Target.Text, HandleListingProgress);
+
+                //Task listImagesTask = ListImages();
+                //listImagesTask.ContinueWith(HandleListingProgress);
             }
             else
             {
@@ -146,23 +168,39 @@ namespace OpenTimelapseSort.Views
             }
         }
 
+        /*
+        private Task ListImages()
+        {
+            var mainViewModel = DataContext as MainViewModel;
+            return Task.Run(() => 
+            {
+                mainViewModel?.Import(Import_Target.Text, HandleListingProgress);
+                Debug.WriteLine("End reached");
+            });
+        }
+        */
+
         //////////////////////////////////////////////////////////
         //////                    FUNCTIONS                 //////
         //////////////////////////////////////////////////////////
 
-        public bool HandlePopup(object obj)
+        private void HandleListingProgress(int count, List<Image> imageList)
         {
-            return !Import_Popup.IsOpen;
-        }
+            // save returned number of found files
+            // update view after all images have been found
 
-        private void PassFilesToBeSorted(string target)
-        {
-            var mainViewModel = DataContext as MainViewModel;
-            RenderComponent(mainViewModel?.Import(Import_Target.Text));
+            Debug.WriteLine("reached");
+            Debug.WriteLine(imageList.Count);
+
+            Import_Progress_Btn.IsEnabled = true;
+            Import_Progress_Count.Text = "Found "+count+" images";
+
+            mainViewModel.SortImages(imageList, RenderComponent);
         }
 
         void RenderComponent(StackPanel sp)
         {
+            Debug.WriteLine("countofstackpanels");
             directoryControl.Items.Add(sp);
         }
 

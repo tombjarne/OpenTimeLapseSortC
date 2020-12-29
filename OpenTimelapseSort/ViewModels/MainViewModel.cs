@@ -1,15 +1,12 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
-using OpenTimelapseSort.Contexts;
+﻿using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.DataServices;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -18,23 +15,15 @@ namespace OpenTimelapseSort
     class MainViewModel
     {
 
-        private delegate StackPanel DirectoryReference(IEnumerable<String> FileNames, String DirName);
-        private delegate StackPanel ImportReference(List<Import> imports, String ImportName);
-
-        public delegate StackPanel ImageDirectoryCallBack(StackPanel directory);
-        public delegate StackPanel ImportCallBack(StackPanel import);
-        public delegate int ImportCountCallBack(int currentNumber);
-
-        public delegate void InitFetch(StackPanel panel);
-
-        private readonly BackgroundWorker worker;
-        private readonly ICommand progressBarInvocation;
-
-        private DBService service;
-        private MatchingService matching;
+        private DBService service = new DBService();
+        private MatchingService matching = new MatchingService();
         private List<Import> imports;
 
-        public MainViewModel(InitFetch fetch)
+        public delegate void ImageListingProgress(int count, List<Image> imageList);
+        public delegate void SortProgress(StackPanel panel);
+        public delegate void InitFetch(StackPanel panel);
+
+        public MainViewModel()
         {
             //init db service 
             //service = new DBService();
@@ -72,55 +61,19 @@ namespace OpenTimelapseSort
             // empty memory before closing
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            return false;
+            return true;
         }
 
-        public static StackPanel TestView()
-        {
-            List<Import> ti = new List<Import>();
-            DBService sv = new DBService();
-            ti = sv.ReturnImports();
 
-            // TEST PURPOSES ONLY
-
-            StackPanel directoryPanel = new StackPanel();
-            for (int i = 0; i < 5; i++)
-            {
-                Rectangle rect2 = new Rectangle();
-                rect2.Width = 100;
-                rect2.Height = 100;
-                rect2.Margin = new Thickness(5);
-                directoryPanel.Children.Add(rect2);
-            }
-
-            return directoryPanel;
-
-        }
-
+        //
+        // is called during creation of View
+        // fetches all saved elements from database
+        // renders elements accordingly through call to Render()
         public StackPanel InitialiseView()
         {
             imports = service.ReturnImports();
 
-            // TEST PURPOSES ONLY
-            /*
-            StackPanel directoryPanel = new StackPanel();
-            for (int i = 0; i < 5; i++)
-            {
-                Rectangle rect2 = new Rectangle();
-                rect2.Width = 100;
-                rect2.Height = 100;
-                rect2.Margin = new Thickness(5);
-                rect2.Fill = Brushes.Blue;
-                directoryPanel.Children.Add(rect2);
-            }
-
-            return directoryPanel;
-            */
-            
-            // TODO: need to fix structure and associations
-            // ensure that directories and imports have right amound of count
-
-            if(imports.Capacity > 0)
+            if (imports.Capacity > 0)
             {
                 StackPanel allImports = new StackPanel();
                 StackPanel directoryPanel = new StackPanel();
@@ -145,7 +98,8 @@ namespace OpenTimelapseSort
 
                         }
                         allImports.Children.Add(importPanel);
-                    } catch (Exception e)
+                    }
+                    catch (Exception e)
                     {
                         // Test purposes
                         Console.WriteLine(e.StackTrace);
@@ -163,117 +117,123 @@ namespace OpenTimelapseSort
                 }
                 return directoryPanel;
 
-            } else
+            }
+            else
             {
                 StackPanel errorStackPanel = new StackPanel();
                 // add attributes and text to warning
                 return errorStackPanel;
             }
-            
-        } 
 
-        private StackPanel RenderImports()
-        {
-            //render all directories for all imports in double for loop ( foreach )
-            //for(){
-            //for () { }}
-            return new StackPanel();
         }
 
-        public StackPanel Import(string name)
+        public void Import(string name, ImageListingProgress listProgress)
+        //public StackPanel Import(string name)
         {
-
             List<Image> imageList = new List<Image>();
-            IEnumerable<string> files = Directory.EnumerateFiles(name);
+            var files = Directory.EnumerateFileSystemEntries(name).ToList();
+            int length = files.Count();
 
-            // instead of files, filename fetch from object that need to be created beginning of this function
-
-            if (files.Count() > 0)
+            if (length > 0)
             {
-                StackPanel import = new StackPanel();
-
-                // TODO: add changable text field to import element
-
-                string[] images = Directory.GetFiles(name);
-                int length = images.Length;
-
                 for (int i = 0; i < length; i++)
                 {
-                    FileInfo info = new FileInfo(images[i]);
+                    FileInfo info = new FileInfo(files[i]);
 
-                    // Attention: does not support more depth than two! Intended to use with camera folders only!
-                    // TODO: check for file endings!
-                    if((File.Exists(images[i]) && info.Directory != null) && !info.FullName.Contains("")) //file is directory TODO: check for invalid endings
+                    if (Directory.Exists(files[i]))
                     {
-                        string[] subDirImages = Directory.GetFiles(images[i]);
+                        string[] subDirImages = Directory.GetFiles(files[i]);
                         FileInfo subDirInfo = new FileInfo(subDirImages[i]);
+                        var subDirLength = Directory.EnumerateFiles(files[i]).ToList().Count();
 
-                        for(int p = 0; p < length; p++)
+                        for (int p = 0; p < subDirLength; p++)
                         {
                             Image image = new Image(subDirImages[i], subDirInfo.FullName);
                             imageList.Add(image);
                         }
-                    } 
+                    }
                     else
                     {
-                        Image image = new Image(images[i], info.FullName);
+                        Image image = new Image(files[i], info.FullName);
                         imageList.Add(image);
                     }
                 }
 
-                // matching.SortImages(List<Image> images, RenderElement)
-
-                // call matching service with counter callback for progressbar update
-                // on file handled call the delegate function in matching service and therefore update its screen value
-
-                // create another delegate that notifies when a directory in matching has been finished
-                // delegate function is passed to matching service
-                // delegate function holds function call to callback from partial class -> renders element
-
-
-                //matching.SortImages(imageList);
-
-                // TODO: sort the created images in the matchingservice!
-                // TODO: update the images paths in matchingservice according to their sorting and target!
-
-                // TODO: return new directory and import instances
-                // TODO: render accordingly to sorted information!
-
-                RenderDirectory();
-
-                // TODO: create directory element
-                // TODO: add "reimport" button to directory
-                // TODO: add directory to import element
-
-                return import;
-            } else
-            {
-                return new StackPanel();
-                // TODO: add "could not import any files" to StackPanel, add listener to autodestruct after 15 seconds
+                listProgress(imageList.Count, imageList);
             }
-            
         }
 
-        // function that renders directories or imports
-        public void RenderElement(StackPanel panel, ImageDirectoryCallBack callback)
+        public void SortImages(List<Image> imageList, SortProgress callback)
         {
-            callback(panel);
+            // RenderDelegate = callback; how to get this into RenderElement?
+
+            Debug.WriteLine(imageList.Count);
+            matching.SortImages(imageList, RenderElement);
+
+            // call matching service with counter callback for progressbar update
+            // on file handled call the delegate function in matching service and therefore update its screen value
+
+            // create another delegate that notifies when a directory in matching has been finished
+            // delegate function is passed to matching service
+            // delegate function holds function call to callback from partial class -> renders element
+
+
+            //matching.SortImages(imageList);
+
+            // TODO: sort the created images in the matchingservice!
+            // TODO: update the images paths in matchingservice according to their sorting and target!
+
+            // TODO: return new directory and import instances
+            // TODO: render accordingly to sorted information!
+
+            // TODO: create directory element
+            // TODO: add "reimport" button to directory
+            // TODO: add directory to import element
         }
 
-        private static StackPanel RenderDirectory()
+        //
+        // function that renders directories, images or imports
+        // is explicitly called from view and returns a visual element on success in matching service
+        // 
+        public void RenderElement(object obj)
         {
-            // TODO: replace with proper elements 
+            var type = obj.GetType();
+            var newElement = new StackPanel();
 
-            StackPanel sp = new StackPanel();
-            Rectangle rect = new Rectangle();
-            rect.Width = 100;
-            rect.Height = 100;
-            rect.Margin = new Thickness(5);
-            rect.Fill = Brushes.Salmon;
-            sp.Children.Add(rect);
+            if(type == typeof(ImageDirectory))
+            {
+                newElement = RenderDirectory((ImageDirectory)obj);
+            }
+            else if (type == typeof(Image))
+            {
+                newElement = RenderImage((Image)obj);
+            }
+            else if (type == typeof(Import))
+            {
+                newElement = RenderImport((Import)obj);
+            }
 
-            return sp;
+            //callback(newElement);
         }
 
+
+        //
+        // following functions are called from the delegated method that is called in matching service
+        // the passed function RenderElement then decides which function to call to pass the newly generated
+        // element back to the view
+        private StackPanel RenderImport(Import import)
+        {
+            return new StackPanel();
+        }
+
+        private StackPanel RenderDirectory(ImageDirectory directory)
+        {
+            return new StackPanel();
+        }
+
+        private StackPanel RenderImage(Image image)
+        {
+            return new StackPanel();
+        }
     }
 }
