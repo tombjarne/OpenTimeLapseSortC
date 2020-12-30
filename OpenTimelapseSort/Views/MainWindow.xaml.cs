@@ -225,7 +225,9 @@ namespace OpenTimelapseSort.Views
         private void Render(ImageDirectory directory)
         {
             // TODO: exception is here!
-            DirectoryViewer1.Items.Add(directory);
+            //DirectoryViewer1.Items.Add(new ImageDirectory("test","test"));
+
+            Debug.WriteLine(directory.name);
 
             // TODO: add to observablecollections
             // TODO: add on click action to GetImagesOfImportedDirectory

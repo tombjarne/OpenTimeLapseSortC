@@ -1,6 +1,7 @@
 ﻿using OpentimelapseSort.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
@@ -74,6 +75,17 @@ namespace OpenTimelapseSort.DataServices
 				{
 
 					dirList.Add(imageList[i]);
+					if(i + 1 == imageList.Count)
+                    {
+						if(pointer - seqPointer >= runs)
+                        {
+							createDir(dirList, render);
+						}
+						else
+                        {
+							addToRandomDir(dirList, render);
+                        }
+					}
 					pointer += 1; // marks last image in current sequence that fits previous deviations
 
 				}
@@ -189,17 +201,32 @@ namespace OpenTimelapseSort.DataServices
 		private void createDir(List<Image> dirList, RenderDelegate render)
         {
 			Preferences preferences = service.FetchPreferences();
+			Debug.WriteLine("Name: "+dirList[0].parentInstance);
+
+			// TODO: fix statement
+			//Debug.WriteLine(dirList[0].parentInstance.Substring(dirList[0].parentInstance.LastIndexOf(@"\"), dirList[0].parentInstance.Length - 1));
 
 			ImageDirectory directory = new ImageDirectory
 				(
 					dirList[0].parentInstance,
-					preferences.useAutoNaming == false ? GuessName(dirList) :
-					dirList[0].parentInstance.Substring(dirList[0].parentInstance.LastIndexOf('/', dirList[0].parentInstance.Length))
+					"lel"
 				)
 			{
 				imageList = dirList,
 			};
 
+			//preferences.useAutoNaming == false ? GuessName(dirList) :
+			//dirList[0].parentInstance.Substring(dirList[0].parentInstance.LastIndexOf(@"\"), dirList[0].parentInstance.Length - 1))
+
+			Debug.WriteLine(directory.name);
+
+			Import import = new Import(false)
+			{
+				length = 1
+			};
+			import.tryPush(directory);
+
+			/*
 			try
 			{
 				Import import = GetImportInstance();
@@ -208,10 +235,13 @@ namespace OpenTimelapseSort.DataServices
 			}
 			catch
 			{
-				Import import = new Import(false);
-				import.directories.Add(directory);
-				import.length++;
+				Import import = new Import(false)
+				{
+					length = 1
+				};
+				import.tryPush(directory);
 			}
+			*/
 
 			render(directory);
 

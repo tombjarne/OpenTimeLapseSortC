@@ -34,7 +34,18 @@ public class Import
     {
         if(directory.getTimestamp() == timestamp)
         {
-            directories.Add(directory);
+            if(this.directories != null)
+            {
+                directories.Add(directory);
+            }
+            else
+            {
+                directories = new List<ImageDirectory>();
+                if (this.tryPush(directory))
+                {
+                    return true;
+                }
+            }
             return true;
         } else
         {

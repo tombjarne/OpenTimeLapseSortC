@@ -96,6 +96,7 @@ namespace OpenTimelapseSort.DataServices
                         importDate = import.importDate,
                         id = import.id
                     }).Where(import => import.timestamp == System.DateTime.Today); // might need to implement fuzzy logic if it is midnight
+                // TODO: fix casting issue!
                 return (Import)import;
             }
         }

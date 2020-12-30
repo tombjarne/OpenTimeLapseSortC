@@ -152,12 +152,14 @@ namespace OpenTimelapseSort
                         for (int p = 0; p < subDirLength; p++)
                         {
                             Image image = new Image(subDirImages[i], subDirInfo.FullName, subDirInfo.DirectoryName);
+                            Debug.WriteLine(subDirInfo.DirectoryName);
                             imageList.Add(image);
                         }
                     }
                     else
                     {
                         Image image = new Image(files[i], info.FullName, info.DirectoryName);
+                        Debug.WriteLine(info.DirectoryName);
                         imageList.Add(image);
                     }
                 }
@@ -176,6 +178,7 @@ namespace OpenTimelapseSort
                     matching.SortImages(imageList, (newDirectory) =>
                     {
                         directory = (ImageDirectory)newDirectory;
+                        Debug.WriteLine(directory.name);
                     });
                  });
 
