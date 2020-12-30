@@ -12,6 +12,8 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Windows.Threading;
+using System.Runtime.CompilerServices;
 
 namespace OpenTimelapseSort.Views
 {
@@ -26,6 +28,9 @@ namespace OpenTimelapseSort.Views
 
 
         ObservableCollection<ImageDirectory> directories = new ObservableCollection<ImageDirectory>();
+        ObservableCollection<Import> imports = new ObservableCollection<Import>();
+        ObservableCollection<Image> images = new ObservableCollection<Image>();
+
         MainViewModel mainViewModel = new MainViewModel();
 
 
@@ -36,11 +41,8 @@ namespace OpenTimelapseSort.Views
         public MainWindow()
         {
             InitializeComponent();
-            //this.DataContext = new MainViewModel(RenderComponent);
-            this.DataContext = new MainViewModel();
-            DataContext = this;
             SetScreenSize();
-            //FetchOnStartup();
+            FetchOnStartup();
         }
 
         //////////////////////////////////////////////////////////
@@ -49,6 +51,7 @@ namespace OpenTimelapseSort.Views
 
         private void FetchOnStartup()
         {
+            // TODO: make it async!
             // check for db
             // if not exists create new one
             // start subtask to notify user about that
@@ -112,6 +115,8 @@ namespace OpenTimelapseSort.Views
 
         private void InvokeTargetChooser(object sender, RoutedEventArgs e)
         {
+            Import_Popup.IsOpen = false;
+
             CommonOpenFileDialog targetChooser = new CommonOpenFileDialog();
             targetChooser.InitialDirectory = @"C:\users";
             targetChooser.Title = "Choose Import Target";
@@ -125,6 +130,7 @@ namespace OpenTimelapseSort.Views
                 {
                     if (Directory.Exists(targetChooser.FileName))
                     {
+                        Import_Popup.IsOpen = true;
                         Import_Target.Text = targetChooser.FileName;
                         Import_Confirm_Btn.IsEnabled = true;
                     }
@@ -168,46 +174,117 @@ namespace OpenTimelapseSort.Views
             }
         }
 
-        /*
-        private Task ListImages()
-        {
-            var mainViewModel = DataContext as MainViewModel;
-            return Task.Run(() => 
-            {
-                mainViewModel?.Import(Import_Target.Text, HandleListingProgress);
-                Debug.WriteLine("End reached");
-            });
-        }
-        */
-
         //////////////////////////////////////////////////////////
         //////                    FUNCTIONS                 //////
         //////////////////////////////////////////////////////////
 
         private void HandleListingProgress(int count, List<Image> imageList)
         {
-            // save returned number of found files
-            // update view after all images have been found
-
-            Debug.WriteLine("reached");
-            Debug.WriteLine(imageList.Count);
 
             Import_Progress_Btn.IsEnabled = true;
-            Import_Progress_Count.Text = "Found "+count+" images";
+            Import_Progress_Count.Text = "Found " + count + " images";
 
-            mainViewModel.SortImages(imageList, RenderComponent);
+            InitiateCountDown();
+
+            var sortingTask = Task.Run(() =>
+            { 
+                mainViewModel.SortImages(imageList, Render);
+            });
+
+            TaskAwaiter taskAwaiter = sortingTask.GetAwaiter();
+            taskAwaiter.OnCompleted(() =>
+            {
+                // invoke new popup to display success message
+            });
         }
 
-        void RenderComponent(StackPanel sp)
+        private void InitiateCountDown()
         {
-            Debug.WriteLine("countofstackpanels");
-            directoryControl.Items.Add(sp);
+            var timer = new DispatcherTimer();
+            TimeSpan timeSpan;
+
+            timeSpan = TimeSpan.FromSeconds(5);
+            timer = new DispatcherTimer(new TimeSpan(0, 0, 1), DispatcherPriority.Normal, delegate
+              {
+                  Sorting_Countdown.Text = timeSpan.ToString("c");
+                  if (timeSpan == TimeSpan.Zero)
+                  {
+                      timer.Stop();
+                      Import_Progress_Popup.IsOpen = false;
+                  }
+                  timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
+              }, Application.Current.Dispatcher);
+            timer.Start();
         }
 
-        void SetScreenSize()
+        private void RenderComponent(StackPanel sp)
+        {
+            DirectoryViewer1.Items.Add(sp);
+        }
+
+        private void Render(ImageDirectory directory)
+        {
+            // TODO: exception is here!
+            DirectoryViewer1.Items.Add(directory);
+
+            // TODO: add to observablecollections
+            // TODO: add on click action to GetImagesOfImportedDirectory
+
+            // DirectoryViewer1.Items.Add(element.visualElement);
+           
+        }
+
+        private void GetImagesOfImportedDirectory(int id)
+        {
+            // TODO: add images of selected directory to observablecollection of images
+            //images = mainViewModel.GetImagesOfImportedDirectory(id);
+        }
+
+        private void SetScreenSize()
         {
             //set width and height according to system specs
             //maybe also adjust text size
+        }
+
+        public void RenderElement(object obj)
+        {
+            var type = obj.GetType();
+            var newElement = new StackPanel();
+
+            if (type == typeof(ImageDirectory))
+            {
+                newElement = RenderDirectory((ImageDirectory)obj);
+            }
+            else if (type == typeof(Image))
+            {
+                newElement = RenderImage((Image)obj);
+            }
+            else if (type == typeof(Import))
+            {
+                newElement = RenderImport((Import)obj);
+            }
+
+            //callback(newElement);
+        }
+
+
+        //
+        // following functions are called from the delegated method that is called in matching service
+        // the passed function RenderElement then decides which function to call to pass the newly generated
+        // element back to the view
+        private StackPanel RenderImport(Import import)
+        {
+            return new StackPanel();
+        }
+
+        private StackPanel RenderDirectory(ImageDirectory directory)
+        {
+            return new StackPanel();
+        }
+
+        private StackPanel RenderImage(Image image)
+        {
+            return new StackPanel();
         }
     }
 }

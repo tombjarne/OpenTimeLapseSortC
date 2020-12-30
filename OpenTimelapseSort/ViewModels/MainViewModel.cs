@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -22,6 +24,7 @@ namespace OpenTimelapseSort
         public delegate void ImageListingProgress(int count, List<Image> imageList);
         public delegate void SortProgress(StackPanel panel);
         public delegate void InitFetch(StackPanel panel);
+        public delegate void ViewUpdate(ImageDirectory directory);
 
         public MainViewModel()
         {
@@ -148,13 +151,13 @@ namespace OpenTimelapseSort
 
                         for (int p = 0; p < subDirLength; p++)
                         {
-                            Image image = new Image(subDirImages[i], subDirInfo.FullName);
+                            Image image = new Image(subDirImages[i], subDirInfo.FullName, subDirInfo.DirectoryName);
                             imageList.Add(image);
                         }
                     }
                     else
                     {
-                        Image image = new Image(files[i], info.FullName);
+                        Image image = new Image(files[i], info.FullName, info.DirectoryName);
                         imageList.Add(image);
                     }
                 }
@@ -163,77 +166,26 @@ namespace OpenTimelapseSort
             }
         }
 
-        public void SortImages(List<Image> imageList, SortProgress callback)
+        public void SortImages(List<Image> imageList, ViewUpdate update)
         {
             // RenderDelegate = callback; how to get this into RenderElement?
+            ImageDirectory directory = new ImageDirectory("default","default");
 
-            Debug.WriteLine(imageList.Count);
-            matching.SortImages(imageList, RenderElement);
-
-            // call matching service with counter callback for progressbar update
-            // on file handled call the delegate function in matching service and therefore update its screen value
-
-            // create another delegate that notifies when a directory in matching has been finished
-            // delegate function is passed to matching service
-            // delegate function holds function call to callback from partial class -> renders element
-
-
-            //matching.SortImages(imageList);
-
-            // TODO: sort the created images in the matchingservice!
-            // TODO: update the images paths in matchingservice according to their sorting and target!
-
-            // TODO: return new directory and import instances
-            // TODO: render accordingly to sorted information!
-
-            // TODO: create directory element
-            // TODO: add "reimport" button to directory
-            // TODO: add directory to import element
-        }
-
-        //
-        // function that renders directories, images or imports
-        // is explicitly called from view and returns a visual element on success in matching service
-        // 
-        public void RenderElement(object obj)
-        {
-            var type = obj.GetType();
-            var newElement = new StackPanel();
-
-            if(type == typeof(ImageDirectory))
-            {
-                newElement = RenderDirectory((ImageDirectory)obj);
-            }
-            else if (type == typeof(Image))
-            {
-                newElement = RenderImage((Image)obj);
-            }
-            else if (type == typeof(Import))
-            {
-                newElement = RenderImport((Import)obj);
-            }
-
-            //callback(newElement);
-        }
+            Task sortingTask = Task
+                .Run(() => {
+                    matching.SortImages(imageList, (newDirectory) =>
+                    {
+                        directory = (ImageDirectory)newDirectory;
+                    });
+                 });
 
 
-        //
-        // following functions are called from the delegated method that is called in matching service
-        // the passed function RenderElement then decides which function to call to pass the newly generated
-        // element back to the view
-        private StackPanel RenderImport(Import import)
-        {
-            return new StackPanel();
-        }
-
-        private StackPanel RenderDirectory(ImageDirectory directory)
-        {
-            return new StackPanel();
-        }
-
-        private StackPanel RenderImage(Image image)
-        {
-            return new StackPanel();
+            // TODO: find way to pass the directory without getting thread warning
+            TaskAwaiter sortingTaskAwaiter = sortingTask.GetAwaiter();
+            sortingTaskAwaiter.OnCompleted(() =>
+                {
+                    update(directory);
+                });
         }
     }
 }

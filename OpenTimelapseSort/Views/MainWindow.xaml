@@ -49,13 +49,13 @@
         </Grid>
         <DockPanel x:Name="LeftPanel" Background=" #3D4A59" Margin="0,44,0,0">
             <ScrollViewer x:Name="DirectoryViewer"  Style="{StaticResource ScrollViewerStyle}" Width="398">
-                <ItemsControl x:Name="directoryControl" VerticalAlignment="Center">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Vertical"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
+                <ListView x:Name="DirectoryViewer1" Height="706" Width="402" Background="#FF3D4A59" BorderBrush="#FF34404D" Foreground="#FFED6558" IsSynchronizedWithCurrentItem="False">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
             </ScrollViewer>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -63,10 +63,7 @@
                 </Grid.ColumnDefinitions>
             </Grid>
         </DockPanel>
-        <Grid  DockPanel.Dock="Bottom" >
-            <ProgressBar x:Name="Progress_Bar" Maximum="10" Value="{Binding Path=ProgressValue, Mode=TwoWay}" Background="#FF34404D" BorderBrush="{x:Null}" Width="650" Height="38" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="414,0,0,0" />
-            <TextBox x:Name="Progress_Value" Text="{Binding Path=ProgressValue, Mode=TwoWay}" HorizontalAlignment="Left" Margin="1064,712,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Height="38"/>
-        </Grid>
+        <Grid  DockPanel.Dock="Bottom" />
         <DockPanel x:Name="RightPanel" Background=" #3D4A59" Margin="397,44,0,37">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -163,9 +160,13 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <DockPanel Margin="15" Grid.Row="0" Background="#34404D">
-                    <Label Content="Images found" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="#FFFF8383" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
+                    <Label Content="Prepare" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="#FFFF8383" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
                     <TextBlock x:Name="Import_Progress_Count" Grid.Column="0" HorizontalAlignment="Left" Margin="0,2,0,-2" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
                         Processing...
+                    </TextBlock>
+                    <Label Content="Starting Import in" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="#FFFF8383" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
+                    <TextBlock x:Name="Sorting_Countdown" Grid.Column="0" HorizontalAlignment="Left" Margin="0,2,0,-2" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
+                        10
                     </TextBlock>
                 </DockPanel>
                 <DockPanel Margin="15" Grid.Row="1">

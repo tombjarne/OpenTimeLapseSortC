@@ -1,6 +1,7 @@
 ﻿using OpentimelapseSort.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows.Controls;
 
@@ -11,6 +12,7 @@ namespace OpenTimelapseSort.DataServices
 		public delegate void RenderDelegate(object obj);
 
 		DBPreferencesService service = new DBPreferencesService();
+		DBService dbService = new DBService();
 		List<ImageDirectory> directories = new List<ImageDirectory>(); // each directory will receive their images in the matching function
 		List<Import> imports = new List<Import>(); // does it need to be a list?
 
@@ -54,27 +56,24 @@ namespace OpenTimelapseSort.DataServices
 
 			for (int i = 0; i < imageList.Count; i++)
 			{
+				if (i > 0)
+				{
+					prevDeviation = (imageList[i].fileTime - imageList[i - 1].fileTime).TotalSeconds;
 
-                // TODO: find way to calculate deviation - also support users input
-                if (i > 0)
-                {
-					//prevDeviation = imageList[i].fileTime - imageList[i - 1].fileTime;
-
-					if (i < imageList.Count)
-                    {
-						//currDeviation = imageList[i + 1].fileTime - imageList[i].fileTime;
+					if (i < imageList.Count - 1)
+					{
+						currDeviation = (imageList[i + 1].fileTime - imageList[i].fileTime).TotalSeconds;
 					}
 					else
-                    {
+					{
 						currDeviation = prevDeviation;
-                    }
+					}
 				}
 
 				if (currDeviation == prevDeviation)
 				{
-				
+
 					dirList.Add(imageList[i]);
-					// count(i)
 					pointer += 1; // marks last image in current sequence that fits previous deviations
 
 				}
@@ -87,42 +86,136 @@ namespace OpenTimelapseSort.DataServices
 					}
 					else // images do not have same deviation and do not fill the minimum length requirement
 					{
-						addToRandomDir(dirList);
+						randomDirList.Add(imageList[i]);
 					}
 
 					pointer = i;
 					seqPointer = i;
 					dirList = new List<Image>(); // reinit dirList
 				}
+				if (i + 1 == imageList.Count && randomDirList.Count > 0)
+				{
+					addToRandomDir(randomDirList, render);
+				}
 			}
 		}
 
-		private void addToRandomDir(List<Image> dirList) // can sometimes only contain a single image
+		private Import GetImportInstance()
         {
-			//TODO: add to random dir list
-			//TODO: write passed image to directory
-
-			if(dirList.Count > 1)
-            {
-				//redc(dirList);
-            }
-			else
-            {
-
-            }
+			return dbService.ReturnCurrentImport();
         }
+
+		private void addToRandomDir(List<Image> dirList, RenderDelegate render) // can sometimes only contain a single image
+        {
+			Preferences preferences = service.FetchPreferences();
+			ImageDirectory directory;
+			// TODO: check if there is already a random directory for the current import
+
+			try
+            {
+				directory = dbService.GetRandomDirInstance();
+				directory.imageList.AddRange(dirList);
+
+				dbService.UpdateImageDirectory(directory);
+			}
+            catch
+            {
+
+            }
+
+			directory = new ImageDirectory
+				(
+					dirList[0].parentInstance,
+					"Random Directory"
+				)
+			{
+				imageList = dirList,
+			};
+
+            try
+            {
+				Import import = GetImportInstance();
+				import.directories.Add(directory);
+				import.length++;
+			}
+			catch
+            {
+				Import import = new Import(false);
+				import.directories.Add(directory);
+				import.length++;
+			}
+
+			// TODO: save changes to db
+
+			render(directory);
+		}
+
+
+		/**
+         * GuessName
+         * 
+         * Returns a guess for directory name based on the image names
+         * useful when user imports images other than from camera itself
+         * 
+         */
+
+		private string GuessName(List<Image> images) {
+			string dirName = "";
+
+			string prevName = "";
+			string curName = "";
+
+			HashSet<string> wordList = new HashSet<string>();
+			string[] sanitizedName;
+
+			foreach(Image image in images)
+            {
+				sanitizedName = image.name.Substring(0, image.name.LastIndexOf('.')).Split(new char[] {'-', '_'});
+
+                if (sanitizedName.Any(word => image.name.Contains(word)))
+                {
+					wordList.Add(image.name);
+                }
+            }
+			
+			for(int i = 0; i < wordList.Count; i++)
+            {
+				//dirName = wordList.
+            }
+
+			return dirName;
+		}
 
 		private void createDir(List<Image> dirList, RenderDelegate render)
         {
-			//TODO: save current list into new directory
-			//TODO: create ImageDirectory instance and pass dirList as imageList
-			ImageDirectory directory = new ImageDirectory("test", "name"); // use updated values or random numbers
-			directory.imageList = dirList;
-			directories.Add(directory);
-			render(directory);
-			//rndc(directory);
-        }
+			Preferences preferences = service.FetchPreferences();
 
-		// add functionality to implement import rendering
+			ImageDirectory directory = new ImageDirectory
+				(
+					dirList[0].parentInstance,
+					preferences.useAutoNaming == false ? GuessName(dirList) :
+					dirList[0].parentInstance.Substring(dirList[0].parentInstance.LastIndexOf('/', dirList[0].parentInstance.Length))
+				)
+			{
+				imageList = dirList,
+			};
+
+			try
+			{
+				Import import = GetImportInstance();
+				import.directories.Add(directory);
+				import.length++;
+			}
+			catch
+			{
+				Import import = new Import(false);
+				import.directories.Add(directory);
+				import.length++;
+			}
+
+			render(directory);
+
+			// TODO: save changes to db
+        }
     }
 }

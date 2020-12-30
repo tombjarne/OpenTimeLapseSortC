@@ -48,7 +48,7 @@ namespace OpenTimelapseSort.DataServices
             {
                 using (var context = new PreferencesContext())
                 {
-                    Preferences preferences = new Preferences(true, true, 10, 20);
+                    Preferences preferences = new Preferences(true, true, true, 10, 20);
                     context.Add(preferences);
                     context.SaveChanges();
                 }
@@ -76,6 +76,7 @@ namespace OpenTimelapseSort.DataServices
                         pre = new Preferences(
                             preferences.useAutoDetectInterval,
                             preferences.useCopy,
+                            preferences.useAutoNaming,
                             preferences.sequenceInterval,
                             preferences.sequenceImageCount
                         );

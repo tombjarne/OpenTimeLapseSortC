@@ -16,7 +16,9 @@ public class ImageDirectory
 
     public ImageDirectory(String target, String name)
     {
+        // TODO: enable only on first creation!
         timestamp = DateTime.Today;
+
         this.target = target;
         this.name = name;
         imageList = new List<Image>();

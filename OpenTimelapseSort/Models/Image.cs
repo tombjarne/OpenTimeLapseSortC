@@ -14,10 +14,13 @@ public class Image
     public DateTime fileTime { get; set; }
     public long fileSize { get; set; }
 
-    public Image(string name, string target)
+    public string parentInstance { get; set; }
+
+    public Image(string name, string target, string parentInstance)
     {
         this.name = name;
         this.target = target;
+        this.parentInstance = parentInstance;
     }
 
     public void SetTimestamp(string value)

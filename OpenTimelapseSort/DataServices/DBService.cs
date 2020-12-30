@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-
-using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Contexts;
 using OpentimelapseSort.Models;
-using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -40,7 +36,7 @@ namespace OpenTimelapseSort.DataServices
             // save into Object
             // return Object
 
-            return new Preferences(true, true, 2.0, 1); // TODO: remove, test purpose only
+            return new Preferences(true, true, true, 2.0, 1); // TODO: remove, test purpose only
         }
 
         // returns a list of Import Objects fetched from db
@@ -79,6 +75,31 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
+
+        /**
+         * ReturnCurrentImport
+         * 
+         * Returns the latest Import instance including its directories
+         * 
+         */
+
+        public Import ReturnCurrentImport()
+        {
+            using (var context = new ImportContext())
+            {
+                var import = context.Imports
+                    .Select(import => new
+                    {
+                        fetch = true,
+                        directories = import.directories,
+                        timestamp = import.timestamp,
+                        importDate = import.importDate,
+                        id = import.id
+                    }).Where(import => import.timestamp == System.DateTime.Today); // might need to implement fuzzy logic if it is midnight
+                return (Import)import;
+            }
+        }
+
         public void SeedDatabase()
         {
             // init db for test purposes
@@ -104,27 +125,69 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        // fetches all images that belong to a directory that already exists and is fetched from db
-
-         private List<Image> GetImages(ImageDirectory directory) // gets all images related to a passed directory
+        public ImageDirectory GetRandomDirInstance()
         {
             using (var context = new ImportContext())
             {
-                List<Image> images = new List<Image>();
-                int directoryId = directory.id;
+                var directory = context.ImageDirectories
+                    .Select(directory => new
+                    {
+                        id = directory.id,
+                        target = directory.target,
+                        name = directory.name,
+                        timestamp = directory.timestamp,
+                        imageList = directory.imageList
+                    }).Where(directory => directory.name.Contains("Random"));
+                return (ImageDirectory)directory;
+            }
+        }
 
-                //TODO: add LINQ statement to select only those images that belong to the submitted directory ( id ) 
+        public void UpdateImageDirectory(ImageDirectory directory)
+        {
+            using (var context = new ImportContext())
+            {
+                context.Update(directory);
+            }        
+        }
 
-                foreach (Image image in context.Images)
+        public void UpdateImport(Import import)
+        {
+            using (var context = new ImportContext())
+            {
+                context.Update(import);
+            }
+        }
+
+         public List<Image> GetImages(int id)
+        {
+            using (var context = new ImportContext())
+            {
+                ImageDirectory directory = (ImageDirectory)context.ImageDirectories
+                    .Select(directory => new
+                    {
+                        id = directory.id,
+                        target = directory.target,
+                        name = directory.name,
+                        timestamp = directory.timestamp,
+                        imageList = directory.imageList
+                    }).Where(directory => directory.id == id);
+
+                List<Image> imageList = directory.imageList;
+
+
+                // might still need this if LINQ and EFcore does not return a list of objects in imageList of directory
+                /*
+                foreach (Image image in imageList)
                 {
                     Image newImage = new Image(
                         image.name,
-                        image.target
+                        image.target,
+                        image.parentInstance
                     );
-                    images.Add(image);
                 }
+                */
 
-                return images;
+                return imageList;
             }
         }
 

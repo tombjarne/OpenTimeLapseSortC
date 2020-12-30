@@ -72,7 +72,8 @@ namespace OpenTimelapseSort.Views
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
-            if(pvm.SavePreferences(true, (bool)Copy.IsChecked, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value))
+            // TODO: update view to include new useAutoName field
+            if(pvm.SavePreferences(true, (bool)Copy.IsChecked, true, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value))
             {
                 App.Current.Windows[1].Close();
             }
