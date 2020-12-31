@@ -5,23 +5,17 @@ using System.Text;
 using OpenTimelapseSort.DataServices;
 using OpenTimelapseSort.Contexts;
 using OpentimelapseSort.Models;
+using System.Diagnostics;
 
 namespace OpenTimelapseSort.ViewModels
 {
     class PreferencesViewModel
     {
-
         private DBPreferencesService service = new DBPreferencesService();
-        Preferences preferences; //holds global object so that preferences only ever refer to a single object
 
         public PreferencesViewModel()
         {
             InitialisePreferencesDB();
-        }
-
-        public Preferences PreferencesInstance()
-        {
-            return preferences;
         }
 
         public bool SavePreferences(bool useAutoDetectInterval, bool copyIsEnabled, double imageInterval, int imageCount)
@@ -34,7 +28,7 @@ namespace OpenTimelapseSort.ViewModels
                 try
                 {
                     database.Database.EnsureCreated();
-                    preferences = new Preferences(
+                    Preferences preferences = new Preferences(
                         useAutoDetectInterval,
                         copyIsEnabled,
                         imageInterval,
@@ -71,13 +65,20 @@ namespace OpenTimelapseSort.ViewModels
 
         public Preferences FetchFromDatabase()
         {
-            using (var database = new PreferencesContext())
+            try
             {
-                database.Database.EnsureCreated();
-
-                return service.FetchPreferences();
-                //InitialiseView();
+                using (var database = new PreferencesContext())
+                {
+                    database.Database.EnsureCreated();
+                }
             }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.StackTrace);
+            }
+
+            Debug.WriteLine(service.FetchPreferences().id);
+            return service.FetchPreferences();
         }
     }
 }

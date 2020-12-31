@@ -14,6 +14,7 @@ namespace OpenTimelapseSort.DataServices
 
 		DBPreferencesService service = new DBPreferencesService();
 		DBService dbService = new DBService();
+
 		List<ImageDirectory> directories = new List<ImageDirectory>(); // each directory will receive their images in the matching function
 		List<Import> imports = new List<Import>(); // does it need to be a list?
 

@@ -23,7 +23,7 @@ namespace OpentimelapseSort.Models
             this.useCopy = useCopy;
             this.sequenceInterval = sequenceInterval;
             this.sequenceImageCount = sequenceImageCount;
-            this.id = 0;
+            id = 1;
         }
 
         public Preferences() { }

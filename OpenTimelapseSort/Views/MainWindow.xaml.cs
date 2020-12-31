@@ -64,7 +64,7 @@ namespace OpenTimelapseSort.Views
 
         private void InvokePreferences(object sender, RoutedEventArgs e)
         {
-            var preferencesWindow = new Preferences();
+            var preferencesWindow = new PreferencesView();
             preferencesWindow.Show();
         }
 
@@ -162,8 +162,6 @@ namespace OpenTimelapseSort.Views
 
                 Import_Progress_Popup.IsOpen = true;
 
-                //var mainViewModel = DataContext as MainViewModel;
-
                 mainViewModel.Import(Import_Target.Text, HandleListingProgress);
 
                 //Task listImagesTask = ListImages();
@@ -228,7 +226,7 @@ namespace OpenTimelapseSort.Views
             try
             {
                 StackPanel referer = (StackPanel)sender;
-                mainViewModel.GetImages(Int16.Parse(referer.Name[1..]));
+                mainViewModel.GetImages(Int16.Parse(referer.Name.Substring(1, referer.Name.Length - 1)));
 
                 // TODO: set screen values to the images of chosen directory
             }

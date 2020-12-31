@@ -1,6 +1,7 @@
 ﻿using OpentimelapseSort.Models;
 using OpenTimelapseSort.Contexts;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace OpenTimelapseSort.DataServices
@@ -11,26 +12,23 @@ namespace OpenTimelapseSort.DataServices
 
         public bool SavePreferencesToDataBase(Preferences preferences)
         {
-            // save preferences to DB
             bool saveSucceeded = false;
             try
             {
-                using (var context = new PreferencesContext())
+                using (var database = new PreferencesContext())
                 {
-                    var entity = context.Preferences.FirstOrDefault(item => item.id == 1);
+                    var entity = database.Preferences.FirstOrDefault(p => p.id == 1);
                     
-                    if (true) // TODO: update statement
-                    {
-                        // TODO: update values
-                        context.Update(preferences);
-                    } 
+                    if (entity != null)
+                    {                        
+                        database.Entry(entity).CurrentValues.SetValues(preferences);
+                    }
                     else
                     {
-                        context.Add(preferences);
+                        database.Add(preferences);
                     }
-                    context.SaveChanges();
+                    database.SaveChanges();
                 }
-
                 saveSucceeded = true;
 
             } catch (Exception e)
@@ -46,11 +44,11 @@ namespace OpenTimelapseSort.DataServices
             bool seedSucceeded = false;
             try
             {
-                using (var context = new PreferencesContext())
+                using (var database = new PreferencesContext())
                 {
                     Preferences preferences = new Preferences(true, true, 10, 20);
-                    context.Add(preferences);
-                    context.SaveChanges();
+                    database.Add(preferences);
+                    database.SaveChanges();
                 }
 
                 seedSucceeded = true;
@@ -65,28 +63,29 @@ namespace OpenTimelapseSort.DataServices
 
         public Preferences FetchPreferences()
         {
-            Preferences pre = new Preferences();
-
-            using (var context = new PreferencesContext())
+            using (var database = new PreferencesContext())
             {
                 try
                 {
-                    foreach (Preferences preferences in context.Preferences)
-                    {
-                        pre = new Preferences(
-                            preferences.useAutoDetectInterval,
-                            preferences.useCopy,
-                            preferences.sequenceInterval,
-                            preferences.sequenceImageCount
-                        );
-                    }
+                    var preferences = database.Preferences
+                        .Single(predicate => predicate.id == 1);
+                    return preferences;
                 }
                 catch (Exception e)
                 {
-                    // notify on exception
+                    Debug.WriteLine(e.StackTrace);
+                    if (SeedPreferencesDatabase())
+                    {
+                        var preferences = database.Preferences
+                            .Single(predicate => predicate.id == 1);
+                        return preferences;
+                    } else
+                    {
+                        // TODO: handle exception
+                        return FetchPreferences();
+                    }
                 }
             }
-            return pre;
         }
     }
 }

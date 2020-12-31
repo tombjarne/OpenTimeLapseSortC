@@ -1,40 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
+using OpentimelapseSort.Models;
 using OpenTimelapseSort.ViewModels;
-using OpenTimelapseSort.Mvvm;
 
 namespace OpenTimelapseSort.Views
 {
     /// <summary>
     /// Interaktionslogik für Preferences.xaml
     /// </summary>
-    public partial class Preferences : Window
+    public partial class PreferencesView : Window
     {
 
         public delegate double SliderCountValueCommand(double value);
-        PreferencesViewModel pvm = new PreferencesViewModel();
+        PreferencesViewModel preferencesViewModel = new PreferencesViewModel();
 
-        public Preferences()
+        public PreferencesView()
         {
             InitializeComponent();
-            FetchOnStartup();
-        }
-
-        private void FetchOnStartup()
-        {
-            SetImageSequence(pvm.FetchFromDatabase().sequenceInterval);
-            SetImageSequenceCount(pvm.FetchFromDatabase().sequenceImageCount);
-            SetCopyEnabled(pvm.FetchFromDatabase().useCopy);
+            SetPreferences(preferencesViewModel.FetchFromDatabase());
         }
 
         void UpdateSliderCountValue(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -51,26 +36,20 @@ namespace OpenTimelapseSort.Views
             this.Interval.Content = value;
         }
 
-        void SetImageSequence(double value)
+        private void SetPreferences(Preferences preferences)
         {
-            Interval.Content = value;
-            IntervalSlider.Value = value;
-        } 
-        
-        void SetImageSequenceCount(double value)
-        {
-            IntervalCount.Content = value;
-            IntervalCountSlider.Value = value;
-        }
+            IntervalCount.Content = preferences.sequenceImageCount.ToString();
+            IntervalCountSlider.Value = preferences.sequenceImageCount;
 
-        void SetCopyEnabled(bool CopyIsEnabled)
-        {
-            Copy.IsChecked = CopyIsEnabled;
+            Interval.Content = preferences.sequenceInterval.ToString();
+            IntervalSlider.Value = preferences.sequenceInterval;
+
+            Copy.IsChecked = preferences.useCopy;
         }
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
-            pvm.SavePreferences(true, (bool)Copy.IsChecked, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value);
+            preferencesViewModel.SavePreferences(true, (bool)Copy.IsChecked, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value);
         }
 
         private void minimizeApplication(object sender, RoutedEventArgs e)
