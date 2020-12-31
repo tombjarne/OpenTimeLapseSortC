@@ -20,6 +20,48 @@
             <Setter Property="HorizontalScrollBarVisibility" Value="Hidden" />
             <Setter Property="VerticalScrollBarVisibility" Value="Hidden" />
         </Style>
+
+        <DataTemplate x:Uid="Name" x:Key="TestTemplate">
+            <Label x:Name="Import_Name" Grid.Column="0" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
+        </DataTemplate>
+        
+            <!-- Import Visual Template -->
+        <DataTemplate x:Key="SelectButtonColumnDataTemplate">
+            <DockPanel Background="#34404D" Height="100" Width="402">
+                <Grid DockPanel.Dock="Top">
+                    <DockPanel>
+                        <Label x:Name="Import_Name" Grid.Column="0" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
+                        <Button Content="Select" DockPanel.Dock="Right"/>
+                    </DockPanel>
+                </Grid>
+                <Grid DockPanel.Dock="Bottom">
+                    <Label Grid.Column="0" Content="OpenTimelapseSort" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
+                </Grid>
+            </DockPanel>
+        </DataTemplate>
+
+        <Style x:Key="HeadlineTemplate" TargetType="{x:Type Label}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="18px"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        
+        <Style x:Key="SubHeadlineTemplate" TargetType="{x:Type Label}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="12px"/>
+            <Setter Property="Foreground" Value="Coral"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="PanelTemplate" TargetType="{x:Type StackPanel}">
+            <Setter Property="Background" Value="#FF34404D"/>
+        </Style>
+
     </Window.Resources>
 
     <Grid x:Name="Pane" Background="#34404D" Height="Auto" >
@@ -48,14 +90,8 @@
             <Rectangle HorizontalAlignment="Left" Height="44" Margin="394,0,0,0" Width="667" MouseDown="moveWindow" Fill="#FF34404D"/>
         </Grid>
         <DockPanel x:Name="LeftPanel" Background=" #3D4A59" Margin="0,44,0,0">
-            <ScrollViewer x:Name="DirectoryViewer"  Style="{StaticResource ScrollViewerStyle}" Width="398">
-                <ListView x:Name="DirectoryViewer1" Height="706" Width="402" Background="#FF3D4A59" BorderBrush="#FF34404D" Foreground="#FFED6558" IsSynchronizedWithCurrentItem="False">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+            <ScrollViewer x:Name="DirectoryViewer"  Style="{StaticResource ScrollViewerStyle}">
+                <ListView x:Name="DirectoryViewer1" Height="Auto" Background="#FF3D4A59" BorderBrush="#FF34404D" Foreground="#FFED6558"/>
             </ScrollViewer>
             <Grid>
                 <Grid.ColumnDefinitions>

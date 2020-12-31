@@ -142,6 +142,7 @@ namespace OpenTimelapseSort.DataServices
 				)
 			{
 				imageList = dirList,
+				id = Int16.Parse(DateTime.Now.ToString("hmmsstt"))
 			};
 
             try
@@ -198,25 +199,30 @@ namespace OpenTimelapseSort.DataServices
 			return dirName;
 		}
 
+		private string GetTrimmedName(string target)
+        {
+			return target.Substring(target.LastIndexOf(@"\"), (target.Length) - target.LastIndexOf(@"\")).Replace(@"\", "");
+		}
+
 		private void createDir(List<Image> dirList, RenderDelegate render)
         {
 			Preferences preferences = service.FetchPreferences();
-			Debug.WriteLine("Name: "+dirList[0].parentInstance);
+			string target = dirList[0].parentInstance;
 
-			// TODO: fix statement
-			//Debug.WriteLine(dirList[0].parentInstance.Substring(dirList[0].parentInstance.LastIndexOf(@"\"), dirList[0].parentInstance.Length - 1));
+			DateTime today = new DateTime();
+			int directoryId = (int)(today.Year * 1000000 + today.Month * 10000 + today.Day + today.Ticks);
 
 			ImageDirectory directory = new ImageDirectory
 				(
-					dirList[0].parentInstance,
-					"lel"
+					target,
+					GetTrimmedName(target)
 				)
 			{
 				imageList = dirList,
+				id = directoryId
 			};
 
 			//preferences.useAutoNaming == false ? GuessName(dirList) :
-			//dirList[0].parentInstance.Substring(dirList[0].parentInstance.LastIndexOf(@"\"), dirList[0].parentInstance.Length - 1))
 
 			Debug.WriteLine(directory.name);
 

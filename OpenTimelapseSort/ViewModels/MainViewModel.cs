@@ -67,6 +67,11 @@ namespace OpenTimelapseSort
             return true;
         }
 
+        public List<Image> GetImages(int id)
+        {
+            return new List<Image>();
+        }
+
 
         //
         // is called during creation of View

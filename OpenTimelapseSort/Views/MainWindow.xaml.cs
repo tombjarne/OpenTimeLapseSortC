@@ -2,18 +2,16 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
-
-using OpenTimelapseSort.ViewModels;
 using OpenTimelapseSort.Mvvm;
 using System;
 using System.IO;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using System.Runtime.CompilerServices;
+using System.Windows.Shapes;
 
 namespace OpenTimelapseSort.Views
 {
@@ -26,6 +24,8 @@ namespace OpenTimelapseSort.Views
 
         //private delegate void WarningReference(string errorHeadline, string errorDetails);
 
+
+        ObservableCollection<ListView> listViews = new ObservableCollection<ListView>();
 
         ObservableCollection<ImageDirectory> directories = new ObservableCollection<ImageDirectory>();
         ObservableCollection<Import> imports = new ObservableCollection<Import>();
@@ -43,6 +43,8 @@ namespace OpenTimelapseSort.Views
             InitializeComponent();
             SetScreenSize();
             FetchOnStartup();
+
+           // DirectoryViewer1.Items.Add(new DCell { DirectoryName = "Test", ImportDate = "Test2", ImageCount = 420 });
         }
 
         //////////////////////////////////////////////////////////
@@ -184,36 +186,31 @@ namespace OpenTimelapseSort.Views
             Import_Progress_Btn.IsEnabled = true;
             Import_Progress_Count.Text = "Found " + count + " images";
 
-            InitiateCountDown();
-
-            var sortingTask = Task.Run(() =>
-            { 
-                mainViewModel.SortImages(imageList, Render);
-            });
-
-            TaskAwaiter taskAwaiter = sortingTask.GetAwaiter();
-            taskAwaiter.OnCompleted(() =>
-            {
-                // invoke new popup to display success message
-            });
-        }
-
-        private void InitiateCountDown()
-        {
             var timer = new DispatcherTimer();
             TimeSpan timeSpan;
 
             timeSpan = TimeSpan.FromSeconds(5);
             timer = new DispatcherTimer(new TimeSpan(0, 0, 1), DispatcherPriority.Normal, delegate
-              {
-                  Sorting_Countdown.Text = timeSpan.ToString("c");
-                  if (timeSpan == TimeSpan.Zero)
-                  {
-                      timer.Stop();
-                      Import_Progress_Popup.IsOpen = false;
-                  }
-                  timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
-              }, Application.Current.Dispatcher);
+            {
+                Sorting_Countdown.Text = timeSpan.ToString("c");
+                if (timeSpan == TimeSpan.Zero)
+                {
+                    timer.Stop();
+                    Import_Progress_Popup.IsOpen = false;
+
+                    var sortingTask = Task.Run(() =>
+                    {
+                        mainViewModel.SortImages(imageList, Render);
+                    });
+
+                    TaskAwaiter taskAwaiter = sortingTask.GetAwaiter();
+                    taskAwaiter.OnCompleted(() =>
+                    {
+                        // invoke new popup to display success message
+                    });
+                }
+                timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
+            }, Application.Current.Dispatcher);
             timer.Start();
         }
 
@@ -222,18 +219,82 @@ namespace OpenTimelapseSort.Views
             DirectoryViewer1.Items.Add(sp);
         }
 
+
+        // alternative to this is an observable list and getting the id from the selectionmodel 
+        // but this alt only works properly if elements dont have to be generated manually 
+
+        private void GetImages(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button referer = (Button)sender;
+                mainViewModel.GetImages(Int16.Parse(referer.Name.Substring(3, referer.Name.Length - 1)));
+
+                // TODO: set screen values to the images of chosen directory
+            }
+            catch
+            {
+
+            }
+        }
+
         private void Render(ImageDirectory directory)
         {
-            // TODO: exception is here!
-            //DirectoryViewer1.Items.Add(new ImageDirectory("test","test"));
+            this.Dispatcher.Invoke(() =>
+            {
+                Style headlineStyle = this.FindResource("HeadlineTemplate") as Style;
+                Style subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
+                Style panelStyle = this.FindResource("PanelTemplate") as Style;
 
-            Debug.WriteLine(directory.name);
+                int width = GetRelativeSize()*402;
 
-            // TODO: add to observablecollections
-            // TODO: add on click action to GetImagesOfImportedDirectory
+                Debug.WriteLine(directory.name);
+                directories.Add(directory);
 
-            // DirectoryViewer1.Items.Add(element.visualElement);
-           
+                Label directoryName = new Label();
+                directoryName.Content = directory.name;
+                directoryName.Style = headlineStyle;
+                
+                Label directoryImageCount = new Label();
+                directoryImageCount.Content = directory.imageList.Count + " Images";
+                directoryImageCount.Style = headlineStyle;
+                
+                Label importDetails = new Label();
+                importDetails.Content = directory.timestamp;
+                importDetails.Style = subHeadlineStyle;
+
+                DockPanel topDockPanel = new DockPanel();
+                topDockPanel.Children.Add(directoryName);
+                topDockPanel.Children.Add(directoryImageCount);
+                DockPanel.SetDock(directoryName, Dock.Left);
+                DockPanel.SetDock(directoryImageCount, Dock.Right);
+
+                DockPanel bottomDockPanel = new DockPanel();
+                bottomDockPanel.Children.Add(importDetails);
+                DockPanel.SetDock(importDetails, Dock.Left);
+
+                Grid topWrapper = new Grid();
+                topWrapper.Children.Add(topDockPanel);
+
+                Grid bottomWrapper = new Grid();
+                bottomWrapper.Children.Add(bottomDockPanel);
+
+                DockPanel dockWrapper = new DockPanel();
+                dockWrapper.Children.Add(topWrapper);
+                dockWrapper.Children.Add(bottomWrapper);
+                dockWrapper.Width = width;
+                DockPanel.SetDock(topWrapper, Dock.Top);
+                DockPanel.SetDock(bottomWrapper, Dock.Bottom);
+             
+                StackPanel directoryPanel = new StackPanel();
+                directoryPanel.Style = panelStyle;
+                directoryPanel.Width = width;
+                directoryPanel.Height = width*0.2;
+                directoryPanel.Children.Add(dockWrapper);
+
+                DirectoryViewer1.Items.Add(directoryPanel);
+
+            });       
         }
 
         private void GetImagesOfImportedDirectory(int id)
@@ -246,6 +307,11 @@ namespace OpenTimelapseSort.Views
         {
             //set width and height according to system specs
             //maybe also adjust text size
+        }
+
+        private int GetRelativeSize()
+        {
+            return 1;
         }
 
         public void RenderElement(object obj)
