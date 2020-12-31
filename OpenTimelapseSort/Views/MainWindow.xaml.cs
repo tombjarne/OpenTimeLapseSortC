@@ -51,7 +51,7 @@ namespace OpenTimelapseSort.Views
         //////                  XAMLFUNCTIONS               //////
         //////////////////////////////////////////////////////////
 
-        private void FetchOnStartup()
+        private async void FetchOnStartup()
         {
             // TODO: make it async!
             // check for db
@@ -83,6 +83,8 @@ namespace OpenTimelapseSort.Views
             else
             {
                 this.Close();
+
+                // TODO: fix below statement
                 //InvokeWarningPopup("Could not perform autosave", "Could not save your latest changes", ForceClose);
             }
         }
@@ -181,16 +183,15 @@ namespace OpenTimelapseSort.Views
         private void HandleListingProgress(int count, List<Image> imageList)
         {
 
-            Import_Progress_Btn.IsEnabled = true;
             Import_Progress_Count.Text = "Found " + count + " images";
 
             var timer = new DispatcherTimer();
             TimeSpan timeSpan;
 
-            timeSpan = TimeSpan.FromSeconds(5);
+            timeSpan = TimeSpan.FromSeconds(9);
             timer = new DispatcherTimer(new TimeSpan(0, 0, 1), DispatcherPriority.Normal, delegate
             {
-                Sorting_Countdown.Text = timeSpan.ToString("c");
+                Sorting_Countdown.Text = timeSpan.ToString(@"\ s");
                 if (timeSpan == TimeSpan.Zero)
                 {
                     timer.Stop();

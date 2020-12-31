@@ -7,9 +7,6 @@ using OpenTimelapseSort.ViewModels;
 
 namespace OpenTimelapseSort.Views
 {
-    /// <summary>
-    /// Interaktionslogik für Preferences.xaml
-    /// </summary>
     public partial class PreferencesView : Window
     {
 
@@ -49,10 +46,11 @@ namespace OpenTimelapseSort.Views
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
-            preferencesViewModel.SavePreferences(true, (bool)Copy.IsChecked, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value);
+            preferencesViewModel.SavePreferences(true, (bool)Copy.IsChecked, 
+                (double)IntervalSlider.Value, (int)IntervalCountSlider.Value);
         }
 
-        private void minimizeApplication(object sender, RoutedEventArgs e)
+        private void closePreferencesWindow(object sender, RoutedEventArgs e)
         {
             App.Current.Windows[1].Close();
         }

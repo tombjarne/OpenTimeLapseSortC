@@ -60,11 +60,16 @@ namespace OpenTimelapseSort.DataServices
 			{
 				if (i > 0)
 				{
+					Debug.WriteLine(imageList[i].fileTime);
+					Debug.WriteLine(imageList[i-1].fileTime);
+					Debug.WriteLine(imageList[i+1].fileTime);
 					prevDeviation = (imageList[i].fileTime - imageList[i - 1].fileTime).TotalSeconds;
+					Debug.WriteLine(prevDeviation);
 
 					if (i < imageList.Count - 1)
 					{
 						currDeviation = (imageList[i + 1].fileTime - imageList[i].fileTime).TotalSeconds;
+						Debug.WriteLine(currDeviation);
 					}
 					else
 					{
@@ -72,10 +77,13 @@ namespace OpenTimelapseSort.DataServices
 					}
 				}
 
+				// TODO: introduce fehlertoleranz
+
 				if (currDeviation == prevDeviation)
 				{
 
 					dirList.Add(imageList[i]);
+
 					if(i + 1 == imageList.Count)
                     {
 						if(pointer - seqPointer >= runs)
@@ -84,7 +92,8 @@ namespace OpenTimelapseSort.DataServices
 						}
 						else
                         {
-							addToRandomDir(dirList, render);
+							randomDirList.Add(imageList[i]);
+							addToRandomDir(randomDirList, render);
                         }
 					}
 					pointer += 1; // marks last image in current sequence that fits previous deviations
@@ -121,8 +130,13 @@ namespace OpenTimelapseSort.DataServices
 		private void addToRandomDir(List<Image> dirList, RenderDelegate render) // can sometimes only contain a single image
         {
 			Preferences preferences = service.FetchPreferences();
-			ImageDirectory directory;
 			// TODO: check if there is already a random directory for the current import
+			string target = dirList[0].parentInstance;
+
+			DateTime today = new DateTime();
+			int directoryId = (int)(today.Year * 1000000 + today.Month * 10000 + today.Day + today.Ticks);
+
+			ImageDirectory directory;
 
 			try
             {
@@ -133,18 +147,16 @@ namespace OpenTimelapseSort.DataServices
 			}
             catch
             {
-
-            }
-
-			directory = new ImageDirectory
+				directory = new ImageDirectory
 				(
-					dirList[0].parentInstance,
-					"Random Directory"
+					target,
+					GetTrimmedName(target)
 				)
-			{
-				imageList = dirList,
-				id = Int16.Parse(DateTime.Now.ToString("hmmsstt"))
-			};
+				{
+					imageList = dirList,
+					id = directoryId
+				};
+			}
 
             try
             {
@@ -155,7 +167,7 @@ namespace OpenTimelapseSort.DataServices
 			catch
             {
 				Import import = new Import(false);
-				import.directories.Add(directory);
+				import.tryPush(directory);
 				import.length++;
 			}
 

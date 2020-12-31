@@ -20,7 +20,7 @@
             </Grid.ColumnDefinitions>
             <Label x:Name="window_name" Grid.Column="0" Content="Preferences" HorizontalAlignment="Left" Margin="0,2,0,-2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
             </Label>
-            <Ellipse x:Name="minimize_btn" HorizontalAlignment="Left" Height="17" Margin="365,14,0,0" VerticalAlignment="Top" Width="17" Fill="Coral" MouseDown="minimizeApplication"/>
+            <Ellipse x:Name="minimize_btn" HorizontalAlignment="Left" Height="17" Margin="365,14,0,0" VerticalAlignment="Top" Width="17" Fill="Coral" MouseDown="closePreferencesWindow"/>
             <Rectangle HorizontalAlignment="Left" Height="44" Margin="128,0,0,-5" Width="228" MouseDown="moveWindow" Fill="#FF34404D"/>
             <Label x:Name="Headline1" Grid.Column="0" Content="Edit your options&#xD;&#xA;" HorizontalAlignment="Left" Margin="17,60,0,-60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="22" Foreground="White"/>
             <Label Grid.Column="0" Content="Interval&#xD;&#xA;" HorizontalAlignment="Left" Margin="36,191,0,-191" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>

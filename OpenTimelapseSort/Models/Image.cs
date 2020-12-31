@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using OpenTimelapseSort.Constants;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 public class Image
 {
@@ -21,6 +22,7 @@ public class Image
         this.name = name;
         this.target = target;
         this.parentInstance = parentInstance;
+        fileTime = File.GetCreationTime(target);
     }
 
     public void SetTimestamp(string value)

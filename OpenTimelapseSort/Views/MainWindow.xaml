@@ -186,7 +186,7 @@
                 </DockPanel>
             </Grid>
         </Popup>
-        <Popup Name="Import_Progress_Popup" Width="Auto" Height="350" IsOpen="False" PlacementTarget="{Binding ElementName=Pane}" Placement="Center">
+        <Popup Name="Import_Progress_Popup" Width="Auto" IsOpen="False" PlacementTarget="{Binding ElementName=Pane}" Placement="Center">
             <Grid Background="#34404D">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -195,24 +195,16 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <DockPanel Margin="15" Grid.Row="0" Background="#34404D">
-                    <Label Content="Prepare" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="#FFFF8383" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
-                    <TextBlock x:Name="Import_Progress_Count" Grid.Column="0" HorizontalAlignment="Left" Margin="0,2,0,-2" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
-                        Processing...
-                    </TextBlock>
-                    <Label Content="Starting Import in" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="#FFFF8383" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
-                    <TextBlock x:Name="Sorting_Countdown" Grid.Column="0" HorizontalAlignment="Left" Margin="0,2,0,-2" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
-                        10
-                    </TextBlock>
-                </DockPanel>
-                <DockPanel Margin="15" Grid.Row="1">
-                    <Button x:Name="Import_Progress_Btn" IsEnabled="False" Content="Begin Import" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0,10,0" Background="#FFFF8383" Foreground="#FF3D4A59" Width="195" BorderBrush="{x:Null}">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
+                <DockPanel Margin="20" Grid.Row="0" Background="#34404D">
+                    <Grid DockPanel.Dock="Top">
+                        <Label Content="Ready?" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="36" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
+                        <TextBlock x:Name="Import_Progress_Count" Grid.Column="0" HorizontalAlignment="Left" Margin="0,2,0,-2" Padding="20,0,20,0" FontWeight="Bold" FontSize="18" Foreground="#FFFF8383">
+                        processing...
+                        </TextBlock>
+                    </Grid>
+                    <Grid DockPanel.Dock="Bottom">
+                        <TextBlock x:Name="Sorting_Countdown" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,-2" Padding="60,0,60,0" FontWeight="Bold" FontSize="56" Foreground="#FFFF8383"/>
+                    </Grid>
                 </DockPanel>
             </Grid>
         </Popup>
