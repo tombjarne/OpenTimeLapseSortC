@@ -227,8 +227,8 @@ namespace OpenTimelapseSort.Views
         {
             try
             {
-                Button referer = (Button)sender;
-                mainViewModel.GetImages(Int16.Parse(referer.Name.Substring(3, referer.Name.Length - 1)));
+                StackPanel referer = (StackPanel)sender;
+                mainViewModel.GetImages(Int16.Parse(referer.Name[1..]));
 
                 // TODO: set screen values to the images of chosen directory
             }
@@ -248,7 +248,6 @@ namespace OpenTimelapseSort.Views
 
                 int width = GetRelativeSize()*402;
 
-                Debug.WriteLine(directory.name);
                 directories.Add(directory);
 
                 Label directoryName = new Label();
@@ -287,10 +286,12 @@ namespace OpenTimelapseSort.Views
                 DockPanel.SetDock(bottomWrapper, Dock.Bottom);
              
                 StackPanel directoryPanel = new StackPanel();
+                directoryPanel.Name = "E"+directory.id.ToString();
                 directoryPanel.Style = panelStyle;
                 directoryPanel.Width = width;
                 directoryPanel.Height = width*0.2;
                 directoryPanel.Children.Add(dockWrapper);
+                directoryPanel.MouseDown += new MouseButtonEventHandler(GetImages);
 
                 DirectoryViewer1.Items.Add(directoryPanel);
 

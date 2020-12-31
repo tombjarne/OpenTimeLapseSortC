@@ -11,19 +11,16 @@ namespace OpentimelapseSort.Models
 
         public bool useCopy { get; set; }
 
-        public bool useAutoNaming { get; set; }
-
         public bool useAutoDetectInterval { get; set; }
 
         public double sequenceInterval { get; set; }
 
         public int sequenceImageCount { get; set; }
 
-        public Preferences(bool useAutoDetectInterval, bool useCopy, bool useAutoNaming, double sequenceInterval, int sequenceImageCount)
+        public Preferences(bool useAutoDetectInterval, bool useCopy, double sequenceInterval, int sequenceImageCount)
         {
             this.useAutoDetectInterval = useAutoDetectInterval;
             this.useCopy = useCopy;
-            this.useAutoNaming = useAutoNaming;
             this.sequenceInterval = sequenceInterval;
             this.sequenceImageCount = sequenceImageCount;
             this.id = 0;

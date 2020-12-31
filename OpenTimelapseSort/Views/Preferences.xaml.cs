@@ -27,8 +27,6 @@ namespace OpenTimelapseSort.Views
         public Preferences()
         {
             InitializeComponent();
-
-            this.DataContext = new PreferencesViewModel();
             FetchOnStartup();
         }
 
@@ -72,15 +70,7 @@ namespace OpenTimelapseSort.Views
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
-            // TODO: update view to include new useAutoName field
-            if(pvm.SavePreferences(true, (bool)Copy.IsChecked, true, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value))
-            {
-                App.Current.Windows[1].Close();
-            }
-            else
-            {
-                // TODO: print that something went wrong
-            }
+            pvm.SavePreferences(true, (bool)Copy.IsChecked, (double)IntervalSlider.Value, (int)IntervalCountSlider.Value);
         }
 
         private void minimizeApplication(object sender, RoutedEventArgs e)

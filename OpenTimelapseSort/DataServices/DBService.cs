@@ -36,7 +36,7 @@ namespace OpenTimelapseSort.DataServices
             // save into Object
             // return Object
 
-            return new Preferences(true, true, true, 2.0, 1); // TODO: remove, test purpose only
+            return new Preferences(true, true, 2.0, 1); // TODO: remove, test purpose only
         }
 
         // returns a list of Import Objects fetched from db
