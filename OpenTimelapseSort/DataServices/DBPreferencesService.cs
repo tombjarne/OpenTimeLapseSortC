@@ -46,7 +46,7 @@ namespace OpenTimelapseSort.DataServices
             {
                 using (var database = new PreferencesContext())
                 {
-                    Preferences preferences = new Preferences(true, true, 10, 20);
+                    Preferences preferences = new Preferences(true, true, 50, 10, 20);
                     database.Add(preferences);
                     database.SaveChanges();
                 }

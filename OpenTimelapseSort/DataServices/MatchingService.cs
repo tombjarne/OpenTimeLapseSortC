@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Windows.Controls;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -28,24 +26,33 @@ namespace OpenTimelapseSort.DataServices
 			return service.FetchPreferences().useCopy;
         }
 
-        public bool WithinSameSequence(Image previous, Image current)
+        public bool WithinSameSequence(double curD, double preD, double generosity)
         {
-            // get Preferences from DB
-            Preferences preferences = DBService.ReturnPreferences();
-            return true;
-        }
 
-		//public void SortImages(List<Image> images, RenderNewDirectoryCallback rndc, RenderExistingDirectoryCallback redc)
+			double syncValue = preD * generosity;
+
+            if (preD >= curD - syncValue && preD <= curD + syncValue ||
+				preD >= curD + syncValue && preD <= curD - syncValue)
+            {
+				return true;
+            } else
+            {
+				return false;
+            }
+
+		}
 
 		public void SortImages(List<Image> imageList, RenderDelegate render)
         {
-			// TODO: implement logic
-
 			int pointer = 0; // marks end of sequence
 			int seqPointer = 0; // marks begin of sequence
 			double currDeviation = 0.0;
 			double prevDeviation = 0.0;
 
+			// TODO: simplify to only fetch preferences instance once
+			// TODO: make algorithm detect new sequences based on date or filesize
+
+			double deviationGenerosity = (service.FetchPreferences().sequenceIntervalGenerosity)/100;
 			int runs = service.FetchPreferences().sequenceImageCount; // pref count to make a sequence
 
             if (service.FetchPreferences().useAutoDetectInterval)
@@ -60,16 +67,11 @@ namespace OpenTimelapseSort.DataServices
 			{
 				if (i > 0)
 				{
-					Debug.WriteLine(imageList[i].fileTime);
-					Debug.WriteLine(imageList[i-1].fileTime);
-					Debug.WriteLine(imageList[i+1].fileTime);
 					prevDeviation = (imageList[i].fileTime - imageList[i - 1].fileTime).TotalSeconds;
-					Debug.WriteLine(prevDeviation);
 
 					if (i < imageList.Count - 1)
 					{
 						currDeviation = (imageList[i + 1].fileTime - imageList[i].fileTime).TotalSeconds;
-						Debug.WriteLine(currDeviation);
 					}
 					else
 					{
@@ -77,25 +79,18 @@ namespace OpenTimelapseSort.DataServices
 					}
 				}
 
-				// TODO: introduce fehlertoleranz
-
-				if (currDeviation == prevDeviation)
+				if (WithinSameSequence(currDeviation, prevDeviation, deviationGenerosity))
 				{
-
+					Debug.WriteLine(WithinSameSequence(currDeviation, prevDeviation, deviationGenerosity));
 					dirList.Add(imageList[i]);
 
-					if(i + 1 == imageList.Count)
+					Debug.WriteLine(pointer - seqPointer);
+					Debug.WriteLine(dirList.Count);
+					if(pointer - seqPointer >= runs && dirList.Count >= runs)
                     {
-						if(pointer - seqPointer >= runs)
-                        {
-							createDir(dirList, render);
-						}
-						else
-                        {
-							randomDirList.Add(imageList[i]);
-							addToRandomDir(randomDirList, render);
-                        }
+						createDir(dirList, render);
 					}
+					
 					pointer += 1; // marks last image in current sequence that fits previous deviations
 
 				}
@@ -115,8 +110,13 @@ namespace OpenTimelapseSort.DataServices
 					seqPointer = i;
 					dirList = new List<Image>(); // reinit dirList
 				}
-				if (i + 1 == imageList.Count && randomDirList.Count > 0)
+				if (i + 1 == imageList.Count && randomDirList.Count > 0 || dirList.Count > 0)
 				{
+					if(dirList.Count < runs && dirList.Count > 0)
+                    {
+						randomDirList.AddRange(dirList);
+					}
+
 					addToRandomDir(randomDirList, render);
 				}
 			}

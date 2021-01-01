@@ -18,7 +18,7 @@ namespace OpenTimelapseSort.ViewModels
             InitialisePreferencesDB();
         }
 
-        public bool SavePreferences(bool useAutoDetectInterval, bool copyIsEnabled, double imageInterval, int imageCount)
+        public bool SavePreferences(bool useAutoDetectInterval, bool copyIsEnabled, double imageInterval, int generosity, int imageCount)
         {
 
             bool success = false;
@@ -32,6 +32,7 @@ namespace OpenTimelapseSort.ViewModels
                         useAutoDetectInterval,
                         copyIsEnabled,
                         imageInterval,
+                        generosity,
                         imageCount
                     );
 

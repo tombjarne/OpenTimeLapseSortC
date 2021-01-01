@@ -19,6 +19,8 @@ namespace OpenTimelapseSort.Views
             SetPreferences(preferencesViewModel.FetchFromDatabase());
         }
 
+        // TODO: simplify
+
         void UpdateSliderCountValue(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Slider slider = (Slider)sender;
@@ -33,6 +35,13 @@ namespace OpenTimelapseSort.Views
             this.Interval.Content = value;
         }
 
+        void UpdateGenerosityValue(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Slider slider = (Slider)sender;
+            double value = Math.Round(slider.Value, 2);
+            this.Generosity.Content = value + " %";
+        }
+
         private void SetPreferences(Preferences preferences)
         {
             IntervalCount.Content = preferences.sequenceImageCount.ToString();
@@ -41,13 +50,16 @@ namespace OpenTimelapseSort.Views
             Interval.Content = preferences.sequenceInterval.ToString();
             IntervalSlider.Value = preferences.sequenceInterval;
 
+            Generosity.Content = preferences.sequenceIntervalGenerosity.ToString();
+            GenerositySlider.Value = preferences.sequenceIntervalGenerosity;
+
             Copy.IsChecked = preferences.useCopy;
         }
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
             preferencesViewModel.SavePreferences(true, (bool)Copy.IsChecked, 
-                (double)IntervalSlider.Value, (int)IntervalCountSlider.Value);
+                (double)IntervalSlider.Value, (int)GenerositySlider.Value, (int)IntervalCountSlider.Value);
         }
 
         private void closePreferencesWindow(object sender, RoutedEventArgs e)
@@ -58,6 +70,11 @@ namespace OpenTimelapseSort.Views
         private void moveWindow(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
+        }
+
+        private void Copy_Checked(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
