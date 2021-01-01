@@ -188,7 +188,8 @@ namespace OpenTimelapseSort
                  });
 
 
-            // TODO: find way to pass the directory without getting thread warning
+            // TODO: find a way to async return a directory to render each time one is completed!
+
             TaskAwaiter sortingTaskAwaiter = sortingTask.GetAwaiter();
             sortingTaskAwaiter.OnCompleted(() =>
                 {

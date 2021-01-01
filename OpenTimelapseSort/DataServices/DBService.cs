@@ -131,15 +131,8 @@ namespace OpenTimelapseSort.DataServices
             using (var context = new ImportContext())
             {
                 var directory = context.ImageDirectories
-                    .Select(directory => new
-                    {
-                        id = directory.id,
-                        target = directory.target,
-                        name = directory.name,
-                        timestamp = directory.timestamp,
-                        imageList = directory.imageList
-                    }).Where(directory => directory.name.Contains("Random"));
-                return (ImageDirectory)directory;
+                        .Single(predicate => predicate.name.Contains("Random"));
+                return directory;
             }
         }
 
