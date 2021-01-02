@@ -188,7 +188,7 @@ namespace OpenTimelapseSort.Views
             var timer = new DispatcherTimer();
             TimeSpan timeSpan;
 
-            timeSpan = TimeSpan.FromSeconds(9);
+            timeSpan = TimeSpan.FromSeconds(1);
             timer = new DispatcherTimer(new TimeSpan(0, 0, 1), DispatcherPriority.Normal, delegate
             {
                 Sorting_Countdown.Text = timeSpan.ToString(@"\ s");
@@ -237,62 +237,68 @@ namespace OpenTimelapseSort.Views
             }
         }
 
-        private void Render(ImageDirectory directory)
+        private void Render(List<ImageDirectory> dirList)
         {
             this.Dispatcher.Invoke(() =>
             {
-                Style headlineStyle = this.FindResource("HeadlineTemplate") as Style;
-                Style subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
-                Style panelStyle = this.FindResource("PanelTemplate") as Style;
+                lock (directories)
+                {
+                    Style headlineStyle = this.FindResource("HeadlineTemplate") as Style;
+                    Style subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
+                    Style panelStyle = this.FindResource("PanelTemplate") as Style;
 
-                int width = GetRelativeSize()*402;
+                    int width = GetRelativeSize() * 402;
 
-                directories.Add(directory);
+                    foreach (var directory in dirList)
+                    {
+                        directories.Add(directory);
 
-                Label directoryName = new Label();
-                directoryName.Content = directory.name;
-                directoryName.Style = headlineStyle;
-                
-                Label directoryImageCount = new Label();
-                directoryImageCount.Content = directory.imageList.Count + " Images";
-                directoryImageCount.Style = headlineStyle;
-                
-                Label importDetails = new Label();
-                importDetails.Content = directory.timestamp;
-                importDetails.Style = subHeadlineStyle;
+                        Label directoryName = new Label();
+                        directoryName.Content = directory.name;
+                        directoryName.Style = headlineStyle;
 
-                DockPanel topDockPanel = new DockPanel();
-                topDockPanel.Children.Add(directoryName);
-                topDockPanel.Children.Add(directoryImageCount);
-                DockPanel.SetDock(directoryName, Dock.Left);
-                DockPanel.SetDock(directoryImageCount, Dock.Right);
+                        Label directoryImageCount = new Label();
+                        directoryImageCount.Content = directory.imageList.Count + " Images";
+                        directoryImageCount.Style = headlineStyle;
 
-                DockPanel bottomDockPanel = new DockPanel();
-                bottomDockPanel.Children.Add(importDetails);
-                DockPanel.SetDock(importDetails, Dock.Left);
+                        Label importDetails = new Label();
+                        importDetails.Content = directory.timestamp;
+                        importDetails.Style = subHeadlineStyle;
 
-                Grid topWrapper = new Grid();
-                topWrapper.Children.Add(topDockPanel);
+                        DockPanel topDockPanel = new DockPanel();
+                        topDockPanel.Children.Add(directoryName);
+                        topDockPanel.Children.Add(directoryImageCount);
+                        DockPanel.SetDock(directoryName, Dock.Left);
+                        DockPanel.SetDock(directoryImageCount, Dock.Right);
 
-                Grid bottomWrapper = new Grid();
-                bottomWrapper.Children.Add(bottomDockPanel);
+                        DockPanel bottomDockPanel = new DockPanel();
+                        bottomDockPanel.Children.Add(importDetails);
+                        DockPanel.SetDock(importDetails, Dock.Left);
 
-                DockPanel dockWrapper = new DockPanel();
-                dockWrapper.Children.Add(topWrapper);
-                dockWrapper.Children.Add(bottomWrapper);
-                dockWrapper.Width = width;
-                DockPanel.SetDock(topWrapper, Dock.Top);
-                DockPanel.SetDock(bottomWrapper, Dock.Bottom);
-             
-                StackPanel directoryPanel = new StackPanel();
-                directoryPanel.Name = "E"+directory.id.ToString();
-                directoryPanel.Style = panelStyle;
-                directoryPanel.Width = width;
-                directoryPanel.Height = width*0.2;
-                directoryPanel.Children.Add(dockWrapper);
-                directoryPanel.MouseDown += new MouseButtonEventHandler(GetImages);
+                        Grid topWrapper = new Grid();
+                        topWrapper.Children.Add(topDockPanel);
 
-                DirectoryViewer1.Items.Add(directoryPanel);
+                        Grid bottomWrapper = new Grid();
+                        bottomWrapper.Children.Add(bottomDockPanel);
+
+                        DockPanel dockWrapper = new DockPanel();
+                        dockWrapper.Children.Add(topWrapper);
+                        dockWrapper.Children.Add(bottomWrapper);
+                        dockWrapper.Width = width;
+                        DockPanel.SetDock(topWrapper, Dock.Top);
+                        DockPanel.SetDock(bottomWrapper, Dock.Bottom);
+
+                        StackPanel directoryPanel = new StackPanel();
+                        directoryPanel.Name = "E" + directory.id.ToString();
+                        directoryPanel.Style = panelStyle;
+                        directoryPanel.Width = width;
+                        directoryPanel.Height = width * 0.2;
+                        directoryPanel.Children.Add(dockWrapper);
+                        directoryPanel.MouseDown += new MouseButtonEventHandler(GetImages);
+
+                        DirectoryViewer1.Items.Add(directoryPanel);
+                    }
+                }
 
             });       
         }

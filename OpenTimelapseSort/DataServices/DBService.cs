@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using OpenTimelapseSort.Contexts;
 using OpentimelapseSort.Models;
 using System.Linq;
+using System.Diagnostics;
+using System.Collections;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -130,18 +132,42 @@ namespace OpenTimelapseSort.DataServices
         {
             using (var context = new ImportContext())
             {
-                var directory = context.ImageDirectories
-                        .Single(predicate => predicate.name.Contains("Random"));
-                return directory;
+                try
+                {
+                    var directory = context.ImageDirectories
+                        .Single(d => d.name.Contains("Random") && d.timestamp == DateTime.Today);
+                    return directory;
+
+                } catch (Exception e)
+                {
+                    Debug.WriteLine(e.StackTrace);
+
+                    var directory = new ImageDirectory("default", "Random Directory");
+                    return directory;
+                }
             }
         }
 
         public void UpdateImageDirectory(ImageDirectory directory)
         {
-            using (var context = new ImportContext())
+            using (var database = new ImportContext())
             {
-                context.Update(directory);
-            }        
+                try
+                {
+                    var entity = database.ImageDirectories
+                        .Single(d => d.name.Contains("Random") && d.timestamp == DateTime.Today);
+
+                    database.Entry(entity).CurrentValues.SetValues(directory);
+                    database.SaveChanges();
+
+                } catch (Exception e)
+                {
+                    // TODO: fix insertion statement
+                    Debug.WriteLine(e.StackTrace);
+                    //database.ImageDirectories.Add(directory);
+                    //database.SaveChanges();
+                }
+            }
         }
 
         public void UpdateImport(Import import)

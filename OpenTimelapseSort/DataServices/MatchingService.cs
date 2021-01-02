@@ -8,12 +8,12 @@ namespace OpenTimelapseSort.DataServices
 {
     class MatchingService
     {
-		public delegate void RenderDelegate(object obj);
+		public delegate void RenderDelegate(List<ImageDirectory> imageDirectories);
 
 		DBPreferencesService service = new DBPreferencesService();
 		DBService dbService = new DBService();
 
-		List<ImageDirectory> directories = new List<ImageDirectory>(); // each directory will receive their images in the matching function
+		List<ImageDirectory> imageDirectories = new List<ImageDirectory>(); // each directory will receive their images in the matching function
 		List<Import> imports = new List<Import>(); // does it need to be a list?
 
 		public bool UseAutoDetection()
@@ -92,19 +92,8 @@ namespace OpenTimelapseSort.DataServices
 
 				if (WithinSameSequence(currDeviation, prevDeviation, deviationGenerosity))
 				{
-					Debug.WriteLine(WithinSameSequence(currDeviation, prevDeviation, deviationGenerosity));
 					dirList.Add(imageList[i]);
-
-					Debug.WriteLine(pointer - seqPointer);
-					Debug.WriteLine(dirList.Count);
-
-					//if(pointer - seqPointer >= runs)
-                    //{
-					//	createDir(dirList, render);
-					//}
-					
 					pointer += 1; // marks last image in current sequence that fits previous deviations
-
 				}
 				else
 				{
@@ -112,7 +101,7 @@ namespace OpenTimelapseSort.DataServices
 					//if (pointer - seqPointer >= runs) // images do not have same deviation and do fill the length requirement
 					if (dirList.Count >= runs) // images do not have same deviation and do fill the length requirement
 					{
-						createDir(dirList, render); // current list will be added due to matching requirements
+						createDir(dirList); // current list will be added due to matching requirements
 					}
 					else // images do not have same deviation and do not fill the minimum length requirement
 					{
@@ -128,12 +117,21 @@ namespace OpenTimelapseSort.DataServices
 					if(dirList.Count < runs && dirList.Count > 0)
                     {
 						randomDirList.AddRange(dirList);
+						addToRandomDir(randomDirList);
 					} else if (randomDirList.Count > 0 && randomDirList.Count < runs)
                     {
-						addToRandomDir(randomDirList, render);
+						addToRandomDir(randomDirList);
 					}
+					
+					if (dirList.Count >= runs)
+                    {
+						createDir(dirList);
+                    }
 				}
 			}
+			Debug.WriteLine(imageDirectories.Count());
+			Debug.WriteLine(imageDirectories[0].imageList.Count);
+			render(imageDirectories);
 		}
 
 		private Import GetImportInstance()
@@ -141,7 +139,7 @@ namespace OpenTimelapseSort.DataServices
 			return dbService.ReturnCurrentImport();
         }
 
-		private void addToRandomDir(List<Image> dirList, RenderDelegate render) // can sometimes only contain a single image
+		private void addToRandomDir(List<Image> dirList) // can sometimes only contain a single image
         {
 			Debug.WriteLine("addToRandomDir");
 
@@ -152,27 +150,20 @@ namespace OpenTimelapseSort.DataServices
 			DateTime today = new DateTime();
 			int directoryId = (int)(today.Year * 1000000 + today.Month * 10000 + today.Day + today.Ticks);
 
-			ImageDirectory directory;
+			ImageDirectory directory = dbService.GetRandomDirInstance();
 
-			try
+			if(directory.target == "default")
             {
-				directory = dbService.GetRandomDirInstance();
+				directory.target = target;
+				directory.name = GetTrimmedName(target) + "Random";
+				directory.id = directoryId;
+				directory.imageList = dirList;
+			} else
+            {
 				directory.imageList.AddRange(dirList);
+			}
 
-				dbService.UpdateImageDirectory(directory);
-			}
-            catch
-            {
-				directory = new ImageDirectory
-				(
-					target,
-					GetTrimmedName(target)
-				)
-				{
-					imageList = dirList,
-					id = directoryId
-				};
-			}
+			dbService.UpdateImageDirectory(directory);
 
 			/*
             try
@@ -191,7 +182,7 @@ namespace OpenTimelapseSort.DataServices
 
 			// TODO: save changes to db
 
-			render(directory);
+			imageDirectories.Add(directory);
 		}
 
 
@@ -235,7 +226,7 @@ namespace OpenTimelapseSort.DataServices
 			return target.Substring(target.LastIndexOf(@"\"), (target.Length) - target.LastIndexOf(@"\")).Replace(@"\", "");
 		}
 
-		private void createDir(List<Image> dirList, RenderDelegate render)
+		private void createDir(List<Image> dirList)
         {
 			Debug.WriteLine("createDir");
 
@@ -282,7 +273,7 @@ namespace OpenTimelapseSort.DataServices
 			}
 			*/
 
-			render(directory);
+			imageDirectories.Add(directory);
 
 			// TODO: save changes to db
         }

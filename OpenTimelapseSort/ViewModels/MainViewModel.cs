@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -24,7 +25,7 @@ namespace OpenTimelapseSort
         public delegate void ImageListingProgress(int count, List<Image> imageList);
         public delegate void SortProgress(StackPanel panel);
         public delegate void InitFetch(StackPanel panel);
-        public delegate void ViewUpdate(ImageDirectory directory);
+        public delegate void ViewUpdate(List<ImageDirectory> directories);
 
         public MainViewModel()
         {
@@ -176,24 +177,55 @@ namespace OpenTimelapseSort
         public void SortImages(List<Image> imageList, ViewUpdate update)
         {
             // RenderDelegate = callback; how to get this into RenderElement?
-            ImageDirectory directory = new ImageDirectory("default","default");
 
             Task sortingTask = Task
                 .Run(() => {
-                    matching.SortImages(imageList, (newDirectory) =>
+                    matching.SortImages(imageList, (List<ImageDirectory> directories) =>
                     {
-                        directory = (ImageDirectory)newDirectory;
-                        Debug.WriteLine(directory.name);
+                        // TODO: parameterize path to images
+                        string destination = @"C:\Users\bjarn\Videos";
+                        string destFile;
+
+                        try
+                        {
+                            foreach (var directory in directories)
+                            {
+
+                                // TODO: each directory needs unique name!
+                                destination += @"\"+directory.name+"Test";
+                                Debug.WriteLine(destination);
+                                System.IO.Directory.CreateDirectory(destination);
+
+                                foreach (var image in directory.imageList)
+                                {
+                                    Debug.WriteLine(destination);
+                                    destFile = System.IO.Path.Combine(destination, image.name);
+                                    using (var writer = File.Open(destFile, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
+                                    {
+                                        Debug.WriteLine(destFile);
+                                        File.Copy(image.target, destFile, true);
+                                    };
+                                }
+
+                                destination = @"C:\Users\bjarn\Bilder";
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e.StackTrace);
+                        }
+
+                        update(directories);
                     });
                  });
-
 
             // TODO: find a way to async return a directory to render each time one is completed!
 
             TaskAwaiter sortingTaskAwaiter = sortingTask.GetAwaiter();
             sortingTaskAwaiter.OnCompleted(() =>
                 {
-                    update(directory);
+                    // TODO: tell user it has been finished
+                    // update(directory);
                 });
         }
     }
