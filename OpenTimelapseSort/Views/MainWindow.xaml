@@ -203,7 +203,9 @@
                         </TextBlock>
                     </Grid>
                     <Grid DockPanel.Dock="Bottom">
-                        <TextBlock x:Name="Sorting_Countdown" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,-2" Padding="60,0,60,0" FontWeight="Bold" FontSize="56" Foreground="#FFFF8383"/>
+                        <TextBlock x:Name="Sorting_Countdown" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,-2" Padding="60,0,60,0" FontWeight="Bold" FontSize="56" Foreground="#FFFF8383">
+                        10
+                        </TextBlock>
                     </Grid>
                 </DockPanel>
             </Grid>

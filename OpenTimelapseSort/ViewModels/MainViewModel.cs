@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace OpenTimelapseSort
 {
@@ -157,15 +158,15 @@ namespace OpenTimelapseSort
 
                         for (int p = 0; p < subDirLength; p++)
                         {
-                            Image image = new Image(subDirImages[i], subDirInfo.FullName, subDirInfo.DirectoryName);
-                            Debug.WriteLine(subDirInfo.DirectoryName);
+                            Debug.WriteLine("Filename "+Path.GetFileName(subDirImages[i]));
+                            Image image = new Image(Path.GetFileName(subDirImages[i]), subDirInfo.FullName, subDirInfo.DirectoryName);
                             imageList.Add(image);
                         }
                     }
                     else
                     {
-                        Image image = new Image(files[i], info.FullName, info.DirectoryName);
-                        Debug.WriteLine(info.DirectoryName);
+                        Debug.WriteLine("Filename " + Path.GetFileName(files[i]));
+                        Image image = new Image(Path.GetFileName(files[i]), info.FullName, info.DirectoryName);
                         imageList.Add(image);
                     }
                 }
@@ -183,28 +184,35 @@ namespace OpenTimelapseSort
                     matching.SortImages(imageList, (List<ImageDirectory> directories) =>
                     {
                         // TODO: parameterize path to images
-                        string destination = @"C:\Users\bjarn\Videos";
-                        string destFile;
+                        string destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                        string source;
+                        string mainDirectory = destination + @"\OTS_IMG";
+
+                        // TODO: extract into method
+
+                        if (!Directory.Exists(mainDirectory))
+                        {
+                            Directory.CreateDirectory(mainDirectory);
+                            Debug.WriteLine(mainDirectory);
+                            Debug.WriteLine(Directory.Exists(mainDirectory));
+                        }
 
                         try
                         {
                             foreach (var directory in directories)
                             {
-
-                                // TODO: each directory needs unique name!
-                                destination += @"\"+directory.name+"Test";
+                                destination = mainDirectory + @"\" + directory.name;
                                 Debug.WriteLine(destination);
-                                System.IO.Directory.CreateDirectory(destination);
+                                Directory.CreateDirectory(destination);
 
                                 foreach (var image in directory.imageList)
                                 {
                                     Debug.WriteLine(destination);
-                                    destFile = System.IO.Path.Combine(destination, image.name);
-                                    using (var writer = File.Open(destFile, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
-                                    {
-                                        Debug.WriteLine(destFile);
-                                        File.Copy(image.target, destFile, true);
-                                    };
+                                    source = Path.Combine(image.target);
+                                    Debug.WriteLine(source);
+                                    Debug.WriteLine(destination);
+                                    Debug.WriteLine(destination + @"\" + image.name);
+                                    File.Copy(source, destination + @"\" + image.name, true);
                                 }
 
                                 destination = @"C:\Users\bjarn\Bilder";

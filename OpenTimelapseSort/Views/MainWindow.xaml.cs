@@ -188,7 +188,7 @@ namespace OpenTimelapseSort.Views
             var timer = new DispatcherTimer();
             TimeSpan timeSpan;
 
-            timeSpan = TimeSpan.FromSeconds(1);
+            timeSpan = TimeSpan.FromSeconds(9);
             timer = new DispatcherTimer(new TimeSpan(0, 0, 1), DispatcherPriority.Normal, delegate
             {
                 Sorting_Countdown.Text = timeSpan.ToString(@"\ s");
