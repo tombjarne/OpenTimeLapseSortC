@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace OpentimelapseSort.Models
@@ -28,8 +27,5 @@ namespace OpentimelapseSort.Models
             this.sequenceImageCount = sequenceImageCount;
             id = 1;
         }
-
-        public Preferences() { }
     }
-
 }

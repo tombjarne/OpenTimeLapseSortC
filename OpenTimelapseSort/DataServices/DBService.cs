@@ -128,6 +128,33 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
+        public void SaveImage(Image image)
+        {
+            using (var database = new ImportContext())
+            {
+                database.Add(image);
+                database.SaveChanges();
+            }
+        }
+
+        public void SaveImageDirectory(ImageDirectory directory)
+        {
+            using (var database = new ImportContext())
+            {
+                database.Add(directory);
+                database.SaveChanges();
+            }
+        }
+
+        public void SaveImport(Import import)
+        {
+            using (var database = new ImportContext())
+            {
+                database.Add(import);
+                database.SaveChanges();
+            }
+        }
+
         public ImageDirectory GetRandomDirInstance()
         {
             using (var context = new ImportContext())

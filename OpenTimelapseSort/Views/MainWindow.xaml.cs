@@ -2,16 +2,13 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using OpenTimelapseSort.Mvvm;
 using System;
 using System.IO;
-using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using System.Runtime.CompilerServices;
-using System.Windows.Shapes;
 
 namespace OpenTimelapseSort.Views
 {
@@ -43,8 +40,6 @@ namespace OpenTimelapseSort.Views
             InitializeComponent();
             SetScreenSize();
             FetchOnStartup();
-
-           // DirectoryViewer1.Items.Add(new DCell { DirectoryName = "Test", ImportDate = "Test2", ImageCount = 420 });
         }
 
         //////////////////////////////////////////////////////////
@@ -87,13 +82,6 @@ namespace OpenTimelapseSort.Views
                 // TODO: fix below statement
                 //InvokeWarningPopup("Could not perform autosave", "Could not save your latest changes", ForceClose);
             }
-        }
-
-        private ICommand GetDelegateCommand(Action<object> callback)
-        {
-
-            var errorCommand = new DelegateCommand(callback);
-            return errorCommand;
         }
 
         private void InvokeWarningPopup(string errorHeadline, string errorDetails, Action<object> callback)
@@ -213,11 +201,6 @@ namespace OpenTimelapseSort.Views
             timer.Start();
         }
 
-        private void RenderComponent(StackPanel sp)
-        {
-            DirectoryViewer1.Items.Add(sp);
-        }
-
 
         // alternative to this is an observable list and getting the id from the selectionmodel 
         // but this alt only works properly if elements dont have to be generated manually 
@@ -236,6 +219,13 @@ namespace OpenTimelapseSort.Views
 
             }
         }
+
+        /**
+         * Render
+         * 
+         * Renders the imported directories into the view component
+         * @param dirList, type List<ImageDirectory>
+         */
 
         private void Render(List<ImageDirectory> dirList)
         {
@@ -303,12 +293,6 @@ namespace OpenTimelapseSort.Views
             });       
         }
 
-        private void GetImagesOfImportedDirectory(int id)
-        {
-            // TODO: add images of selected directory to observablecollection of images
-            //images = mainViewModel.GetImagesOfImportedDirectory(id);
-        }
-
         private void SetScreenSize()
         {
             //set width and height according to system specs
@@ -318,47 +302,6 @@ namespace OpenTimelapseSort.Views
         private int GetRelativeSize()
         {
             return 1;
-        }
-
-        public void RenderElement(object obj)
-        {
-            var type = obj.GetType();
-            var newElement = new StackPanel();
-
-            if (type == typeof(ImageDirectory))
-            {
-                newElement = RenderDirectory((ImageDirectory)obj);
-            }
-            else if (type == typeof(Image))
-            {
-                newElement = RenderImage((Image)obj);
-            }
-            else if (type == typeof(Import))
-            {
-                newElement = RenderImport((Import)obj);
-            }
-
-            //callback(newElement);
-        }
-
-
-        //
-        // following functions are called from the delegated method that is called in matching service
-        // the passed function RenderElement then decides which function to call to pass the newly generated
-        // element back to the view
-        private StackPanel RenderImport(Import import)
-        {
-            return new StackPanel();
-        }
-
-        private StackPanel RenderDirectory(ImageDirectory directory)
-        {
-            return new StackPanel();
-        }
-
-        private StackPanel RenderImage(Image image)
-        {
-            return new StackPanel();
         }
     }
 }

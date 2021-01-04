@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -158,14 +156,12 @@ namespace OpenTimelapseSort
 
                         for (int p = 0; p < subDirLength; p++)
                         {
-                            Debug.WriteLine("Filename "+Path.GetFileName(subDirImages[i]));
                             Image image = new Image(Path.GetFileName(subDirImages[i]), subDirInfo.FullName, subDirInfo.DirectoryName);
                             imageList.Add(image);
                         }
                     }
                     else
                     {
-                        Debug.WriteLine("Filename " + Path.GetFileName(files[i]));
                         Image image = new Image(Path.GetFileName(files[i]), info.FullName, info.DirectoryName);
                         imageList.Add(image);
                     }
@@ -175,10 +171,16 @@ namespace OpenTimelapseSort
             }
         }
 
+        /**
+         * deleteAccount
+         *
+         * Deletes local database and all persistently saved information
+         *
+         * @param event         trigger for delete button being clicked
+         */
+
         public void SortImages(List<Image> imageList, ViewUpdate update)
         {
-            // RenderDelegate = callback; how to get this into RenderElement?
-
             Task sortingTask = Task
                 .Run(() => {
                     matching.SortImages(imageList, (List<ImageDirectory> directories) =>
@@ -188,33 +190,24 @@ namespace OpenTimelapseSort
                         string source;
                         string mainDirectory = destination + @"\OTS_IMG";
 
-                        // TODO: extract into method
-
                         if (!Directory.Exists(mainDirectory))
-                        {
                             Directory.CreateDirectory(mainDirectory);
-                            Debug.WriteLine(mainDirectory);
-                            Debug.WriteLine(Directory.Exists(mainDirectory));
-                        }
 
                         try
                         {
+                            // TODO: add missing import instance
                             foreach (var directory in directories)
                             {
                                 destination = mainDirectory + @"\" + directory.name;
-                                Debug.WriteLine(destination);
                                 Directory.CreateDirectory(destination);
 
                                 foreach (var image in directory.imageList)
                                 {
-                                    Debug.WriteLine(destination);
                                     source = Path.Combine(image.target);
-                                    Debug.WriteLine(source);
-                                    Debug.WriteLine(destination);
-                                    Debug.WriteLine(destination + @"\" + image.name);
                                     File.Copy(source, destination + @"\" + image.name, true);
+                                    service.SaveImage(image);
                                 }
-
+                                service.SaveImageDirectory(directory);
                                 destination = @"C:\Users\bjarn\Bilder";
                             }
                         }
@@ -226,15 +219,6 @@ namespace OpenTimelapseSort
                         update(directories);
                     });
                  });
-
-            // TODO: find a way to async return a directory to render each time one is completed!
-
-            TaskAwaiter sortingTaskAwaiter = sortingTask.GetAwaiter();
-            sortingTaskAwaiter.OnCompleted(() =>
-                {
-                    // TODO: tell user it has been finished
-                    // update(directory);
-                });
         }
     }
 }
