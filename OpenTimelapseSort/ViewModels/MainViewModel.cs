@@ -47,7 +47,7 @@ namespace OpenTimelapseSort
                 {
                     database.Database.EnsureCreated();
                     
-                    service.SeedDatabase();
+                    //service.SeedDatabase();
                     //InitialiseView();
                 } catch(Exception e)
                 {
@@ -179,11 +179,11 @@ namespace OpenTimelapseSort
          * @param event         trigger for delete button being clicked
          */
 
-        public void SortImages(List<Image> imageList, ViewUpdate update)
+        public async void SortImages(List<Image> imageList, ViewUpdate update)
         {
             Task sortingTask = Task
                 .Run(() => {
-                    matching.SortImages(imageList, (List<ImageDirectory> directories) =>
+                    matching.SortImages(imageList, async (List<ImageDirectory> directories) =>
                     {
                         // TODO: parameterize path to images
                         string destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
@@ -195,19 +195,34 @@ namespace OpenTimelapseSort
 
                         try
                         {
+                            Import import = new Import(false)
+                            {
+                                id = DateTime.Now.Millisecond + DateTime.Today.Day,
+                                name = "Nightsky_Timelapse",
+                                importDate = DateTime.Today.ToShortDateString(),
+                                length = 10,
+                                target = "killmenow"
+                            };
+                            await service.SaveImportAsync(import);
                             // TODO: add missing import instance
                             foreach (var directory in directories)
                             {
                                 destination = mainDirectory + @"\" + directory.name;
                                 Directory.CreateDirectory(destination);
 
+                                directory.id += DateTime.Today.Millisecond;
+                                directory.importId = import.id;
+                                await service.SaveImageDirectoryAsync(directory);
+
                                 foreach (var image in directory.imageList)
                                 {
                                     source = Path.Combine(image.target);
                                     File.Copy(source, destination + @"\" + image.name, true);
-                                    service.SaveImage(image);
+                                    image.id = DateTime.Now.Millisecond;
+                                    image.directoryId = directory.id;
+                                    Debug.WriteLine(image);
+                                    await service.SaveImageAsync(image);
                                 }
-                                service.SaveImageDirectory(directory);
                                 destination = @"C:\Users\bjarn\Bilder";
                             }
                         }

@@ -8,42 +8,43 @@ namespace OpenTimelapseSort.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Imports",
+                name: "Import",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    target = table.Column<string>(type: "TEXT", nullable: true),
+                    name = table.Column<string>(type: "TEXT", nullable: true),
                     timestamp = table.Column<DateTime>(type: "TEXT", nullable: false),
                     importDate = table.Column<string>(type: "TEXT", nullable: true),
-                    name = table.Column<string>(type: "TEXT", nullable: true),
                     length = table.Column<int>(type: "INTEGER", nullable: false),
                     fetch = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Imports", x => x.id);
+                    table.PrimaryKey("PK_Import", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Directories",
+                name: "ImageDirectory",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    importId = table.Column<int>(type: "INTEGER", nullable: false),
                     timestamp = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    target = table.Column<string>(type: "TEXT", nullable: true),
-                    name = table.Column<string>(type: "TEXT", nullable: true),
-                    Importid = table.Column<int>(type: "INTEGER", nullable: true)
+                    target = table.Column<string>(type: "TEXT", nullable: false),
+                    name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Directories", x => x.id);
+                    table.PrimaryKey("PK_ImageDirectory", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Directories_Imports_Importid",
-                        column: x => x.Importid,
-                        principalTable: "Imports",
+                        name: "FK_ImageDirectory_Import_importId",
+                        column: x => x.importId,
+                        principalTable: "Import",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,32 +53,34 @@ namespace OpenTimelapseSort.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    name = table.Column<string>(type: "TEXT", nullable: true),
-                    target = table.Column<string>(type: "TEXT", nullable: true),
+                    directoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    name = table.Column<string>(type: "TEXT", nullable: false),
+                    target = table.Column<string>(type: "TEXT", nullable: false),
                     fileTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     fileSize = table.Column<long>(type: "INTEGER", nullable: false),
+                    parentInstance = table.Column<string>(type: "TEXT", nullable: false),
                     ImageDirectoryid = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Image", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Image_Directories_ImageDirectoryid",
+                        name: "FK_Image_ImageDirectory_ImageDirectoryid",
                         column: x => x.ImageDirectoryid,
-                        principalTable: "Directories",
+                        principalTable: "ImageDirectory",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Directories_Importid",
-                table: "Directories",
-                column: "Importid");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Image_ImageDirectoryid",
                 table: "Image",
                 column: "ImageDirectoryid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ImageDirectory_importId",
+                table: "ImageDirectory",
+                column: "importId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -86,10 +89,10 @@ namespace OpenTimelapseSort.Migrations
                 name: "Image");
 
             migrationBuilder.DropTable(
-                name: "Directories");
+                name: "ImageDirectory");
 
             migrationBuilder.DropTable(
-                name: "Imports");
+                name: "Import");
         }
     }
 }

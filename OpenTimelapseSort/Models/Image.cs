@@ -2,19 +2,25 @@ using System;
 using System.Collections.Generic;
 using OpenTimelapseSort.Constants;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 
 public class Image
 {
-    [Key]
+    [Key][Required]
     public int id { get; set; }
 
+    [ForeignKey("directoryId")] [Required]
+    public int directoryId { get; set; }
+
     private Dictionary<META_ATTRIBUTE, string> meta = new Dictionary<META_ATTRIBUTE, string>();
+    [Required]
     public string name { get; set; }
+    [Required]
     public string target { get; set; }
     public DateTime fileTime { get; set; }
     public long fileSize { get; set; }
-
+    [Required]
     public string parentInstance { get; set; }
 
     public Image(string name, string target, string parentInstance)

@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections;
-
-using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.Contexts
 {
@@ -19,8 +16,8 @@ namespace OpenTimelapseSort.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
-            modelBuilder.Entity<Import>().ToTable("Imports");
-            modelBuilder.Entity<ImageDirectory>().ToTable("ImageDirectories");
+            modelBuilder.Entity<Import>().ToTable("Import");
+            modelBuilder.Entity<ImageDirectory>().ToTable("ImageDirectory");
             modelBuilder.Entity<Image>().ToTable("Image");
 
             /*

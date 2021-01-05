@@ -5,6 +5,7 @@ using OpentimelapseSort.Models;
 using System.Linq;
 using System.Diagnostics;
 using System.Collections;
+using System.Reflection.Metadata;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -128,30 +129,52 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public void SaveImage(Image image)
+        public async System.Threading.Tasks.Task SaveImageAsync(Image image)
         {
             using (var database = new ImportContext())
-            {
-                database.Add(image);
-                database.SaveChanges();
+            { 
+                try
+                {
+                    await database.AddAsync(image);
+                    await database.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.StackTrace);
+                    Debug.WriteLine(e.Message);
+                }
             }
         }
 
-        public void SaveImageDirectory(ImageDirectory directory)
+        public async System.Threading.Tasks.Task SaveImageDirectoryAsync(ImageDirectory directory)
         {
             using (var database = new ImportContext())
             {
-                database.Add(directory);
-                database.SaveChanges();
+                try
+                {
+                    await database.AddAsync(directory);
+                    await database.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.StackTrace);
+                }
             }
         }
 
-        public void SaveImport(Import import)
+        public async System.Threading.Tasks.Task SaveImportAsync(Import import)
         {
             using (var database = new ImportContext())
             {
-                database.Add(import);
-                database.SaveChanges();
+                try
+                {
+                    await database.AddAsync(import);
+                    await database.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.StackTrace);
+                }
             }
         }
 

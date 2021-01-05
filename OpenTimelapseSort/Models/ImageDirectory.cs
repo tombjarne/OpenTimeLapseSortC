@@ -2,16 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class ImageDirectory
 {
-    [Key]
+    [Key][Required]
     public int id { get; set; }
 
-    public List<Image> imageList { get; set; }
+    [ForeignKey("importId")] [Required]
+    public int importId { get; set; }
+    public virtual List<Image> imageList { get; set; }
     public DateTime timestamp { get; set; }
-    public String target { get; set; }
-    public String name { get; set; }
+    [Required]
+    public string target { get; set; }
+    [Required]
+    public string name { get; set; }
 
     public ImageDirectory(String target, String name)
     {

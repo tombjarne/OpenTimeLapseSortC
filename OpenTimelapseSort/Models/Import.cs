@@ -8,7 +8,7 @@ public class Import
     public int id { get; set; }
     public string target { get; set; }
     public string name { get; set; } // enable user to change name of import :-)
-    public List<ImageDirectory> directories { get; set; }
+    public virtual List<ImageDirectory> directories { get; set; }
     public DateTime timestamp { get; set; }
     public string importDate { get; set; }
     public int length { get; set; }
