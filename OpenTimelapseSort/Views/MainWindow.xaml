@@ -24,8 +24,8 @@
         <DataTemplate x:Uid="Name" x:Key="TestTemplate">
             <Label x:Name="Import_Name" Grid.Column="0" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
         </DataTemplate>
-        
-            <!-- Import Visual Template -->
+
+        <!-- Import Visual Template -->
         <DataTemplate x:Key="SelectButtonColumnDataTemplate">
             <DockPanel Background="#34404D" Height="100" Width="402">
                 <Grid DockPanel.Dock="Top">
@@ -48,7 +48,7 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
         </Style>
-        
+
         <Style x:Key="SubHeadlineTemplate" TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -91,7 +91,7 @@
         </Grid>
         <DockPanel x:Name="LeftPanel" Background=" #3D4A59" Margin="0,44,0,0">
             <ScrollViewer x:Name="DirectoryViewer"  Style="{StaticResource ScrollViewerStyle}">
-                <ListView x:Name="DirectoryViewer1" Height="Auto" Background="#FF3D4A59" BorderBrush="#FF34404D" Foreground="#FFED6558"/>
+                <ListView x:Name="DirectoryViewer1" Height="Auto" Background="#FF3D4A59" BorderBrush="#FF34404D" MouseDoubleClick="DirectoryViewer1_OnMouseDoubleClick" Foreground="#FFED6558"/>
             </ScrollViewer>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -105,18 +105,13 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <Label x:Name="directory_headline1" Content="Nothing to import&#xA;" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" Height="49" Width="434" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,24,0,0"/>
-                <Label x:Name="directory_prefix1" Content="Path:" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383" Margin="24,96,0,595" Width="94"/>
-                <Label x:Name="directory_name1" Content="C:/Users/bjarn/Default" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Normal" FontSize="14px" Foreground="#FFFF8383" Margin="71,94,0,590" Width="224"/>
-                <ScrollViewer x:Name="DirectoryDetailViewer"  Style="{StaticResource ScrollViewerStyle}" Margin="18,160,-284,0" Panel.ZIndex="1">
-                    <ItemsControl x:Name="imageControl" VerticalAlignment="Center">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
+                <Label x:Name="directory_headline1" Content="Nothing to import&#xA;" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" Height="44" Width="434" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="34,23,0,0"/>
+                <ScrollViewer x:Name="ImageViewer"  Style="{StaticResource ScrollViewerStyle}" Margin="0,147,-254,0">
+                    <ListView x:Name="ImageViewer1" Height="517" Background="#FF3D4A59" BorderBrush="{x:Null}" Foreground="#FFED6558" IsSynchronizedWithCurrentItem="False" Width="691"/>
                 </ScrollViewer>
+                <Label x:Name="directory_prefix1" Content="Path:" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383" Margin="24,96,0,595" Width="94"/>
+                <Label x:Name="directory_name1_Copy" Content="C:/Users/bjarn/Default" VerticalContentAlignment="Top" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383" Height="24" Width="323" HorizontalAlignment="Left" HorizontalContentAlignment="Left" VerticalAlignment="Top" Margin="34,72,0,0"/>
+
             </Grid>
         </DockPanel>
         <!-- Popup Screen Elements -->

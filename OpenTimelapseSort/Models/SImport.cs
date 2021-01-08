@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-public class Import
+public class SImport
 {
     [Key]
     public int id { get; set; }
     public string target { get; set; }
     public string name { get; set; } // enable user to change name of import :-)
-    public virtual List<ImageDirectory> directories { get; set; }
+    public virtual List<SDirectory> directories { get; set; }
     public DateTime timestamp { get; set; }
     public string importDate { get; set; }
     public int length { get; set; }
     public bool fetch { get; set; } // change permissions?
 
-    public Import(bool fetch)
+    public SImport(bool fetch)
     {
         if (!fetch)
         {
@@ -24,12 +24,12 @@ public class Import
         this.fetch = fetch;
     }
 
-    public void initImportList(List<ImageDirectory> directories)
+    public void initImportList(List<SDirectory> directories)
     {
         this.directories = directories;
     }
 
-    public bool tryPush(ImageDirectory directory)
+    public bool tryPush(SDirectory directory)
     {
         if(directory.getTimestamp() == timestamp)
         {
@@ -39,7 +39,7 @@ public class Import
             }
             else
             {
-                directories = new List<ImageDirectory>();
+                directories = new List<SDirectory>();
                 if (this.tryPush(directory))
                 {
                     return true;

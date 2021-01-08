@@ -7,8 +7,11 @@ using System.IO;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Threading;
 using System.Runtime.CompilerServices;
+using System.Windows.Media;
+using FontAwesome.WPF;
 
 namespace OpenTimelapseSort.Views
 {
@@ -21,12 +24,10 @@ namespace OpenTimelapseSort.Views
 
         //private delegate void WarningReference(string errorHeadline, string errorDetails);
 
-
-        ObservableCollection<ListView> listViews = new ObservableCollection<ListView>();
-
-        ObservableCollection<ImageDirectory> directories = new ObservableCollection<ImageDirectory>();
-        ObservableCollection<Import> imports = new ObservableCollection<Import>();
-        ObservableCollection<Image> images = new ObservableCollection<Image>();
+        ObservableCollection<StackPanel> panels = new ObservableCollection<StackPanel>();
+        ObservableCollection<SDirectory> directories = new ObservableCollection<SDirectory>();
+        ObservableCollection<SImport> imports = new ObservableCollection<SImport>();
+        ObservableCollection<SImage> images = new ObservableCollection<SImage>();
 
         MainViewModel mainViewModel = new MainViewModel();
 
@@ -152,10 +153,8 @@ namespace OpenTimelapseSort.Views
 
                 Import_Progress_Popup.IsOpen = true;
 
+                ShowLoader();
                 mainViewModel.Import(Import_Target.Text, HandleListingProgress);
-
-                //Task listImagesTask = ListImages();
-                //listImagesTask.ContinueWith(HandleListingProgress);
             }
             else
             {
@@ -168,7 +167,7 @@ namespace OpenTimelapseSort.Views
         //////                    FUNCTIONS                 //////
         //////////////////////////////////////////////////////////
 
-        private void HandleListingProgress(int count, List<Image> imageList)
+        private void HandleListingProgress(int count, List<SImage> imageList)
         {
 
             Import_Progress_Count.Text = "Found " + count + " images";
@@ -193,7 +192,7 @@ namespace OpenTimelapseSort.Views
                     TaskAwaiter taskAwaiter = sortingTask.GetAwaiter();
                     taskAwaiter.OnCompleted(() =>
                     {
-                        // invoke new popup to display success message
+                        //
                     });
                 }
                 timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
@@ -205,14 +204,54 @@ namespace OpenTimelapseSort.Views
         // alternative to this is an observable list and getting the id from the selectionmodel 
         // but this alt only works properly if elements dont have to be generated manually 
 
-        private void GetImages(object sender, RoutedEventArgs e)
+        private async Task GetImagesAsync(int id)
         {
             try
             {
-                StackPanel referer = (StackPanel)sender;
-                mainViewModel.GetImages(Int16.Parse(referer.Name.Substring(1, referer.Name.Length - 1)));
+                var imageList = await mainViewModel.GetImagesAsync(id);
 
-                // TODO: set screen values to the images of chosen directory
+                Style headlineStyle = this.FindResource("HeadlineTemplate") as Style;
+                Style subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
+                Style panelStyle = this.FindResource("PanelTemplate") as Style;
+
+                int width = GetRelativeSize() * 402;
+                directory_headline1.Content = imageList[0].parentInstance;
+                directory_name1_Copy.Content = imageList[0].target;
+
+                foreach (var image in imageList)
+                {
+                    images.Add(image);
+
+                    Label imageName = new Label();
+                    imageName.Content = image.name;
+                    imageName.Style = headlineStyle;
+
+                    Label imageSize = new Label();
+                    imageSize.Content = image.fileSize;
+                    imageName.Style = subHeadlineStyle;
+
+                    Grid detailGrid = new Grid();
+                    detailGrid.Children.Add(imageName);
+                    detailGrid.Children.Add(imageSize);
+
+                    //Image previewImage = new Image();
+                    //previewImage.Source = new Uri(image.target);
+
+                    DockPanel dockWrapper = new DockPanel();
+                    dockWrapper.Width = width;
+                    dockWrapper.Children.Add(detailGrid);
+                    DockPanel.SetDock(detailGrid, Dock.Top);
+                    //DockPanel.SetDock(previewImage, Dock.Bottom);
+
+                    StackPanel directoryPanel = new StackPanel();
+                    directoryPanel.Name = "E" + image.id.ToString();
+                    directoryPanel.Style = panelStyle;
+                    directoryPanel.Width = width;
+                    directoryPanel.Height = width * 0.2;
+                    directoryPanel.Children.Add(dockWrapper);
+
+                    ImageViewer1.Items.Add(directoryPanel);
+                }
             }
             catch
             {
@@ -227,7 +266,7 @@ namespace OpenTimelapseSort.Views
          * @param dirList, type List<ImageDirectory>
          */
 
-        private void Render(List<ImageDirectory> dirList)
+        private void Render(List<SDirectory> dirList)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -284,13 +323,52 @@ namespace OpenTimelapseSort.Views
                         directoryPanel.Width = width;
                         directoryPanel.Height = width * 0.2;
                         directoryPanel.Children.Add(dockWrapper);
-                        directoryPanel.MouseDown += new MouseButtonEventHandler(GetImages);
 
                         DirectoryViewer1.Items.Add(directoryPanel);
+                        panels.Add(directoryPanel);
+                        HideLoader();
                     }
                 }
-
             });       
+        }
+
+        private void ShowLoader()
+        {
+            Style panelStyle = this.FindResource("PanelTemplate") as Style;
+
+            int width = GetRelativeSize() * 402;
+
+            ImageAwesome loadingIcon = new ImageAwesome()
+            {
+                Icon = FontAwesomeIcon.CircleOutlineNotch,
+                Spin = true,
+                SpinDuration = 2,
+                Width = 50.0,
+                Height = 50.0,
+                Margin = new Thickness(20),
+                Foreground = Brushes.White,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            StackPanel directoryPanel = new StackPanel()
+            {
+                Name = "DirectoryLoader",
+                Style = panelStyle,
+                Width = width,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            directoryPanel.Children.Add(loadingIcon);
+
+            DirectoryViewer1.Items.Add(directoryPanel);
+            panels.Add(directoryPanel);
+        }
+
+        private void HideLoader()
+        {
+            DirectoryViewer1.Items.Remove(panels.Single(p => p.Name == "DirectoryLoader"));
         }
 
         private void SetScreenSize()
@@ -302,6 +380,12 @@ namespace OpenTimelapseSort.Views
         private int GetRelativeSize()
         {
             return 1;
+        }
+
+        private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            int directoryId = directories[DirectoryViewer1.SelectedIndex].id;
+            var fetchImagesTask = GetImagesAsync(directoryId);
         }
     }
 }

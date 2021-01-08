@@ -19,12 +19,12 @@ namespace OpenTimelapseSort
 
         private DBService service = new DBService();
         private MatchingService matching = new MatchingService();
-        private List<Import> imports;
+        private List<SImport> imports;
 
-        public delegate void ImageListingProgress(int count, List<Image> imageList);
+        public delegate void ImageListingProgress(int count, List<SImage> imageList);
         public delegate void SortProgress(StackPanel panel);
         public delegate void InitFetch(StackPanel panel);
-        public delegate void ViewUpdate(List<ImageDirectory> directories);
+        public delegate void ViewUpdate(List<SDirectory> directories);
 
         public MainViewModel()
         {
@@ -67,9 +67,9 @@ namespace OpenTimelapseSort
             return true;
         }
 
-        public List<Image> GetImages(int id)
+        public async Task<List<SImage>> GetImagesAsync(int id)
         {
-            return new List<Image>();
+            return await service.GetImagesAsync(id);
         }
 
 
@@ -86,12 +86,12 @@ namespace OpenTimelapseSort
                 StackPanel allImports = new StackPanel();
                 StackPanel directoryPanel = new StackPanel();
 
-                foreach (Import import in imports)
+                foreach (SImport import in imports)
                 {
                     try
                     {
                         StackPanel importPanel = new StackPanel();
-                        foreach (ImageDirectory directory in import.directories)
+                        foreach (SDirectory directory in import.directories)
                         {
                             // add on click event
                             // add directoryPanel to importPanel
@@ -138,7 +138,7 @@ namespace OpenTimelapseSort
         public void Import(string name, ImageListingProgress listProgress)
         //public StackPanel Import(string name)
         {
-            List<Image> imageList = new List<Image>();
+            List<SImage> imageList = new List<SImage>();
             var files = Directory.EnumerateFileSystemEntries(name).ToList();
             int length = files.Count();
 
@@ -156,13 +156,13 @@ namespace OpenTimelapseSort
 
                         for (int p = 0; p < subDirLength; p++)
                         {
-                            Image image = new Image(Path.GetFileName(subDirImages[i]), subDirInfo.FullName, subDirInfo.DirectoryName);
+                            SImage image = new SImage(Path.GetFileName(subDirImages[i]), subDirInfo.FullName, subDirInfo.DirectoryName);
                             imageList.Add(image);
                         }
                     }
                     else
                     {
-                        Image image = new Image(Path.GetFileName(files[i]), info.FullName, info.DirectoryName);
+                        SImage image = new SImage(Path.GetFileName(files[i]), info.FullName, info.DirectoryName);
                         imageList.Add(image);
                     }
                 }
@@ -179,11 +179,11 @@ namespace OpenTimelapseSort
          * @param event         trigger for delete button being clicked
          */
 
-        public async void SortImages(List<Image> imageList, ViewUpdate update)
+        public async void SortImages(List<SImage> imageList, ViewUpdate update)
         {
             Task sortingTask = Task
                 .Run(() => {
-                    matching.SortImages(imageList, async (List<ImageDirectory> directories) =>
+                    matching.SortImages(imageList, async (List<SDirectory> directories) =>
                     {
                         // TODO: parameterize path to images
                         string destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
@@ -195,7 +195,7 @@ namespace OpenTimelapseSort
 
                         try
                         {
-                            Import import = new Import(false)
+                            SImport import = new SImport(false)
                             {
                                 id = DateTime.Now.Millisecond + DateTime.Today.Day,
                                 name = "Nightsky_Timelapse",

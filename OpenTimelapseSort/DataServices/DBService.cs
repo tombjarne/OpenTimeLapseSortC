@@ -6,6 +6,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections;
 using System.Reflection.Metadata;
+using Microsoft.EntityFrameworkCore;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -44,7 +45,7 @@ namespace OpenTimelapseSort.DataServices
 
         // returns a list of Import Objects fetched from db
 
-        public List<Import> ReturnImports()
+        public List<SImport> ReturnImports()
         {
             // fetch from DB
             // save into Object
@@ -52,21 +53,21 @@ namespace OpenTimelapseSort.DataServices
 
             using (var context = new ImportContext())
             {
-                List<Import> imports = new List<Import>();
-                List<ImageDirectory> directories = new List<ImageDirectory>(); // images are fetched on click to reduce overhead
+                List<SImport> imports = new List<SImport>();
+                List<SDirectory> directories = new List<SDirectory>(); // images are fetched on click to reduce overhead
 
-                foreach (ImageDirectory directory in context.ImageDirectories)
+                foreach (SDirectory directory in context.ImageDirectories)
                 {
-                    ImageDirectory newDirectory = new ImageDirectory(
+                    SDirectory newDirectory = new SDirectory(
                         directory.name,
                         directory.target
                     );
                     directories.Add(newDirectory);
                 }
 
-                foreach (Import import in context.Imports)
+                foreach (SImport import in context.Imports)
                 {
-                    Import newImport = new Import(true);
+                    SImport newImport = new SImport(true);
                     newImport.initImportList(directories);
                     newImport.importDate = import.importDate;
                     newImport.timestamp = import.timestamp; //convert string to date 
@@ -86,7 +87,7 @@ namespace OpenTimelapseSort.DataServices
          * 
          */
 
-        public Import ReturnCurrentImport()
+        public SImport ReturnCurrentImport()
         {
             using (var context = new ImportContext())
             {
@@ -100,7 +101,7 @@ namespace OpenTimelapseSort.DataServices
                         id = import.id
                     }).Where(import => import.timestamp == System.DateTime.Today); // might need to implement fuzzy logic if it is midnight
                 // TODO: fix casting issue!
-                return (Import)import;
+                return (SImport)import;
             }
         }
 
@@ -111,25 +112,25 @@ namespace OpenTimelapseSort.DataServices
             using (var context = new ImportContext())
             {
 
-                Import import = new Import(false)
+                SImport import = new SImport(false)
                 {
                     name = "Urlaub",
                     length = 1,
-                    directories = new List<ImageDirectory>(0)
+                    directories = new List<SDirectory>(0)
                 };
                 context.Add(import);
                 context.SaveChanges();
 
-                ImageDirectory directory = new ImageDirectory("/", "Urlaub 1")
+                SDirectory directory = new SDirectory("/", "Urlaub 1")
                 {
-                    imageList = new List<Image>(0),
+                    imageList = new List<SImage>(0),
                 };
                 context.Add(directory);
                 context.SaveChanges();
             }
         }
 
-        public async System.Threading.Tasks.Task SaveImageAsync(Image image)
+        public async System.Threading.Tasks.Task SaveImageAsync(SImage image)
         {
             using (var database = new ImportContext())
             { 
@@ -146,7 +147,7 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public async System.Threading.Tasks.Task SaveImageDirectoryAsync(ImageDirectory directory)
+        public async System.Threading.Tasks.Task SaveImageDirectoryAsync(SDirectory directory)
         {
             using (var database = new ImportContext())
             {
@@ -162,7 +163,7 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public async System.Threading.Tasks.Task SaveImportAsync(Import import)
+        public async System.Threading.Tasks.Task SaveImportAsync(SImport import)
         {
             using (var database = new ImportContext())
             {
@@ -178,7 +179,7 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public ImageDirectory GetRandomDirInstance()
+        public SDirectory GetRandomDirInstance()
         {
             using (var context = new ImportContext())
             {
@@ -192,13 +193,13 @@ namespace OpenTimelapseSort.DataServices
                 {
                     Debug.WriteLine(e.StackTrace);
 
-                    var directory = new ImageDirectory("default", "Random Directory");
+                    var directory = new SDirectory("default", "Random Directory");
                     return directory;
                 }
             }
         }
 
-        public void UpdateImageDirectory(ImageDirectory directory)
+        public void UpdateImageDirectory(SDirectory directory)
         {
             using (var database = new ImportContext())
             {
@@ -220,7 +221,7 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public void UpdateImport(Import import)
+        public void UpdateImport(SImport import)
         {
             using (var context = new ImportContext())
             {
@@ -228,36 +229,30 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-         public List<Image> GetImages(int id)
+         public async System.Threading.Tasks.Task<List<SImage>> GetImagesAsync(int id)
         {
             using (var context = new ImportContext())
             {
-                ImageDirectory directory = (ImageDirectory)context.ImageDirectories
-                    .Select(directory => new
-                    {
-                        id = directory.id,
-                        target = directory.target,
-                        name = directory.name,
-                        timestamp = directory.timestamp,
-                        imageList = directory.imageList
-                    }).Where(directory => directory.id == id);
-
-                List<Image> imageList = directory.imageList;
-
-
-                // might still need this if LINQ and EFcore does not return a list of objects in imageList of directory
-                /*
-                foreach (Image image in imageList)
+                try
                 {
-                    Image newImage = new Image(
-                        image.name,
-                        image.target,
-                        image.parentInstance
-                    );
-                }
-                */
+                    var directory = await context.ImageDirectories
+                        .SingleAsync(d => d.id == id);
 
-                return imageList;
+                    Debug.WriteLine(directory);
+
+                    SImage image = new SImage("test", "test", "test/test/wohoo");
+                    directory.imageList.Add(image);
+
+                    return directory.imageList;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.StackTrace);
+                    Debug.WriteLine(e.InnerException);
+
+                    List<SImage> errorList = new List<SImage>();
+                    return errorList;
+                }
             }
         }
 

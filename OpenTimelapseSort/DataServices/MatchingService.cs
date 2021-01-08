@@ -8,13 +8,13 @@ namespace OpenTimelapseSort.DataServices
 {
     class MatchingService
     {
-		public delegate void RenderDelegate(List<ImageDirectory> imageDirectories);
+		public delegate void RenderDelegate(List<SDirectory> imageDirectories);
 
 		DBPreferencesService service = new DBPreferencesService();
 		DBService dbService = new DBService();
 
-		List<ImageDirectory> imageDirectories = new List<ImageDirectory>(); // each directory will receive their images in the matching function
-		List<Import> imports = new List<Import>(); // does it need to be a list?
+		List<SDirectory> imageDirectories = new List<SDirectory>(); // each directory will receive their images in the matching function
+		List<SImport> imports = new List<SImport>(); // does it need to be a list?
 
 		public bool UseAutoDetection()
         {
@@ -48,7 +48,7 @@ namespace OpenTimelapseSort.DataServices
 
 		}
 
-		public void SortImages(List<Image> imageList, RenderDelegate render)
+		public void SortImages(List<SImage> imageList, RenderDelegate render)
         {
 			int pointer = 0; // marks end of sequence
 			int seqPointer = 0; // marks begin of sequence
@@ -67,8 +67,8 @@ namespace OpenTimelapseSort.DataServices
 				prevDeviation = service.FetchPreferences().sequenceInterval;
             }
 
-			List<Image> dirList = new List<Image>();
-			List<Image> randomDirList = new List<Image>();
+			List<SImage> dirList = new List<SImage>();
+			List<SImage> randomDirList = new List<SImage>();
 
 			// TODO: match to fit seconds spec again! Fix milliseconds issue
 
@@ -110,7 +110,7 @@ namespace OpenTimelapseSort.DataServices
 
 					pointer = i;
 					seqPointer = i;
-					dirList = new List<Image>(); // reinit dirList
+					dirList = new List<SImage>(); // reinit dirList
 				}
 				if (i + 1 == imageList.Count)
 				{
@@ -134,12 +134,12 @@ namespace OpenTimelapseSort.DataServices
 			render(imageDirectories);
 		}
 
-		private Import GetImportInstance()
+		private SImport GetImportInstance()
         {
 			return dbService.ReturnCurrentImport();
         }
 
-		private void addToRandomDir(List<Image> dirList) // can sometimes only contain a single image
+		private void addToRandomDir(List<SImage> dirList) // can sometimes only contain a single image
         {
 			Debug.WriteLine("addToRandomDir");
 
@@ -150,7 +150,7 @@ namespace OpenTimelapseSort.DataServices
 			DateTime today = new DateTime();
 			int directoryId = (int)(today.Year * 1000000 + today.Month * 10000 + today.Day + today.Ticks);
 
-			ImageDirectory directory = dbService.GetRandomDirInstance();
+			SDirectory directory = dbService.GetRandomDirInstance();
 
 			if(directory.target == "default")
             {
@@ -194,7 +194,7 @@ namespace OpenTimelapseSort.DataServices
          * 
          */
 
-		private string GuessName(List<Image> images) {
+		private string GuessName(List<SImage> images) {
 			string dirName = "";
 
 			string prevName = "";
@@ -203,7 +203,7 @@ namespace OpenTimelapseSort.DataServices
 			HashSet<string> wordList = new HashSet<string>();
 			string[] sanitizedName;
 
-			foreach(Image image in images)
+			foreach(SImage image in images)
             {
 				sanitizedName = image.name.Substring(0, image.name.LastIndexOf('.')).Split(new char[] {'-', '_'});
 
@@ -226,7 +226,7 @@ namespace OpenTimelapseSort.DataServices
 			return target.Substring(target.LastIndexOf(@"\"), (target.Length) - target.LastIndexOf(@"\")).Replace(@"\", "");
 		}
 
-		private void createDir(List<Image> dirList)
+		private void createDir(List<SImage> dirList)
         {
 			Debug.WriteLine("createDir");
 
@@ -236,7 +236,7 @@ namespace OpenTimelapseSort.DataServices
 			DateTime today = new DateTime();
 			int directoryId = (int)(today.Year * 1000000 + today.Month * 10000 + today.Day + today.Ticks);
 
-			ImageDirectory directory = new ImageDirectory
+			SDirectory directory = new SDirectory
 				(
 					target,
 					GetTrimmedName(target)
@@ -250,7 +250,7 @@ namespace OpenTimelapseSort.DataServices
 
 			Debug.WriteLine(directory.name);
 
-			Import import = new Import(false)
+			SImport import = new SImport(false)
 			{
 				length = 1
 			};

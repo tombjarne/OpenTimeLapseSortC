@@ -4,28 +4,28 @@ using System.IO;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class ImageDirectory
+public class SDirectory
 {
     [Key][Required]
     public int id { get; set; }
 
     [ForeignKey("importId")] [Required]
     public int importId { get; set; }
-    public virtual List<Image> imageList { get; set; }
+    public virtual List<SImage> imageList { get; set; }
     public DateTime timestamp { get; set; }
     [Required]
     public string target { get; set; }
     [Required]
     public string name { get; set; }
 
-    public ImageDirectory(String target, String name)
+    public SDirectory(String target, String name)
     {
         // TODO: enable only on first creation!
         timestamp = DateTime.Today;
 
         this.target = target;
         this.name = name;
-        imageList = new List<Image>();
+        imageList = new List<SImage>();
     }
 
     public DateTime getTimestamp()
@@ -33,17 +33,17 @@ public class ImageDirectory
         return timestamp;
     }
 
-    public void pushImage(Image image)
+    public void pushImage(SImage image)
     {
         imageList.Add(image);
     }
 
-    public Image getImage(int index)
+    public SImage getImage(int index)
     {
         return imageList[index];
     }
 
-    public void Delete(Image image)
+    public void Delete(SImage image)
     {
         try
         {

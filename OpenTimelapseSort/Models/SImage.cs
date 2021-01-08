@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 
-public class Image
+public class SImage
 {
     [Key][Required]
     public int id { get; set; }
@@ -23,7 +23,7 @@ public class Image
     [Required]
     public string parentInstance { get; set; }
 
-    public Image(string name, string target, string parentInstance)
+    public SImage(string name, string target, string parentInstance)
     {
         this.name = name;
         this.target = target;

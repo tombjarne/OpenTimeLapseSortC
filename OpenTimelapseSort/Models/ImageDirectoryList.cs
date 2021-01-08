@@ -8,7 +8,7 @@ namespace OpenTimelapseSort.Models
     {
         public int importId { get; set; }
 
-        public List<ImageDirectory> directories;
+        public List<SDirectory> directories;
 
         public ImageDirectoryList(int importId)
         {

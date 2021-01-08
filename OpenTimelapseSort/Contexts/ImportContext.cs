@@ -4,9 +4,9 @@ namespace OpenTimelapseSort.Contexts
 {
     public class ImportContext : DbContext
     {
-        public DbSet<Import> Imports { get; set; }
-        public DbSet<ImageDirectory> ImageDirectories { get; set; }
-        public DbSet<Image> Images { get; set; }
+        public DbSet<SImport> Imports { get; set; }
+        public DbSet<SDirectory> ImageDirectories { get; set; }
+        public DbSet<SImage> Images { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -16,9 +16,9 @@ namespace OpenTimelapseSort.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
-            modelBuilder.Entity<Import>().ToTable("Import");
-            modelBuilder.Entity<ImageDirectory>().ToTable("ImageDirectory");
-            modelBuilder.Entity<Image>().ToTable("Image");
+            modelBuilder.Entity<SImport>().ToTable("Import");
+            modelBuilder.Entity<SDirectory>().ToTable("ImageDirectory");
+            modelBuilder.Entity<SImage>().ToTable("Image");
 
             /*
             modelBuilder.Entity<Import>(entity =>

@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "YsKyS/mXOuPkUS568PR+0pcE919FGqXOMb9F6XHliGnawfW93lV2gXOIBLx1cCR5yw1On7cZFPd+q5tvhPIOZA==",
+  "dgSpecHash": "GK7Pls1GtWIZ/CEe0RbmO346Zk8faPMkrLI+ZEel0UVkobautTEdKZs2AMJBnGhYgYnI4M3Av3O6fuiEdd1WMg==",
   "success": true,
   "projectFilePath": "C:\\Users\\bjarn\\source\\repos\\OpenTimelapseSort\\OpenTimelapseSort\\OpenTimelapseSort.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\bjarn\\.nuget\\packages\\fontawesome.wpf\\4.7.0.9\\fontawesome.wpf.4.7.0.9.nupkg.sha512",
     "C:\\Users\\bjarn\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\bjarn\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\bjarn\\.nuget\\packages\\microsoft.data.sqlite.core\\5.0.0\\microsoft.data.sqlite.core.5.0.0.nupkg.sha512",
@@ -40,6 +41,16 @@
     "C:\\Users\\bjarn\\.nuget\\packages\\windowsapicodepack-shell\\1.1.1\\windowsapicodepack-shell.1.1.1.nupkg.sha512"
   ],
   "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Das Paket \"FontAwesome.WPF 4.7.0.9\" wurde nicht mit dem Projektzielframework \".NETCoreApp,Version=v3.1\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
+      "libraryId": "FontAwesome.WPF",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v3.1"
+      ]
+    },
     {
       "code": "NU1701",
       "level": "Warning",
