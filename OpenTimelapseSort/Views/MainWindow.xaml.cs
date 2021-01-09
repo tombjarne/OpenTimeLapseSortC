@@ -204,7 +204,7 @@ namespace OpenTimelapseSort.Views
         // alternative to this is an observable list and getting the id from the selectionmodel 
         // but this alt only works properly if elements dont have to be generated manually 
 
-        private async Task GetImagesAsync(int id)
+        private async Task GetImagesAsync(string id)
         {
             try
             {
@@ -318,7 +318,6 @@ namespace OpenTimelapseSort.Views
                         DockPanel.SetDock(bottomWrapper, Dock.Bottom);
 
                         StackPanel directoryPanel = new StackPanel();
-                        directoryPanel.Name = "E" + directory.id.ToString();
                         directoryPanel.Style = panelStyle;
                         directoryPanel.Width = width;
                         directoryPanel.Height = width * 0.2;
@@ -384,7 +383,7 @@ namespace OpenTimelapseSort.Views
 
         private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            int directoryId = directories[DirectoryViewer1.SelectedIndex].id;
+            string directoryId = directories[DirectoryViewer1.SelectedIndex].id;
             var fetchImagesTask = GetImagesAsync(directoryId);
         }
     }

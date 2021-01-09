@@ -4,8 +4,6 @@ using OpenTimelapseSort.Contexts;
 using OpentimelapseSort.Models;
 using System.Linq;
 using System.Diagnostics;
-using System.Collections;
-using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
 
 namespace OpenTimelapseSort.DataServices
@@ -19,28 +17,6 @@ namespace OpenTimelapseSort.DataServices
             // init a delegate that contains values ( HashSet ) of Directory table
             // init a delegate that contains values ( HashSet ) of Import table
             // return delegate to MainViewModel ( so that it can render HashSet of Imports ( which includes HashSet of Directories ) ) 
-        }
-
-        public void InitializeDBService()
-        {
-            /*
-            using (var preferencesContext = new PreferencesContext())
-            {
-                if (!preferencesContext.Any())
-                {
-
-                }
-            }
-            */
-        }
-
-        public static Preferences ReturnPreferences()
-        {
-            // fetch from DB
-            // save into Object
-            // return Object
-
-            return new Preferences(true, true, 2.0, 50, 1); // TODO: remove, test purpose only
         }
 
         // returns a list of Import Objects fetched from db
@@ -87,21 +63,31 @@ namespace OpenTimelapseSort.DataServices
          * 
          */
 
-        public SImport ReturnCurrentImport()
+        public async System.Threading.Tasks.Task<SImport> GetImportAsync()
         {
             using (var context = new ImportContext())
             {
-                var import = context.Imports
-                    .Select(import => new
-                    {
-                        fetch = true,
-                        directories = import.directories,
-                        timestamp = import.timestamp,
-                        importDate = import.importDate,
-                        id = import.id
-                    }).Where(import => import.timestamp == System.DateTime.Today); // might need to implement fuzzy logic if it is midnight
-                // TODO: fix casting issue!
-                return (SImport)import;
+                var import = await context.Imports
+                    .SingleAsync(i => i.timestamp == DateTime.Today);
+
+                Debug.WriteLine(import);
+                return import;
+            }
+        }
+
+        public async System.Threading.Tasks.Task<bool> ImportExistsAsync()
+        {
+            using (var context = new ImportContext())
+            {
+                try
+                {
+                    await GetImportAsync();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
             }
         }
 
@@ -159,6 +145,7 @@ namespace OpenTimelapseSort.DataServices
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.StackTrace);
+                    Debug.WriteLine(e.StackTrace);
                 }
             }
         }
@@ -175,31 +162,39 @@ namespace OpenTimelapseSort.DataServices
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.StackTrace);
+                    Debug.WriteLine(e.StackTrace);
                 }
             }
         }
 
-        public SDirectory GetRandomDirInstance()
+        public async System.Threading.Tasks.Task<SDirectory> GetRandomDirInstance()
+        {
+            using (var context = new ImportContext())
+            {
+                var directory = await context.ImageDirectories
+                    .SingleAsync(d => d.name.Contains("Random") && d.timestamp == DateTime.Today);
+                
+                return directory;
+            }
+        }
+
+        public async System.Threading.Tasks.Task<bool> RandomDirInstanceExistsAsync()
         {
             using (var context = new ImportContext())
             {
                 try
                 {
-                    var directory = context.ImageDirectories
-                        .Single(d => d.name.Contains("Random") && d.timestamp == DateTime.Today);
-                    return directory;
-
-                } catch (Exception e)
+                    await GetRandomDirInstance();
+                    return true;
+                }
+                catch (Exception e)
                 {
-                    Debug.WriteLine(e.StackTrace);
-
-                    var directory = new SDirectory("default", "Random Directory");
-                    return directory;
+                    return false;
                 }
             }
         }
 
-        public void UpdateImageDirectory(SDirectory directory)
+        public void UpdateRandomImageDirectory(SDirectory directory)
         {
             using (var database = new ImportContext())
             {
@@ -208,7 +203,9 @@ namespace OpenTimelapseSort.DataServices
                     var entity = database.ImageDirectories
                         .Single(d => d.name.Contains("Random") && d.timestamp == DateTime.Today);
 
-                    database.Entry(entity).CurrentValues.SetValues(directory);
+                    //database.Entry(entity).CurrentValues.SetValues(directory);
+                    //database.SaveChanges();
+                    database.Update(entity);
                     database.SaveChanges();
 
                 } catch (Exception e)
@@ -221,6 +218,22 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
+        public async System.Threading.Tasks.Task UpdateImportAsync(SImport import)
+        {
+            using (var database = new ImportContext())
+            {
+                try
+                {
+                    await database.AddAsync(import);
+                    await database.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.StackTrace);
+                }
+            }
+        }
+
         public void UpdateImport(SImport import)
         {
             using (var context = new ImportContext())
@@ -229,14 +242,14 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-         public async System.Threading.Tasks.Task<List<SImage>> GetImagesAsync(int id)
+         public async System.Threading.Tasks.Task<List<SImage>> GetImagesAsync(string id)
         {
             using (var context = new ImportContext())
             {
                 try
                 {
                     var directory = await context.ImageDirectories
-                        .SingleAsync(d => d.id == id);
+                        .SingleAsync(d => d.id.Equals(id));
 
                     Debug.WriteLine(directory);
 

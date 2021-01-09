@@ -4,8 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class SImport
 {
-    [Key]
-    public int id { get; set; }
+    public string id { get; set; }
     public string target { get; set; }
     public string name { get; set; } // enable user to change name of import :-)
     public virtual List<SDirectory> directories { get; set; }

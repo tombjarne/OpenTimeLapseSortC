@@ -18,6 +18,8 @@ namespace OpenTimelapseSort.ViewModels
             InitialisePreferencesDB();
         }
 
+        //TODO: refactor and optimize!
+
         public bool SavePreferences(bool useAutoDetectInterval, bool copyIsEnabled, double imageInterval, int generosity, int imageCount)
         {
 

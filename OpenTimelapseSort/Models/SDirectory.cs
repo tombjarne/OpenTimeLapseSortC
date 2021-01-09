@@ -6,15 +6,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class SDirectory
 {
-    [Key][Required]
-    public int id { get; set; }
-    [Required]
-    public int importId { get; set; }
+    public string id { get; set; }
+    public string importId { get; set; }
     public virtual List<SImage> imageList { get; set; }
     public DateTime timestamp { get; set; }
-    [Required]
     public string target { get; set; }
-    [Required]
     public string name { get; set; }
     public SImport parentImport { get; set; }
 

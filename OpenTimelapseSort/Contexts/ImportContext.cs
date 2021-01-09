@@ -42,11 +42,12 @@ namespace OpenTimelapseSort.Contexts
                     .WithOne(import => import.parentImport);
             });
 
+            modelBuilder.Entity<SImport>()
+                .HasKey(i => i.id)
+                .HasName("PK_Import_Identifier");
+
             modelBuilder.Entity<SDirectory>(entity =>
             {
-                entity.Property(e => e.id)
-                    .IsRequired();
-
                 entity.Property(e => e.target)
                     .IsRequired();
 
@@ -61,6 +62,10 @@ namespace OpenTimelapseSort.Contexts
                     .HasForeignKey(directory => directory.importId)
                     .HasConstraintName("FK_Import_Identifier");
             });
+
+            modelBuilder.Entity<SDirectory>()
+                .HasKey(d => d.id)
+                .HasName("PK_Directory_Identifier");
 
             modelBuilder.Entity<SImage>(entity =>
             {
@@ -77,9 +82,12 @@ namespace OpenTimelapseSort.Contexts
                     .WithMany(directory => directory.imageList)
                     .HasForeignKey(image => image.directoryId)
                     .HasConstraintName("FK_Directory_Identifier");
-                
+
             });
-            
+
+            modelBuilder.Entity<SImage>()
+                .HasKey(i => i.id)
+                .HasName("PK_Image_Identifier");
         }
     }
 }

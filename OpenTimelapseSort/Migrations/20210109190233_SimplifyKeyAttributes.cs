@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OpenTimelapseSort.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class SimplifyKeyAttributes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,8 +11,7 @@ namespace OpenTimelapseSort.Migrations
                 name: "Import",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    id = table.Column<string>(type: "TEXT", nullable: false),
                     target = table.Column<string>(type: "TEXT", nullable: false),
                     name = table.Column<string>(type: "TEXT", nullable: false),
                     timestamp = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -28,9 +27,8 @@ namespace OpenTimelapseSort.Migrations
                 name: "ImageDirectory",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    importId = table.Column<int>(type: "INTEGER", nullable: false),
+                    id = table.Column<string>(type: "TEXT", nullable: false),
+                    importId = table.Column<string>(type: "TEXT", nullable: true),
                     timestamp = table.Column<DateTime>(type: "TEXT", nullable: false),
                     target = table.Column<string>(type: "TEXT", nullable: false),
                     name = table.Column<string>(type: "TEXT", nullable: false)
@@ -43,21 +41,20 @@ namespace OpenTimelapseSort.Migrations
                         column: x => x.importId,
                         principalTable: "Import",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Image",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    directoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    id = table.Column<string>(type: "TEXT", nullable: false),
+                    directoryId = table.Column<string>(type: "TEXT", nullable: true),
                     name = table.Column<string>(type: "TEXT", nullable: false),
                     target = table.Column<string>(type: "TEXT", nullable: false),
                     fileTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     fileSize = table.Column<long>(type: "INTEGER", nullable: false),
-                    parentInstance = table.Column<string>(type: "TEXT", nullable: false)
+                    parentInstance = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,7 +64,7 @@ namespace OpenTimelapseSort.Migrations
                         column: x => x.directoryId,
                         principalTable: "ImageDirectory",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

@@ -67,7 +67,7 @@ namespace OpenTimelapseSort
             return true;
         }
 
-        public async Task<List<SImage>> GetImagesAsync(int id)
+        public async Task<List<SImage>> GetImagesAsync(string id)
         {
             return await service.GetImagesAsync(id);
         }
@@ -179,38 +179,43 @@ namespace OpenTimelapseSort
          * @param event         trigger for delete button being clicked
          */
 
+        // TODO: fix saving to db issues! ( maybe only save import, instead of directories extra!)
+
         public async void SortImages(List<SImage> imageList, ViewUpdate update)
         {
             Task sortingTask = Task
                 .Run(() => {
                     matching.SortImages(imageList, async (List<SDirectory> directories) =>
                     {
-                        // TODO: parameterize path to images
                         string destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                         string source;
                         string mainDirectory = destination + @"\OTS_IMG";
+
+                        List<SDirectory> tempDirectories = new List<SDirectory>();
 
                         if (!Directory.Exists(mainDirectory))
                             Directory.CreateDirectory(mainDirectory);
 
                         try
                         {
-                            SImport import = new SImport()
+                            SImport import = await service.ImportExistsAsync() == true ? 
+                                await service.GetImportAsync() : new SImport()
                             {
-                                id = DateTime.Now.Millisecond + DateTime.Today.Day,
-                                name = "Nightsky_Timelapse",
+                                id = System.Guid.NewGuid().ToString(),
+                                name = directories[0].name,
                                 importDate = DateTime.Today.ToShortDateString(),
-                                length = 10,
-                                target = "killmenow"
+                                length = 0,
+                                target = "",
+                                directories = new List<SDirectory>()
                             };
+
                             await service.SaveImportAsync(import);
-                            // TODO: add missing import instance
+
                             foreach (var directory in directories)
                             {
                                 destination = mainDirectory + @"\" + directory.name;
                                 Directory.CreateDirectory(destination);
 
-                                directory.id += DateTime.Today.Millisecond;
                                 directory.importId = import.id;
                                 await service.SaveImageDirectoryAsync(directory);
 
@@ -218,13 +223,19 @@ namespace OpenTimelapseSort
                                 {
                                     source = Path.Combine(image.target);
                                     File.Copy(source, destination + @"\" + image.name, true);
-                                    image.id = DateTime.Now.Millisecond;
-                                    image.directoryId = directory.id;
-                                    Debug.WriteLine(image);
-                                    await service.SaveImageAsync(image);
+
+                                    //image.directoryId = directory.id;
+                                    //await service.SaveImageAsync(image);
                                 }
-                                destination = @"C:\Users\bjarn\Bilder";
+
+                                import.length++;
+                                tempDirectories.Add(directory);
+
+                                destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                             }
+                            
+                            import.directories.AddRange(tempDirectories);
+                            await service.UpdateImportAsync(import);
                         }
                         catch (Exception e)
                         {

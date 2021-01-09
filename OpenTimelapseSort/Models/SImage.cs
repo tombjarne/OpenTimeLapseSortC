@@ -7,19 +7,14 @@ using System.IO;
 
 public class SImage
 {
-    [Key][Required]
-    public int id { get; set; }
-    [ForeignKey("directoryId")] [Required]
-    public int directoryId { get; set; }
+    public string id { get; set; }
+    public string directoryId { get; set; }
 
     private Dictionary<META_ATTRIBUTE, string> meta = new Dictionary<META_ATTRIBUTE, string>();
-    [Required]
     public string name { get; set; }
-    [Required]
     public string target { get; set; }
     public DateTime fileTime { get; set; }
     public long fileSize { get; set; }
-    [Required]
     public string parentInstance { get; set; }
 
     public SDirectory parentDirectory { get; set; }
