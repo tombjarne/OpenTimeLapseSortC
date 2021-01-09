@@ -242,54 +242,18 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-         public async System.Threading.Tasks.Task<List<SImage>> GetImagesAsync(string id)
+        public async System.Threading.Tasks.Task<List<SImage>> GetImagesAsync(string id)
         {
             using (var context = new ImportContext())
             {
-                try
-                {
-                    var directory = await context.ImageDirectories
-                        .SingleAsync(d => d.id.Equals(id));
+                var directory = await context.ImageDirectories
+                    .SingleAsync(d => d.id.Equals(id));
 
-                    Debug.WriteLine(directory);
+                SImage image = new SImage("test", "test", "test/test/wohoo");
+                directory.imageList.Add(image);
 
-                    SImage image = new SImage("test", "test", "test/test/wohoo");
-                    directory.imageList.Add(image);
-
-                    return directory.imageList;
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.StackTrace);
-                    Debug.WriteLine(e.InnerException);
-
-                    List<SImage> errorList = new List<SImage>();
-                    return errorList;
-                }
+                return directory.imageList;
             }
         }
-
-        /*
-        private HashSet<ImageDirectory> GetDirectories(HashSet<ImageDirectory> directories) // gets all directories related to a passed import
-        {
-            // loop over all entries and create new objects
-            // save objects to HashSet
-            // repeat for each directory
-            
-        }
-
-        private HashSet<Import> GetImports() // gets all imports from database
-        {
-            // loop over all entries and create new objects
-            // save objects to HashSet
-            // repeat for each directory
-
-            Imports imports = new Imports(GetDirectories);
-            return imports;
-        }
-        */
-
-        //use Entity Framework here to fetch and store
-
     }
 }

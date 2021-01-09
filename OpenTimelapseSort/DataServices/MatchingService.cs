@@ -30,10 +30,6 @@ namespace OpenTimelapseSort.DataServices
         {
 
 			double syncValue = preD * generosity;
-			Debug.WriteLine("syncvalue :" + syncValue);
-			Debug.WriteLine("syncvalue :" + generosity);
-			Debug.WriteLine("syncvalue :" + preD);
-			Debug.WriteLine("syncvalue :" + curD);
 
 			// TODO: fix statement
 
@@ -45,16 +41,17 @@ namespace OpenTimelapseSort.DataServices
             {
 				return false;
             }
-
-		}
+        }
 
 		public async void SortImages(List<SImage> imageList, RenderDelegate render)
         {
-			int pointer = 0; // marks end of sequence
+            List<SImage> dirList = new List<SImage>();
+            List<SImage> randomDirList = new List<SImage>();
+
+            int pointer = 0; // marks end of sequence
 			int seqPointer = 0; // marks begin of sequence
 			double currDeviation = 0.0;
 			double prevDeviation = 0.0;
-
             double deviationGenerosity = ((double)service.FetchPreferences().sequenceIntervalGenerosity)/100;
 			int runs = service.FetchPreferences().sequenceImageCount; // pref count to make a sequence
 
@@ -63,11 +60,7 @@ namespace OpenTimelapseSort.DataServices
 				prevDeviation = service.FetchPreferences().sequenceInterval;
             }
 
-			List<SImage> dirList = new List<SImage>();
-			List<SImage> randomDirList = new List<SImage>();
-
-			// TODO: match to fit seconds spec again! Fix milliseconds issue
-
+            // TODO: match to fit seconds spec again! Fix milliseconds issue
 
 			for (int i = 0; i < imageList.Count; i++)
             {
@@ -133,9 +126,8 @@ namespace OpenTimelapseSort.DataServices
             render(imageDirectories);
 		}
 
-        private async System.Threading.Tasks.Task addToRandomDirAsync(List<SImage> dirList) // can sometimes only contain a single image
-        {
-
+        private async System.Threading.Tasks.Task addToRandomDirAsync(List<SImage> dirList)
+		{
             SDirectory directory = await dbService.ImportExistsAsync() == true ?
                 await dbService.GetRandomDirInstance() : new SDirectory
                 (
@@ -164,46 +156,5 @@ namespace OpenTimelapseSort.DataServices
 
             imageDirectories.Add(directory);
 		}
-
-        /**
-         * GuessName
-         * 
-         * Returns a guess for directory name based on the image names
-         * useful when user imports images other than from camera itself
-         * 
-         */
-
-        private string GuessName(List<SImage> images)
-        {
-            string dirName = "";
-
-            string prevName = "";
-            string curName = "";
-
-            HashSet<string> wordList = new HashSet<string>();
-            string[] sanitizedName;
-
-            foreach (SImage image in images)
-            {
-                sanitizedName = image.name.Substring(0, image.name.LastIndexOf('.')).Split(new char[] { '-', '_' });
-
-                if (sanitizedName.Any(word => image.name.Contains(word)))
-                {
-                    wordList.Add(image.name);
-                }
-            }
-
-            for (int i = 0; i < wordList.Count; i++)
-            {
-                //dirName = wordList.
-            }
-
-            return dirName;
-        }
-
-        private string GetTrimmedName(string target)
-        {
-            return target.Substring(target.LastIndexOf(@"\"), (target.Length) - target.LastIndexOf(@"\")).Replace(@"\", "");
-        }
-	}
+    }
 }
