@@ -250,7 +250,7 @@ namespace OpenTimelapseSort.DataServices
 
 			Debug.WriteLine(directory.name);
 
-			SImport import = new SImport(false)
+			SImport import = new SImport()
 			{
 				length = 1
 			};

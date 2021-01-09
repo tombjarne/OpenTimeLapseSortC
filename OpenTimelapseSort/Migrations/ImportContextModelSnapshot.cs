@@ -22,9 +22,6 @@ namespace OpenTimelapseSort.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("SImportid")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("importId")
                         .HasColumnType("INTEGER");
 
@@ -41,7 +38,7 @@ namespace OpenTimelapseSort.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("SImportid");
+                    b.HasIndex("importId");
 
                     b.ToTable("ImageDirectory");
                 });
@@ -50,9 +47,6 @@ namespace OpenTimelapseSort.Migrations
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("SDirectoryid")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("directoryId")
@@ -78,7 +72,7 @@ namespace OpenTimelapseSort.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("SDirectoryid");
+                    b.HasIndex("directoryId");
 
                     b.ToTable("Image");
                 });
@@ -89,19 +83,19 @@ namespace OpenTimelapseSort.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("fetch")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("importDate")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("length")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("target")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("timestamp")
@@ -114,16 +108,26 @@ namespace OpenTimelapseSort.Migrations
 
             modelBuilder.Entity("SDirectory", b =>
                 {
-                    b.HasOne("SImport", null)
+                    b.HasOne("SImport", "parentImport")
                         .WithMany("directories")
-                        .HasForeignKey("SImportid");
+                        .HasForeignKey("importId")
+                        .HasConstraintName("FK_Import_Identifier")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("parentImport");
                 });
 
             modelBuilder.Entity("SImage", b =>
                 {
-                    b.HasOne("SDirectory", null)
+                    b.HasOne("SDirectory", "parentDirectory")
                         .WithMany("imageList")
-                        .HasForeignKey("SDirectoryid");
+                        .HasForeignKey("directoryId")
+                        .HasConstraintName("FK_Directory_Identifier")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("parentDirectory");
                 });
 
             modelBuilder.Entity("SDirectory", b =>

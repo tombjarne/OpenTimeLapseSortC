@@ -195,7 +195,7 @@ namespace OpenTimelapseSort
 
                         try
                         {
-                            SImport import = new SImport(false)
+                            SImport import = new SImport()
                             {
                                 id = DateTime.Now.Millisecond + DateTime.Today.Day,
                                 name = "Nightsky_Timelapse",

@@ -12,16 +12,13 @@ public class SImport
     public DateTime timestamp { get; set; }
     public string importDate { get; set; }
     public int length { get; set; }
-    public bool fetch { get; set; } // change permissions?
-
-    public SImport(bool fetch)
+    public SImport()
     {
-        if (!fetch)
+        if (timestamp == null)
         {
             timestamp = System.DateTime.Today;
             importDate = timestamp.ToString();
         }
-        this.fetch = fetch;
     }
 
     public void initImportList(List<SDirectory> directories)

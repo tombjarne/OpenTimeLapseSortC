@@ -9,7 +9,6 @@ public class SImage
 {
     [Key][Required]
     public int id { get; set; }
-
     [ForeignKey("directoryId")] [Required]
     public int directoryId { get; set; }
 
@@ -22,6 +21,8 @@ public class SImage
     public long fileSize { get; set; }
     [Required]
     public string parentInstance { get; set; }
+
+    public SDirectory parentDirectory { get; set; }
 
     public SImage(string name, string target, string parentInstance)
     {

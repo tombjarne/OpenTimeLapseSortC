@@ -8,8 +8,7 @@ public class SDirectory
 {
     [Key][Required]
     public int id { get; set; }
-
-    [ForeignKey("importId")] [Required]
+    [Required]
     public int importId { get; set; }
     public virtual List<SImage> imageList { get; set; }
     public DateTime timestamp { get; set; }
@@ -17,6 +16,7 @@ public class SDirectory
     public string target { get; set; }
     [Required]
     public string name { get; set; }
+    public SImport parentImport { get; set; }
 
     public SDirectory(String target, String name)
     {

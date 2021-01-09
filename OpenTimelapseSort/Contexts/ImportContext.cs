@@ -20,47 +20,66 @@ namespace OpenTimelapseSort.Contexts
             modelBuilder.Entity<SDirectory>().ToTable("ImageDirectory");
             modelBuilder.Entity<SImage>().ToTable("Image");
 
-            /*
-            modelBuilder.Entity<Import>(entity =>
+            
+            modelBuilder.Entity<SImport>(entity =>
             {
-                entity.Property(import => import.timestamp)
+                entity.Property(e => e.id)
                     .IsRequired();
 
-                entity.HasMany(import => import.directories)
-                    .WithMany(directories => directories);
+                entity.Property(e => e.target)
+                    .IsRequired();
+
+                entity.Property(e => e.name)
+                    .IsRequired();
+
+                entity.Property(e => e.timestamp)
+                    .IsRequired();
+
+                entity.Property(e => e.importDate)
+                    .IsRequired();
+
+                entity.HasMany(directory => directory.directories)
+                    .WithOne(import => import.parentImport);
             });
 
-            // TODO: replace above with detailed code below to match specs
+            modelBuilder.Entity<SDirectory>(entity =>
+            {
+                entity.Property(e => e.id)
+                    .IsRequired();
+
+                entity.Property(e => e.target)
+                    .IsRequired();
+
+                entity.Property(e => e.name)
+                    .IsRequired();
+
+                entity.HasMany(directory => directory.imageList)
+                    .WithOne(image => image.parentDirectory);
+
+                entity.HasOne(directory => directory.parentImport)
+                    .WithMany(import => import.directories)
+                    .HasForeignKey(directory => directory.importId)
+                    .HasConstraintName("FK_Import_Identifier");
+            });
+
+            modelBuilder.Entity<SImage>(entity =>
+            {
+                entity.Property(e => e.id)
+                    .IsRequired();
+
+                entity.Property(e => e.target)
+                    .IsRequired();
+
+                entity.Property(e => e.name)
+                    .IsRequired();
+
+                entity.HasOne(image => image.parentDirectory)
+                    .WithMany(directory => directory.imageList)
+                    .HasForeignKey(image => image.directoryId)
+                    .HasConstraintName("FK_Directory_Identifier");
+                
+            });
             
-            modelBuilder.Entity<Department>(entity =>
-            {
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
- 
-            modelBuilder.Entity<Employee>(entity =>
-            {
-                entity.Property(e => e.Designation)
-                    .IsRequired()
-                    .HasMaxLength(25)
-                    .IsUnicode(false);
- 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
- 
-                entity.HasOne(d => d.Department)
-                    .WithMany(p => p.Employee) <- this makes the relationships between db entries
-                    .HasForeignKey(d => d.DepartmentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Employee_Department");
-            });
-            */
-
         }
-
     }
 }

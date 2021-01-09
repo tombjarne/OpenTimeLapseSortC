@@ -67,7 +67,7 @@ namespace OpenTimelapseSort.DataServices
 
                 foreach (SImport import in context.Imports)
                 {
-                    SImport newImport = new SImport(true);
+                    SImport newImport = new SImport();
                     newImport.initImportList(directories);
                     newImport.importDate = import.importDate;
                     newImport.timestamp = import.timestamp; //convert string to date 
@@ -112,7 +112,7 @@ namespace OpenTimelapseSort.DataServices
             using (var context = new ImportContext())
             {
 
-                SImport import = new SImport(false)
+                SImport import = new SImport()
                 {
                     name = "Urlaub",
                     length = 1,

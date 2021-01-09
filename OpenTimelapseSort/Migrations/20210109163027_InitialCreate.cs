@@ -13,12 +13,11 @@ namespace OpenTimelapseSort.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    target = table.Column<string>(type: "TEXT", nullable: true),
-                    name = table.Column<string>(type: "TEXT", nullable: true),
+                    target = table.Column<string>(type: "TEXT", nullable: false),
+                    name = table.Column<string>(type: "TEXT", nullable: false),
                     timestamp = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    importDate = table.Column<string>(type: "TEXT", nullable: true),
-                    length = table.Column<int>(type: "INTEGER", nullable: false),
-                    fetch = table.Column<bool>(type: "INTEGER", nullable: false)
+                    importDate = table.Column<string>(type: "TEXT", nullable: false),
+                    length = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,7 +39,7 @@ namespace OpenTimelapseSort.Migrations
                 {
                     table.PrimaryKey("PK_ImageDirectory", x => x.id);
                     table.ForeignKey(
-                        name: "FK_ImageDirectory_Import_importId",
+                        name: "FK_Import_Identifier",
                         column: x => x.importId,
                         principalTable: "Import",
                         principalColumn: "id",
@@ -58,24 +57,23 @@ namespace OpenTimelapseSort.Migrations
                     target = table.Column<string>(type: "TEXT", nullable: false),
                     fileTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     fileSize = table.Column<long>(type: "INTEGER", nullable: false),
-                    parentInstance = table.Column<string>(type: "TEXT", nullable: false),
-                    ImageDirectoryid = table.Column<int>(type: "INTEGER", nullable: true)
+                    parentInstance = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Image", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Image_ImageDirectory_ImageDirectoryid",
-                        column: x => x.ImageDirectoryid,
+                        name: "FK_Directory_Identifier",
+                        column: x => x.directoryId,
                         principalTable: "ImageDirectory",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Image_ImageDirectoryid",
+                name: "IX_Image_directoryId",
                 table: "Image",
-                column: "ImageDirectoryid");
+                column: "directoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ImageDirectory_importId",
