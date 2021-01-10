@@ -17,13 +17,12 @@ namespace OpenTimelapseSort
     class MainViewModel
     {
 
-        private DBService service = new DBService();
-        private MatchingService matching = new MatchingService();
+        private DbService _dbService = new DbService();
+        private readonly MatchingService matching = new MatchingService();
+
         private List<SImport> imports;
 
         public delegate void ImageListingProgress(int count, List<SImage> imageList);
-        public delegate void SortProgress(StackPanel panel);
-        public delegate void InitFetch(StackPanel panel);
         public delegate void ViewUpdate(List<SDirectory> directories);
 
         public MainViewModel()
@@ -40,7 +39,7 @@ namespace OpenTimelapseSort
 
         private void initialiseDBService()
         {
-            service = new DBService();
+            _dbService = new DbService();
             using (var database = new ImportContext())
             {
                 try
@@ -67,72 +66,14 @@ namespace OpenTimelapseSort
             return true;
         }
 
-        public async Task<List<SImage>> GetImagesAsync(string id)
+        public async Task<List<SDirectory>> GetDirectoriesAsync()
         {
-            return await service.GetImagesAsync(id);
+            return await _dbService.GetDirectoriesAsync();
         }
 
-
-        //
-        // is called during creation of View
-        // fetches all saved elements from database
-        // renders elements accordingly through call to Render()
-        public StackPanel InitialiseView()
+        public async Task<List<SImage>> GetImagesAsync(string id)
         {
-            imports = service.ReturnImports();
-
-            if (imports.Capacity > 0)
-            {
-                StackPanel allImports = new StackPanel();
-                StackPanel directoryPanel = new StackPanel();
-
-                foreach (SImport import in imports)
-                {
-                    try
-                    {
-                        StackPanel importPanel = new StackPanel();
-                        foreach (SDirectory directory in import.directories)
-                        {
-                            // add on click event
-                            // add directoryPanel to importPanel
-                            //importPanel.Children.Add(directoryPanel);
-
-                            Rectangle rect2 = new Rectangle();
-                            rect2.Width = 100;
-                            rect2.Height = 100;
-                            rect2.Margin = new Thickness(5);
-                            rect2.Fill = Brushes.Blue;
-                            directoryPanel.Children.Add(rect2);
-
-                        }
-                        allImports.Children.Add(importPanel);
-                    }
-                    catch (Exception e)
-                    {
-                        // Test purposes
-                        Console.WriteLine(e.StackTrace);
-                    }
-
-                    allImports.Width = 300;
-                    allImports.Height = 100;
-                    allImports.Margin = new Thickness(5);
-
-                    TextBox importName = new TextBox();
-                    importName.Text = "Test Import";
-                    //allImports.Children.Add(directoryPanel);
-                    //allImports.Children.Add(importName);
-
-                }
-                return directoryPanel;
-
-            }
-            else
-            {
-                StackPanel errorStackPanel = new StackPanel();
-                // add attributes and text to warning
-                return errorStackPanel;
-            }
-
+            return await _dbService.GetImagesAsync(id);
         }
 
         public void Import(string name, ImageListingProgress listProgress)
@@ -181,61 +122,35 @@ namespace OpenTimelapseSort
 
         // TODO: fix saving to db issues! ( maybe only save import, instead of directories extra!)
 
-        public async void SortImages(List<SImage> imageList, ViewUpdate update)
+        public void SortImages(List<SImage> imageList, ViewUpdate update)
         {
-            Task sortingTask = Task
-                .Run(() => {
+            var sortingTask = Task
+                .Run(() =>
+                {
                     matching.SortImages(imageList, async (List<SDirectory> directories) =>
                     {
                         string destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                        string source;
                         string mainDirectory = destination + @"\OTS_IMG";
-
-                        List<SDirectory> tempDirectories = new List<SDirectory>();
 
                         if (!Directory.Exists(mainDirectory))
                             Directory.CreateDirectory(mainDirectory);
 
                         try
                         {
-                            SImport import = await service.ImportExistsAsync() == true ? 
-                                await service.GetImportAsync() : new SImport()
-                            {
-                                id = System.Guid.NewGuid().ToString(),
-                                name = directories[0].name,
-                                importDate = DateTime.Today.ToShortDateString(),
-                                length = 0,
-                                target = "",
-                                directories = new List<SDirectory>()
-                            };
-
-                            await service.SaveImportAsync(import);
 
                             foreach (var directory in directories)
                             {
                                 destination = mainDirectory + @"\" + directory.name;
                                 Directory.CreateDirectory(destination);
 
-                                directory.importId = import.id;
-                                await service.SaveImageDirectoryAsync(directory);
-
                                 foreach (var image in directory.imageList)
                                 {
-                                    source = Path.Combine(image.target);
+                                    string source = Path.Combine(image.target);
                                     File.Copy(source, destination + @"\" + image.name, true);
-
-                                    //image.directoryId = directory.id;
-                                    //await service.SaveImageAsync(image);
                                 }
-
-                                import.length++;
-                                tempDirectories.Add(directory);
 
                                 destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                             }
-                            
-                            import.directories.AddRange(tempDirectories);
-                            await service.UpdateImportAsync(import);
                         }
                         catch (Exception e)
                         {
@@ -244,7 +159,7 @@ namespace OpenTimelapseSort
 
                         update(directories);
                     });
-                 });
+                });
         }
     }
 }

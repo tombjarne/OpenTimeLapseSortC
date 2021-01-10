@@ -29,11 +29,11 @@ public class SImage
 
     public void SetTimestamp(string value)
     {
-        meta.Add(META_ATTRIBUTE.TIMESTAMP, value);
+        meta.Add(META_ATTRIBUTE.Timestamp, value);
     }
 
     public void SetSize(string value)
     {
-        meta.Add(META_ATTRIBUTE.FILESIZE, value);
+        meta.Add(META_ATTRIBUTE.Filesize, value);
     }
 } 

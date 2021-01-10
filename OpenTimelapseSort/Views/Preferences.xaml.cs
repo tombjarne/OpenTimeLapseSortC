@@ -9,14 +9,12 @@ namespace OpenTimelapseSort.Views
 {
     public partial class PreferencesView : Window
     {
-
-        public delegate double SliderCountValueCommand(double value);
-        PreferencesViewModel preferencesViewModel = new PreferencesViewModel();
+        private readonly PreferencesViewModel _preferencesViewModel = new PreferencesViewModel();
 
         public PreferencesView()
         {
             InitializeComponent();
-            SetPreferences(preferencesViewModel.FetchFromDatabase());
+            SetPreferences(_preferencesViewModel.FetchFromDatabase());
         }
 
         // TODO: simplify
@@ -58,7 +56,7 @@ namespace OpenTimelapseSort.Views
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
-            preferencesViewModel.SavePreferences(true, (bool)Copy.IsChecked, 
+            _preferencesViewModel.SavePreferences(true, (bool)Copy.IsChecked, 
                 (double)IntervalSlider.Value, (int)GenerositySlider.Value, (int)IntervalCountSlider.Value);
         }
 
@@ -67,14 +65,9 @@ namespace OpenTimelapseSort.Views
             App.Current.Windows[1].Close();
         }
 
-        private void moveWindow(object sender, MouseButtonEventArgs e)
+        private void MoveWindow(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
-        }
-
-        private void Copy_Checked(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

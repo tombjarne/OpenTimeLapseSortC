@@ -10,37 +10,26 @@ namespace OpenTimelapseSort.DataServices
     {
 		public delegate void RenderDelegate(List<SDirectory> imageDirectories);
 
-		DBPreferencesService service = new DBPreferencesService();
-		DBService dbService = new DBService();
-
-		List<SDirectory> imageDirectories = new List<SDirectory>(); // each directory will receive their images in the matching function
-		List<SImport> imports = new List<SImport>(); // does it need to be a list?
+        private readonly DBPreferencesService _dbPreferencesService = new DBPreferencesService();
+        private readonly DbService _dbService = new DbService();
+        private readonly List<SDirectory> _imageDirectories = new List<SDirectory>(); // each directory will receive their images in the matching function
 
 		public bool UseAutoDetection()
         {
-			return service.FetchPreferences().useAutoDetectInterval;
+			return _dbPreferencesService.FetchPreferences().useAutoDetectInterval;
         }
 
 		public bool UseCopy()
         {
-			return service.FetchPreferences().useCopy;
+			return _dbPreferencesService.FetchPreferences().useCopy;
         }
 
         public bool WithinSameSequence(double curD, double preD, double generosity)
         {
+            double syncValue = preD * generosity;
 
-			double syncValue = preD * generosity;
-
-			// TODO: fix statement
-
-            if (preD >= curD - syncValue && preD <= curD + syncValue ||
-				preD <= curD - syncValue && preD >= curD + syncValue)
-            {
-				return true;
-            } else
-            {
-				return false;
-            }
+            return (preD >= curD - syncValue && preD <= curD + syncValue ||
+                    preD <= curD - syncValue && preD >= curD + syncValue);
         }
 
 		public async void SortImages(List<SImage> imageList, RenderDelegate render)
@@ -48,16 +37,14 @@ namespace OpenTimelapseSort.DataServices
             List<SImage> dirList = new List<SImage>();
             List<SImage> randomDirList = new List<SImage>();
 
-            int pointer = 0; // marks end of sequence
-			int seqPointer = 0; // marks begin of sequence
 			double currDeviation = 0.0;
 			double prevDeviation = 0.0;
-            double deviationGenerosity = ((double)service.FetchPreferences().sequenceIntervalGenerosity)/100;
-			int runs = service.FetchPreferences().sequenceImageCount; // pref count to make a sequence
+            double deviationGenerosity = ((double)_dbPreferencesService.FetchPreferences().sequenceIntervalGenerosity)/100;
+			int runs = _dbPreferencesService.FetchPreferences().sequenceImageCount;
 
-            if (service.FetchPreferences().useAutoDetectInterval)
+            if (_dbPreferencesService.FetchPreferences().useAutoDetectInterval)
             {
-				prevDeviation = service.FetchPreferences().sequenceInterval;
+				prevDeviation = _dbPreferencesService.FetchPreferences().sequenceInterval;
             }
 
             // TODO: match to fit seconds spec again! Fix milliseconds issue
@@ -69,12 +56,10 @@ namespace OpenTimelapseSort.DataServices
                 if (i > 0)
 				{
 					prevDeviation = Math.Abs((imageList[i].fileTime - imageList[i - 1].fileTime).Milliseconds);
-					Debug.WriteLine(prevDeviation);
 
 					if (i < imageList.Count - 1)
 					{
 						currDeviation = Math.Abs((imageList[i + 1].fileTime - imageList[i].fileTime).Milliseconds);
-						Debug.WriteLine(currDeviation);
 					}
 					else
 					{
@@ -85,66 +70,75 @@ namespace OpenTimelapseSort.DataServices
 				if (WithinSameSequence(currDeviation, prevDeviation, deviationGenerosity))
 				{
 					dirList.Add(imageList[i]);
-					pointer += 1; // marks last image in current sequence that fits previous deviations
 				}
 				else
 				{
-
-					//if (pointer - seqPointer >= runs) // images do not have same deviation and do fill the length requirement
-					if (dirList.Count >= runs) // images do not have same deviation and do fill the length requirement
+                    if (dirList.Count >= runs)
 					{
-						createDir(dirList); // current list will be added due to matching requirements
+						await CreateDirAsync(dirList); 
 					}
-					else // images do not have same deviation and do not fill the minimum length requirement
+					else
 					{
 						randomDirList.Add(imageList[i]);
 					}
 
-					pointer = i;
-					seqPointer = i;
-					dirList = new List<SImage>(); // reinit dirList
+					dirList = new List<SImage>();
 				}
+
 				if (i + 1 == imageList.Count)
 				{
+
+                    // TODO: simplify!
+
+                    if (WithinSameSequence(currDeviation, prevDeviation, deviationGenerosity))
+                    {
+                        dirList.Add(imageList[i]);
+                    }
+                    else
+                    {
+                        randomDirList.Add(imageList[i]);
+                    }
+
                     imageList[i].id = System.Guid.NewGuid().ToString();
 
                     if (dirList.Count < runs && dirList.Count > 0)
                     {
 						randomDirList.AddRange(dirList);
-                        await addToRandomDirAsync(randomDirList);
+                        await CreateRandomDirAsync(randomDirList);
 					} else if (randomDirList.Count > 0 && randomDirList.Count < runs)
                     {
-                        await addToRandomDirAsync(randomDirList);
+                        await CreateRandomDirAsync(randomDirList);
 					}
 					
 					if (dirList.Count >= runs)
                     {
-						createDir(dirList);
+						await CreateDirAsync(dirList);
                     }
 				}
 			}
-            render(imageDirectories);
+            render(_imageDirectories);
 		}
 
-        private async System.Threading.Tasks.Task addToRandomDirAsync(List<SImage> dirList)
-		{
-            SDirectory directory = await dbService.ImportExistsAsync() == true ?
-                await dbService.GetRandomDirInstance() : new SDirectory
-                (
-                    dirList[0].target,
-                    dirList[0].name + "Random"
-                )
-                {
-                    id = System.Guid.NewGuid().ToString(),
-                    imageList = dirList
-                };
+        private async System.Threading.Tasks.Task CreateRandomDirAsync(List<SImage> dirList)
+        {
+            
+            var directory = new SDirectory
+            (
+                dirList[0].target,
+                dirList[0].name + "Random"
+            )
+            {
+                id = System.Guid.NewGuid().ToString(),
+                imageList = dirList
+            };
 
-            imageDirectories.Add(directory);
+            await SaveMatch(directory);
+            _imageDirectories.Add(directory);
         }
 
-		private void createDir(List<SImage> dirList)
+		private async System.Threading.Tasks.Task CreateDirAsync(List<SImage> dirList)
         {
-            SDirectory directory = new SDirectory
+            var directory = new SDirectory
                 (
                     dirList[0].target,
 					dirList[0].name
@@ -154,7 +148,44 @@ namespace OpenTimelapseSort.DataServices
                     imageList = dirList
                 };
 
-            imageDirectories.Add(directory);
+            await SaveMatch(directory);
+            _imageDirectories.Add(directory);
 		}
+
+        private async System.Threading.Tasks.Task SaveMatch(SDirectory directory)
+        {
+            SImport import;
+            var importExists = await _dbService.ImportExistsAsync();
+
+            if (importExists)
+            {
+                import = await _dbService.GetImportAsync();
+
+                directory.importId = import.id;
+
+                import.directories = new List<SDirectory>();
+                import.directories.Add(directory);
+                import.length++;
+
+                await _dbService.UpdateImportAsync(import);
+            }
+            else
+            {
+                import = new SImport()
+                {
+                    id = System.Guid.NewGuid().ToString(),
+                    name = directory.name,
+                    importDate = DateTime.Today.ToShortDateString(),
+                    length = 0,
+                    target = directory.target,
+                    directories = new List<SDirectory>()
+                };
+
+                directory.importId = import.id;
+                import.directories.Add(directory);
+
+                await _dbService.SaveImportAsync(import);
+            }
+        }
     }
 }

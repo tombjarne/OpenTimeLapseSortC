@@ -21,13 +21,13 @@
             <Label x:Name="window_name" Grid.Column="0" Content="Preferences" HorizontalAlignment="Left" Margin="0,2,0,-2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
             </Label>
             <Ellipse x:Name="minimize_btn" HorizontalAlignment="Left" Height="17" Margin="365,14,0,0" VerticalAlignment="Top" Width="17" Fill="Coral" MouseDown="closePreferencesWindow"/>
-            <Rectangle HorizontalAlignment="Left" Height="44" Margin="128,0,0,-5" Width="228" MouseDown="moveWindow" Fill="#FF34404D"/>
+            <Rectangle HorizontalAlignment="Left" Height="44" Margin="128,0,0,-5" Width="228" MouseDown="MoveWindow" Fill="#FF34404D"/>
             <Label x:Name="Headline1" Grid.Column="0" Content="Edit your options&#xD;&#xA;" HorizontalAlignment="Left" Margin="17,60,0,-60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="22" Foreground="White"/>
             <Label Grid.Column="0" Content="Interval&#xD;&#xA;" HorizontalAlignment="Left" Margin="36,191,0,-191" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
             <Label Grid.Column="0" Content="Interval Generosity&#xA;&#xA;" HorizontalAlignment="Left" Margin="36,276,0,-276" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
             <Label Grid.Column="0" Content="Interval Image Count&#xA;&#xA;" HorizontalAlignment="Left" Margin="36,362,0,-362" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
         </Grid>
-        <CheckBox x:Name="Copy" Content="Copy" HorizontalAlignment="Left" Margin="56,116,0,0" VerticalAlignment="Top" Foreground="White" FontSize="14" Checked="Copy_Checked"/>
+        <CheckBox x:Name="Copy" Content="Copy" HorizontalAlignment="Left" Margin="56,116,0,0" VerticalAlignment="Top" Foreground="White" FontSize="14"/>
         <Slider x:Name="IntervalSlider" Minimum="0" IsSnapToTickEnabled="True" TickFrequency="0.5" Maximum="400" ValueChanged="UpdateSliderIntervalValue" HorizontalAlignment="Left" Margin="56,232,0,0" VerticalAlignment="Top" Width="245"/>
         <Slider x:Name="IntervalCountSlider" Minimum="0" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="2000" ValueChanged="UpdateSliderCountValue" HorizontalAlignment="Left" Margin="56,393,0,0" VerticalAlignment="Top" Width="245"/>
         <Label x:Name="Interval" Content="0&#xA;" HorizontalAlignment="Left" Margin="306,233,0,273" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>

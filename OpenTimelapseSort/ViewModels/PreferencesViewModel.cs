@@ -11,11 +11,17 @@ namespace OpenTimelapseSort.ViewModels
 {
     class PreferencesViewModel
     {
-        private DBPreferencesService service = new DBPreferencesService();
+        private readonly DBPreferencesService _dbPreferencesService = new DBPreferencesService();
 
         public PreferencesViewModel()
         {
             InitialisePreferencesDB();
+        }
+
+        private async void EnsureDatabaseIsCreatedAsync()
+        {
+            await using var database = new PreferencesContext();
+            await database.Database.EnsureCreatedAsync();
         }
 
         //TODO: refactor and optimize!
@@ -24,27 +30,27 @@ namespace OpenTimelapseSort.ViewModels
         {
 
             bool success = false;
+            using var database = new PreferencesContext();
 
-            using (var database = new PreferencesContext())
+            try
             {
-                try
-                {
-                    database.Database.EnsureCreated();
-                    Preferences preferences = new Preferences(
-                        useAutoDetectInterval,
-                        copyIsEnabled,
-                        imageInterval,
-                        generosity,
-                        imageCount
-                    );
+                EnsureDatabaseIsCreatedAsync();
 
-                    success = service.SavePreferencesToDataBase(preferences);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.StackTrace);
-                }
+                Preferences preferences = new Preferences(
+                    useAutoDetectInterval,
+                    copyIsEnabled,
+                    imageInterval,
+                    generosity,
+                    imageCount
+                );
+
+                success = _dbPreferencesService.SavePreferencesToDataBase(preferences);
             }
+            catch (Exception)
+            {
+                // handle exception
+            }
+
             return success;
         }
 
@@ -54,7 +60,7 @@ namespace OpenTimelapseSort.ViewModels
             {
                 try
                 {
-                    database.Database.EnsureCreated();
+                    EnsureDatabaseIsCreatedAsync();
 
                     //service.SeedPreferencesDatabase();
                     //InitialiseView();
@@ -68,20 +74,7 @@ namespace OpenTimelapseSort.ViewModels
 
         public Preferences FetchFromDatabase()
         {
-            try
-            {
-                using (var database = new PreferencesContext())
-                {
-                    database.Database.EnsureCreated();
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.StackTrace);
-            }
-
-            Debug.WriteLine(service.FetchPreferences().id);
-            return service.FetchPreferences();
+            return _dbPreferencesService.FetchPreferences();
         }
     }
 }

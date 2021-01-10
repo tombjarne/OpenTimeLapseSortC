@@ -24,13 +24,11 @@ namespace OpenTimelapseSort.Views
 
         //private delegate void WarningReference(string errorHeadline, string errorDetails);
 
-        ObservableCollection<StackPanel> panels = new ObservableCollection<StackPanel>();
-        ObservableCollection<SDirectory> directories = new ObservableCollection<SDirectory>();
-        ObservableCollection<SImport> imports = new ObservableCollection<SImport>();
-        ObservableCollection<SImage> images = new ObservableCollection<SImage>();
+        private readonly ObservableCollection<StackPanel> _panels = new ObservableCollection<StackPanel>();
+        private readonly ObservableCollection<SDirectory> _directories = new ObservableCollection<SDirectory>();
+        private readonly ObservableCollection<SImage> _images = new ObservableCollection<SImage>();
 
-        MainViewModel mainViewModel = new MainViewModel();
-
+        private readonly MainViewModel _mainViewModel = new MainViewModel();
 
         //////////////////////////////////////////////////////////
         //////                   CONSTRUCTOR                //////
@@ -39,23 +37,22 @@ namespace OpenTimelapseSort.Views
         public MainWindow()
         {
             InitializeComponent();
-            SetScreenSize();
-            FetchOnStartup();
+            _ = FetchOnStartupAsync();
         }
 
         //////////////////////////////////////////////////////////
         //////                  XAMLFUNCTIONS               //////
         //////////////////////////////////////////////////////////
 
-        private async void FetchOnStartup()
+        private async Task FetchOnStartupAsync()
         {
-            // TODO: make it async!
-            // check for db
-            // if not exists create new one
-            // start subtask to notify user about that
+            await GetDirectoriesAsync();
+            SetScreenSize();
+        }
 
-            // fetch entries from db and render them / if there is anything to fetch / also notify user about that
-            // if db did not exist -> start tutorial 
+        private async Task GetDirectoriesAsync()
+        {
+            await _mainViewModel.GetDirectoriesAsync();
         }
 
         private void InvokePreferences(object sender, RoutedEventArgs e)
@@ -67,11 +64,12 @@ namespace OpenTimelapseSort.Views
         private void closeApplication(object sender, RoutedEventArgs e)
         {
             var mainViewModel = DataContext as MainViewModel;
+            var windows = App.Current.Windows;
             if (mainViewModel?.PerformAutoSave() == true)
             {
-                if (App.Current.Windows[1].IsActive)
+                if (windows[1].IsActive)
                 {
-                    App.Current.Windows[1].Close();
+                    windows[1].Close();
                 }
 
                 this.Close();
@@ -154,7 +152,7 @@ namespace OpenTimelapseSort.Views
                 Import_Progress_Popup.IsOpen = true;
 
                 ShowLoader();
-                mainViewModel.Import(Import_Target.Text, HandleListingProgress);
+                _mainViewModel.Import(Import_Target.Text, HandleListingProgress);
             }
             else
             {
@@ -186,7 +184,7 @@ namespace OpenTimelapseSort.Views
 
                     var sortingTask = Task.Run(() =>
                     {
-                        mainViewModel.SortImages(imageList, Render);
+                        _mainViewModel.SortImages(imageList, Render);
                     });
 
                     TaskAwaiter taskAwaiter = sortingTask.GetAwaiter();
@@ -208,7 +206,7 @@ namespace OpenTimelapseSort.Views
         {
             try
             {
-                var imageList = await mainViewModel.GetImagesAsync(id);
+                var imageList = await _mainViewModel.GetImagesAsync(id);
 
                 Style headlineStyle = this.FindResource("HeadlineTemplate") as Style;
                 Style subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
@@ -220,7 +218,7 @@ namespace OpenTimelapseSort.Views
 
                 foreach (var image in imageList)
                 {
-                    images.Add(image);
+                    _images.Add(image);
 
                     Label imageName = new Label();
                     imageName.Content = image.name;
@@ -262,7 +260,7 @@ namespace OpenTimelapseSort.Views
         /**
          * Render
          * 
-         * Renders the imported directories into the view component
+         * Renders the imported _directories into the view component
          * @param dirList, type List<ImageDirectory>
          */
 
@@ -270,7 +268,7 @@ namespace OpenTimelapseSort.Views
         {
             this.Dispatcher.Invoke(() =>
             {
-                lock (directories)
+                lock (_directories)
                 {
                     Style headlineStyle = this.FindResource("HeadlineTemplate") as Style;
                     Style subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
@@ -280,7 +278,7 @@ namespace OpenTimelapseSort.Views
 
                     foreach (var directory in dirList)
                     {
-                        directories.Add(directory);
+                        _directories.Add(directory);
 
                         Label directoryName = new Label();
                         directoryName.Content = directory.name;
@@ -324,7 +322,7 @@ namespace OpenTimelapseSort.Views
                         directoryPanel.Children.Add(dockWrapper);
 
                         DirectoryViewer1.Items.Add(directoryPanel);
-                        panels.Add(directoryPanel);
+                        _panels.Add(directoryPanel);
                         HideLoader();
                     }
                 }
@@ -362,12 +360,12 @@ namespace OpenTimelapseSort.Views
             directoryPanel.Children.Add(loadingIcon);
 
             DirectoryViewer1.Items.Add(directoryPanel);
-            panels.Add(directoryPanel);
+            _panels.Add(directoryPanel);
         }
 
         private void HideLoader()
         {
-            DirectoryViewer1.Items.Remove(panels.Single(p => p.Name == "DirectoryLoader"));
+            DirectoryViewer1.Items.Remove(_panels.Single(p => p.Name == "DirectoryLoader"));
         }
 
         private void SetScreenSize()
@@ -383,7 +381,7 @@ namespace OpenTimelapseSort.Views
 
         private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            string directoryId = directories[DirectoryViewer1.SelectedIndex].id;
+            string directoryId = _directories[DirectoryViewer1.SelectedIndex].id;
             var fetchImagesTask = GetImagesAsync(directoryId);
         }
     }

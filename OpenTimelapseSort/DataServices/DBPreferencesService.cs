@@ -8,8 +8,6 @@ namespace OpenTimelapseSort.DataServices
 {
     class DBPreferencesService
     {
-        public DBPreferencesService() {}
-
         public bool SavePreferencesToDataBase(Preferences preferences)
         {
             bool saveSucceeded = false;

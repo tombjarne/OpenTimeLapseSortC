@@ -15,12 +15,10 @@ namespace OpenTimelapseSort.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
             modelBuilder.Entity<SImport>().ToTable("Import");
             modelBuilder.Entity<SDirectory>().ToTable("ImageDirectory");
             modelBuilder.Entity<SImage>().ToTable("Image");
 
-            
             modelBuilder.Entity<SImport>(entity =>
             {
                 entity.Property(e => e.id)
@@ -42,10 +40,6 @@ namespace OpenTimelapseSort.Contexts
                     .WithOne(import => import.parentImport);
             });
 
-            modelBuilder.Entity<SImport>()
-                .HasKey(i => i.id)
-                .HasName("PK_Import_Identifier");
-
             modelBuilder.Entity<SDirectory>(entity =>
             {
                 entity.Property(e => e.target)
@@ -62,10 +56,6 @@ namespace OpenTimelapseSort.Contexts
                     .HasForeignKey(directory => directory.importId)
                     .HasConstraintName("FK_Import_Identifier");
             });
-
-            modelBuilder.Entity<SDirectory>()
-                .HasKey(d => d.id)
-                .HasName("PK_Directory_Identifier");
 
             modelBuilder.Entity<SImage>(entity =>
             {
@@ -84,10 +74,6 @@ namespace OpenTimelapseSort.Contexts
                     .HasConstraintName("FK_Directory_Identifier");
 
             });
-
-            modelBuilder.Entity<SImage>()
-                .HasKey(i => i.id)
-                .HasName("PK_Image_Identifier");
         }
     }
 }

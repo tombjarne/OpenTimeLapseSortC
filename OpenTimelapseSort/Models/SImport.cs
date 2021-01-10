@@ -13,11 +13,8 @@ public class SImport
     public int length { get; set; }
     public SImport()
     {
-        if (timestamp == null)
-        {
-            timestamp = System.DateTime.Today;
-            importDate = timestamp.ToString();
-        }
+        timestamp = System.DateTime.Today;
+        importDate = timestamp.ToShortDateString();
     }
 
     public void initImportList(List<SDirectory> directories)
