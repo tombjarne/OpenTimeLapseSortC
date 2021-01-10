@@ -58,8 +58,6 @@ namespace OpenTimelapseSort
         public bool PerformAutoSave()
         {
             // collect currently active instances and try to save them into database
-
-
             // empty memory before closing
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -79,35 +77,51 @@ namespace OpenTimelapseSort
         public void Import(string name, ImageListingProgress listProgress)
         //public StackPanel Import(string name)
         {
-            List<SImage> imageList = new List<SImage>();
+            var imageList = new List<SImage>();
             var files = Directory.EnumerateFileSystemEntries(name).ToList();
-            int length = files.Count();
+            var length = files.Count();
 
             if (length > 0)
             {
                 for (int i = 0; i < length; i++)
                 {
-                    FileInfo info = new FileInfo(files[i]);
+                    var file = files[i];
+                    var info = new FileInfo(file);
 
-                    if (Directory.Exists(files[i]))
+                    if (Directory.Exists(file))
                     {
-                        string[] subDirImages = Directory.GetFiles(files[i]);
-                        FileInfo subDirInfo = new FileInfo(subDirImages[i]);
-                        var subDirLength = Directory.EnumerateFiles(files[i]).ToList().Count();
+                        var subDirImages = Directory.GetFiles(file);
+                        var subDirInfo = new FileInfo(subDirImages[i]);
+                        var subDirLength = Directory.EnumerateFiles(file).ToList().Count();
 
                         for (int p = 0; p < subDirLength; p++)
                         {
-                            SImage image = new SImage(Path.GetFileName(subDirImages[i]), subDirInfo.FullName, subDirInfo.DirectoryName);
+                            var image = new SImage
+                            (
+                                Path.GetFileName(subDirImages[i]),
+                                subDirInfo.FullName,
+                                subDirInfo.DirectoryName
+                            )
+                            {
+                                id = System.Guid.NewGuid().ToString()
+                            };
                             imageList.Add(image);
                         }
                     }
                     else
                     {
-                        SImage image = new SImage(Path.GetFileName(files[i]), info.FullName, info.DirectoryName);
+                        var image = new SImage
+                        (
+                            Path.GetFileName(file),
+                            info.FullName,
+                            info.DirectoryName
+                        )
+                        {
+                            id = System.Guid.NewGuid().ToString()
+                        };
                         imageList.Add(image);
                     }
                 }
-
                 listProgress(imageList.Count, imageList);
             }
         }
@@ -120,46 +134,41 @@ namespace OpenTimelapseSort
          * @param event         trigger for delete button being clicked
          */
 
-        // TODO: fix saving to db issues! ( maybe only save import, instead of directories extra!)
-
         public void SortImages(List<SImage> imageList, ViewUpdate update)
         {
             var sortingTask = Task
-                .Run(() =>
+            .Run(() =>
+            {
+                matching.SortImages(imageList, async (List<SDirectory> directories) =>
                 {
-                    matching.SortImages(imageList, async (List<SDirectory> directories) =>
+                    var destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                    var mainDirectory = destination + @"\OTS_IMG";
+
+                    if (!Directory.Exists(mainDirectory))
+                        Directory.CreateDirectory(mainDirectory);
+
+                    try
                     {
-                        string destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                        string mainDirectory = destination + @"\OTS_IMG";
-
-                        if (!Directory.Exists(mainDirectory))
-                            Directory.CreateDirectory(mainDirectory);
-
-                        try
+                        foreach (var directory in directories)
                         {
+                            destination = mainDirectory + @"\" + directory.name;
+                            Directory.CreateDirectory(destination);
 
-                            foreach (var directory in directories)
+                            foreach (var image in directory.imageList)
                             {
-                                destination = mainDirectory + @"\" + directory.name;
-                                Directory.CreateDirectory(destination);
-
-                                foreach (var image in directory.imageList)
-                                {
-                                    string source = Path.Combine(image.target);
-                                    File.Copy(source, destination + @"\" + image.name, true);
-                                }
-
-                                destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                                var source = Path.Combine(image.target);
+                                File.Copy(source, destination + @"\" + image.name, true);
                             }
+                            destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                         }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine(e.StackTrace);
-                        }
-
-                        update(directories);
-                    });
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e.StackTrace);
+                    }
+                    update(directories);
                 });
+            });
         }
     }
 }

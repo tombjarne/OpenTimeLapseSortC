@@ -34,40 +34,40 @@ namespace OpenTimelapseSort.DataServices
 
 		public async void SortImages(List<SImage> imageList, RenderDelegate render)
         {
-            List<SImage> dirList = new List<SImage>();
-            List<SImage> randomDirList = new List<SImage>();
+            var dirList = new List<SImage>();
+            var randomDirList = new List<SImage>();
 
-			double currDeviation = 0.0;
-			double prevDeviation = 0.0;
-            double deviationGenerosity = ((double)_dbPreferencesService.FetchPreferences().sequenceIntervalGenerosity)/100;
-			int runs = _dbPreferencesService.FetchPreferences().sequenceImageCount;
+			var curD = 0.0;
+			var preD = 0.0;
 
-            if (_dbPreferencesService.FetchPreferences().useAutoDetectInterval)
+            var preferences = _dbPreferencesService.FetchPreferences();
+            var deviationGenerosity = preferences.sequenceIntervalGenerosity/100;
+			var runs = preferences.sequenceImageCount;
+
+            if (preferences.useAutoDetectInterval)
             {
-				prevDeviation = _dbPreferencesService.FetchPreferences().sequenceInterval;
+				preD = preferences.sequenceInterval;
             }
 
             // TODO: match to fit seconds spec again! Fix milliseconds issue
 
-			for (int i = 0; i < imageList.Count; i++)
+			for (var i = 0; i < imageList.Count; i++)
             {
-                imageList[i].id = System.Guid.NewGuid().ToString();
-
                 if (i > 0)
 				{
-					prevDeviation = Math.Abs((imageList[i].fileTime - imageList[i - 1].fileTime).Milliseconds);
+					preD = Math.Abs((imageList[i].fileTime - imageList[i - 1].fileTime).Milliseconds);
 
 					if (i < imageList.Count - 1)
 					{
-						currDeviation = Math.Abs((imageList[i + 1].fileTime - imageList[i].fileTime).Milliseconds);
+						curD = Math.Abs((imageList[i + 1].fileTime - imageList[i].fileTime).Milliseconds);
 					}
 					else
 					{
-						currDeviation = prevDeviation;
+						curD = preD;
 					}
 				}
 
-				if (WithinSameSequence(currDeviation, prevDeviation, deviationGenerosity))
+				if (WithinSameSequence(curD, preD, deviationGenerosity))
 				{
 					dirList.Add(imageList[i]);
 				}
@@ -84,38 +84,23 @@ namespace OpenTimelapseSort.DataServices
 
 					dirList = new List<SImage>();
 				}
+            }
 
-				if (i + 1 == imageList.Count)
-				{
+            if (dirList.Count < runs && dirList.Count > 0)
+            {
+                randomDirList.AddRange(dirList);
+                await CreateRandomDirAsync(randomDirList);
+            }
+            else if (randomDirList.Count > 0 && randomDirList.Count < runs)
+            {
+                await CreateRandomDirAsync(randomDirList);
+            }
 
-                    // TODO: simplify!
+            if (dirList.Count >= runs)
+            {
+                await CreateDirAsync(dirList);
+            }
 
-                    if (WithinSameSequence(currDeviation, prevDeviation, deviationGenerosity))
-                    {
-                        dirList.Add(imageList[i]);
-                    }
-                    else
-                    {
-                        randomDirList.Add(imageList[i]);
-                    }
-
-                    imageList[i].id = System.Guid.NewGuid().ToString();
-
-                    if (dirList.Count < runs && dirList.Count > 0)
-                    {
-						randomDirList.AddRange(dirList);
-                        await CreateRandomDirAsync(randomDirList);
-					} else if (randomDirList.Count > 0 && randomDirList.Count < runs)
-                    {
-                        await CreateRandomDirAsync(randomDirList);
-					}
-					
-					if (dirList.Count >= runs)
-                    {
-						await CreateDirAsync(dirList);
-                    }
-				}
-			}
             render(_imageDirectories);
 		}
 
