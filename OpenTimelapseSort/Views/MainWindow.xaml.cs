@@ -12,6 +12,7 @@ using System.Windows.Threading;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using FontAwesome.WPF;
+using System.Diagnostics;
 
 namespace OpenTimelapseSort.Views
 {
@@ -46,13 +47,13 @@ namespace OpenTimelapseSort.Views
 
         private async Task FetchOnStartupAsync()
         {
-            await GetDirectoriesAsync();
+            Render(await GetDirectoriesAsync());
             SetScreenSize();
         }
 
-        private async Task GetDirectoriesAsync()
+        private async System.Threading.Tasks.Task<List<SDirectory>> GetDirectoriesAsync()
         {
-            await _mainViewModel.GetDirectoriesAsync();
+            return await _mainViewModel.GetDirectoriesAsync();
         }
 
         private void InvokePreferences(object sender, RoutedEventArgs e)
@@ -208,11 +209,11 @@ namespace OpenTimelapseSort.Views
             {
                 var imageList = await _mainViewModel.GetImagesAsync(id);
 
-                Style headlineStyle = this.FindResource("HeadlineTemplate") as Style;
-                Style subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
-                Style panelStyle = this.FindResource("PanelTemplate") as Style;
+                var headlineStyle = this.FindResource("HeadlineTemplate") as Style;
+                var subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
+                var panelStyle = this.FindResource("PanelTemplate") as Style;
+                var width = GetRelativeSize() * 402;
 
-                int width = GetRelativeSize() * 402;
                 directory_headline1.Content = imageList[0].parentInstance;
                 directory_name1_Copy.Content = imageList[0].target;
 
@@ -220,40 +221,49 @@ namespace OpenTimelapseSort.Views
                 {
                     _images.Add(image);
 
-                    Label imageName = new Label();
-                    imageName.Content = image.name;
-                    imageName.Style = headlineStyle;
+                    var imageName = new Label
+                    {
+                        Content = image.name,
+                        Style = headlineStyle
+                    };
 
-                    Label imageSize = new Label();
-                    imageSize.Content = image.fileSize;
+                    var imageSize = new Label
+                    {
+                        Content = image.fileSize
+                    };
                     imageName.Style = subHeadlineStyle;
 
-                    Grid detailGrid = new Grid();
+                    var detailGrid = new Grid();
                     detailGrid.Children.Add(imageName);
                     detailGrid.Children.Add(imageSize);
 
                     //Image previewImage = new Image();
                     //previewImage.Source = new Uri(image.target);
 
-                    DockPanel dockWrapper = new DockPanel();
-                    dockWrapper.Width = width;
+                    var dockWrapper = new DockPanel
+                    {
+                        Width = width
+                    };
                     dockWrapper.Children.Add(detailGrid);
                     DockPanel.SetDock(detailGrid, Dock.Top);
                     //DockPanel.SetDock(previewImage, Dock.Bottom);
 
-                    StackPanel directoryPanel = new StackPanel();
-                    directoryPanel.Name = "E" + image.id.ToString();
-                    directoryPanel.Style = panelStyle;
-                    directoryPanel.Width = width;
-                    directoryPanel.Height = width * 0.2;
+                    var directoryPanel = new StackPanel
+                    {
+                        Name = "E" + image.id.ToString(),
+                        Style = panelStyle,
+                        Width = width,
+                        Height = width * 0.2
+                    };
                     directoryPanel.Children.Add(dockWrapper);
 
                     ImageViewer1.Items.Add(directoryPanel);
                 }
             }
-            catch
+            catch (Exception e)
             {
-
+                Debug.WriteLine(e.StackTrace);
+                Debug.WriteLine(e.StackTrace);
             }
         }
 
@@ -270,59 +280,67 @@ namespace OpenTimelapseSort.Views
             {
                 lock (_directories)
                 {
-                    Style headlineStyle = this.FindResource("HeadlineTemplate") as Style;
-                    Style subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
-                    Style panelStyle = this.FindResource("PanelTemplate") as Style;
-
-                    int width = GetRelativeSize() * 402;
+                    var headlineStyle = this.FindResource("HeadlineTemplate") as Style;
+                    var subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
+                    var panelStyle = this.FindResource("PanelTemplate") as Style;
+                    var width = GetRelativeSize() * 402;
 
                     foreach (var directory in dirList)
                     {
                         _directories.Add(directory);
 
-                        Label directoryName = new Label();
-                        directoryName.Content = directory.name;
-                        directoryName.Style = headlineStyle;
+                        var directoryName = new Label
+                        {
+                            Content = directory.name,
+                            Style = headlineStyle
+                        };
 
-                        Label directoryImageCount = new Label();
-                        directoryImageCount.Content = directory.imageList.Count + " Images";
-                        directoryImageCount.Style = headlineStyle;
+                        var directoryImageCount = new Label
+                        {
+                            Content = directory.imageList.Count + " Images",
+                            Style = headlineStyle
+                        };
 
-                        Label importDetails = new Label();
-                        importDetails.Content = directory.timestamp;
-                        importDetails.Style = subHeadlineStyle;
+                        var importDetails = new Label
+                        {
+                            Content = directory.timestamp,
+                            Style = subHeadlineStyle
+                        };
 
-                        DockPanel topDockPanel = new DockPanel();
+                        var topDockPanel = new DockPanel();
                         topDockPanel.Children.Add(directoryName);
                         topDockPanel.Children.Add(directoryImageCount);
                         DockPanel.SetDock(directoryName, Dock.Left);
                         DockPanel.SetDock(directoryImageCount, Dock.Right);
 
-                        DockPanel bottomDockPanel = new DockPanel();
+                        var bottomDockPanel = new DockPanel();
                         bottomDockPanel.Children.Add(importDetails);
                         DockPanel.SetDock(importDetails, Dock.Left);
 
-                        Grid topWrapper = new Grid();
+                        var topWrapper = new Grid();
                         topWrapper.Children.Add(topDockPanel);
 
-                        Grid bottomWrapper = new Grid();
+                        var bottomWrapper = new Grid();
                         bottomWrapper.Children.Add(bottomDockPanel);
 
-                        DockPanel dockWrapper = new DockPanel();
+                        var dockWrapper = new DockPanel();
                         dockWrapper.Children.Add(topWrapper);
                         dockWrapper.Children.Add(bottomWrapper);
                         dockWrapper.Width = width;
                         DockPanel.SetDock(topWrapper, Dock.Top);
                         DockPanel.SetDock(bottomWrapper, Dock.Bottom);
 
-                        StackPanel directoryPanel = new StackPanel();
-                        directoryPanel.Style = panelStyle;
-                        directoryPanel.Width = width;
-                        directoryPanel.Height = width * 0.2;
+                        var directoryPanel = new StackPanel
+                        {
+                            Style = panelStyle,
+                            Width = width,
+                            Height = width * 0.2
+                        };
                         directoryPanel.Children.Add(dockWrapper);
 
                         DirectoryViewer1.Items.Add(directoryPanel);
                         _panels.Add(directoryPanel);
+
                         HideLoader();
                     }
                 }

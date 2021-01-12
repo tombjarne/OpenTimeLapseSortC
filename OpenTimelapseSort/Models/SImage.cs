@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using OpenTimelapseSort.Constants;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
+using System.Drawing;
+using System.Runtime.CompilerServices;
 
 public class SImage
 {
+    
     public string id { get; set; }
     public string directoryId { get; set; }
 
@@ -16,8 +17,9 @@ public class SImage
     public DateTime fileTime { get; set; }
     public long fileSize { get; set; }
     public string parentInstance { get; set; }
-
     public SDirectory parentDirectory { get; set; }
+
+    public Color[] Pixels { get; set; }
 
     public SImage(string name, string target, string parentInstance)
     {

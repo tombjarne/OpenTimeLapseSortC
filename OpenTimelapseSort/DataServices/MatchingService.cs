@@ -1,8 +1,17 @@
 ﻿using OpentimelapseSort.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Color = System.Drawing.Color;
+using Image = System.Windows.Controls.Image;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -12,7 +21,7 @@ namespace OpenTimelapseSort.DataServices
 
         private readonly DBPreferencesService _dbPreferencesService = new DBPreferencesService();
         private readonly DbService _dbService = new DbService();
-        private readonly List<SDirectory> _imageDirectories = new List<SDirectory>(); // each directory will receive their images in the matching function
+        private readonly List<SDirectory> _imageDirectories = new List<SDirectory>();
 
 		public bool UseAutoDetection()
         {
@@ -24,21 +33,70 @@ namespace OpenTimelapseSort.DataServices
 			return _dbPreferencesService.FetchPreferences().useCopy;
         }
 
+        private bool WithinSameLocation(double mLocPre, double mLocCur)
+        {
+            return true;
+        }
+
+        private bool WithinSameShot(SImage pImage, SImage cImage)
+        {
+            const int colorSync = 0xffff;
+            const int lumenSync = 100;
+
+            long cMatrixPre = 0x00;
+            long cMatrixCur = 0x00;
+            double cLumenPre = 0;
+            double cLumenCur = 0;
+
+            var mBitPre = new BitmapMetadata(pImage.target);
+            var mBitCur = new BitmapMetadata(cImage.target);
+
+            var mLocPre = double.Parse(mBitPre.Location);
+            var mLocCur = double.Parse(mBitCur.Location);
+
+            Debug.WriteLine(mLocPre);
+            Debug.WriteLine(mLocCur);
+
+            if (!WithinSameLocation(mLocPre, mLocCur))
+                return false;
+
+            var pixelsPre = pImage.Pixels;
+            var pixelsCur = cImage.Pixels;
+
+            foreach (var pixel in pixelsPre)
+            {
+                cMatrixPre += pixel.G;
+                cLumenPre += 0.2126 * pixel.R + 0.7152 * pixel.G + 0.0722 * pixel.B;
+            }
+
+            foreach (var pixel in pixelsCur)
+            {
+                cMatrixCur += pixel.G;
+                cLumenCur += 0.2126 * pixel.R + 0.7152 * pixel.G + 0.0722 * pixel.B;
+            }
+
+            return ((cMatrixPre >= cMatrixCur - colorSync && cMatrixPre <= cMatrixCur + colorSync ||
+                     cMatrixPre <= cMatrixCur - colorSync && cMatrixPre >= cMatrixCur + colorSync) &&
+                    (cLumenPre >= cLumenCur - lumenSync && cLumenPre <= cLumenCur + lumenSync ||
+                     cLumenPre <= cLumenCur - lumenSync && cLumenPre >= cLumenCur + lumenSync));
+        }
+
         public bool WithinSameSequence(double curD, double preD, double generosity)
         {
-            double syncValue = preD * generosity;
+            var syncValue = preD * generosity;
 
             return (preD >= curD - syncValue && preD <= curD + syncValue ||
                     preD <= curD - syncValue && preD >= curD + syncValue);
         }
 
-		public async void SortImages(List<SImage> imageList, RenderDelegate render)
+        public async void SortImages(List<SImage> imageList, RenderDelegate render)
         {
             var dirList = new List<SImage>();
             var randomDirList = new List<SImage>();
 
 			var curD = 0.0;
 			var preD = 0.0;
+            var preI = imageList[0];
 
             var preferences = _dbPreferencesService.FetchPreferences();
             var deviationGenerosity = preferences.sequenceIntervalGenerosity/100;
@@ -56,6 +114,7 @@ namespace OpenTimelapseSort.DataServices
                 if (i > 0)
 				{
 					preD = Math.Abs((imageList[i].fileTime - imageList[i - 1].fileTime).Milliseconds);
+                    preI = imageList[i - 1];
 
 					if (i < imageList.Count - 1)
 					{
@@ -67,7 +126,7 @@ namespace OpenTimelapseSort.DataServices
 					}
 				}
 
-				if (WithinSameSequence(curD, preD, deviationGenerosity))
+				if (WithinSameSequence(curD, preD, deviationGenerosity) || WithinSameShot(preI,imageList[i]))
 				{
 					dirList.Add(imageList[i]);
 				}

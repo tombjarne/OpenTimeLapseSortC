@@ -134,9 +134,11 @@ namespace OpenTimelapseSort.DataServices
             var images = await context.Images
                 .Where(i => i.directoryId == directory.id)
                 .ToListAsync();
-
+            
             return images;
         }
+
+        // TODO: should return all directories
 
         public async System.Threading.Tasks.Task<List<SDirectory>> GetDirectoriesAsync()
         {
