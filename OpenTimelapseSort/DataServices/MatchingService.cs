@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Color = System.Drawing.Color;
-using Image = System.Windows.Controls.Image;
+using Image = System.Drawing.Image;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -38,6 +38,27 @@ namespace OpenTimelapseSort.DataServices
             return true;
         }
 
+        private static List<Color> GetPixels(Bitmap imgBitmap)
+        {
+            var pixels = new List<Color>();
+
+            for (var j = 0; j < imgBitmap.Height; j++)
+            {
+                if (j % 150 == 0)
+                {
+                    for (var i = 0; i < imgBitmap.Width; i++)
+                    {
+                        if (i % 150 == 0)
+                        {
+                            pixels.Add(imgBitmap.GetPixel(i, j));
+                        }
+                    }
+                }
+            }
+
+            return pixels;
+        }
+
         private bool WithinSameShot(SImage pImage, SImage cImage)
         {
             const int colorSync = 0xffff;
@@ -48,20 +69,21 @@ namespace OpenTimelapseSort.DataServices
             double cLumenPre = 0;
             double cLumenCur = 0;
 
-            var mBitPre = new BitmapMetadata(pImage.target);
-            var mBitCur = new BitmapMetadata(cImage.target);
+            var pImageBitmap = (Bitmap) Image.FromFile(pImage.target);
+            var cImageBitmap = (Bitmap) Image.FromFile(cImage.target);
 
-            var mLocPre = double.Parse(mBitPre.Location);
-            var mLocCur = double.Parse(mBitCur.Location);
+            // TODO: fix location matching
+            //var mBitPre = new BitmapMetadata(pImage.target);
+            //var mBitCur = new BitmapMetadata(cImage.target);
 
-            Debug.WriteLine(mLocPre);
-            Debug.WriteLine(mLocCur);
+            //var mLocPre = double.Parse(mBitPre.Location);
+            //var mLocCur = double.Parse(mBitCur.Location);
 
-            if (!WithinSameLocation(mLocPre, mLocCur))
-                return false;
+            //if (!WithinSameLocation(mLocPre, mLocCur))
+            //return false;
 
-            var pixelsPre = pImage.Pixels;
-            var pixelsCur = cImage.Pixels;
+            var pixelsPre = GetPixels(pImageBitmap);
+            var pixelsCur = GetPixels(cImageBitmap);
 
             foreach (var pixel in pixelsPre)
             {
@@ -74,6 +96,9 @@ namespace OpenTimelapseSort.DataServices
                 cMatrixCur += pixel.G;
                 cLumenCur += 0.2126 * pixel.R + 0.7152 * pixel.G + 0.0722 * pixel.B;
             }
+
+            GC.AddMemoryPressure(cMatrixPre);
+            GC.AddMemoryPressure(cMatrixCur);
 
             return ((cMatrixPre >= cMatrixCur - colorSync && cMatrixPre <= cMatrixCur + colorSync ||
                      cMatrixPre <= cMatrixCur - colorSync && cMatrixPre >= cMatrixCur + colorSync) &&
@@ -96,7 +121,8 @@ namespace OpenTimelapseSort.DataServices
 
 			var curD = 0.0;
 			var preD = 0.0;
-            var preI = imageList[0];
+            var lastIndex = imageList.Count - 1;
+            var preI = imageList[lastIndex];
 
             var preferences = _dbPreferencesService.FetchPreferences();
             var deviationGenerosity = preferences.sequenceIntervalGenerosity/100;
@@ -126,23 +152,30 @@ namespace OpenTimelapseSort.DataServices
 					}
 				}
 
-				if (WithinSameSequence(curD, preD, deviationGenerosity) || WithinSameShot(preI,imageList[i]))
+				if (WithinSameSequence(curD, preD, deviationGenerosity))
 				{
 					dirList.Add(imageList[i]);
 				}
 				else
 				{
-                    if (dirList.Count >= runs)
-					{
-						await CreateDirAsync(dirList); 
-					}
-					else
-					{
-						randomDirList.Add(imageList[i]);
-					}
+                    if (WithinSameShot(preI, imageList[i]))
+                    {
+                        dirList.Add(imageList[i]);
+                    }
+                    else
+                    {
+                        if (dirList.Count >= runs)
+                        {
+                            await CreateDirAsync(dirList);
+                        }
+                        else
+                        {
+                            randomDirList.Add(imageList[i]);
+                        }
 
-					dirList = new List<SImage>();
-				}
+                        dirList = new List<SImage>();
+                    }
+                }
             }
 
             if (dirList.Count < runs && dirList.Count > 0)
