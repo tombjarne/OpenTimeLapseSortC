@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 public class SImport
 {
@@ -13,7 +12,7 @@ public class SImport
     public int length { get; set; }
     public SImport()
     {
-        timestamp = System.DateTime.Today;
+        timestamp = DateTime.Today;
         importDate = timestamp.ToShortDateString();
     }
 
@@ -24,9 +23,9 @@ public class SImport
 
     public bool tryPush(SDirectory directory)
     {
-        if(directory.getTimestamp() == timestamp)
+        if (directory.getTimestamp() == timestamp)
         {
-            if(this.directories != null)
+            if (this.directories != null)
             {
                 directories.Add(directory);
             }
@@ -39,7 +38,8 @@ public class SImport
                 }
             }
             return true;
-        } else
+        }
+        else
         {
             return false;
         }

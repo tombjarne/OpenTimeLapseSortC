@@ -16,9 +16,9 @@ namespace OpenTimelapseSort.DataServices
                 using (var database = new PreferencesContext())
                 {
                     var entity = database.Preferences.FirstOrDefault(p => p.id == 1);
-                    
+
                     if (entity != null)
-                    {                        
+                    {
                         database.Entry(entity).CurrentValues.SetValues(preferences);
                     }
                     else
@@ -29,7 +29,8 @@ namespace OpenTimelapseSort.DataServices
                 }
                 saveSucceeded = true;
 
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
             }
@@ -51,7 +52,8 @@ namespace OpenTimelapseSort.DataServices
 
                 seedSucceeded = true;
 
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
             }
@@ -77,7 +79,8 @@ namespace OpenTimelapseSort.DataServices
                         var preferences = database.Preferences
                             .Single(predicate => predicate.id == 1);
                         return preferences;
-                    } else
+                    }
+                    else
                     {
                         // TODO: handle exception
                         return FetchPreferences();

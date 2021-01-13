@@ -1,7 +1,4 @@
 ﻿using OpenTimelapseSort.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OpenTimelapseSort.Database
 {

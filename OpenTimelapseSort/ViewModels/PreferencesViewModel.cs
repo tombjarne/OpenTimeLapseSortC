@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using OpenTimelapseSort.DataServices;
+﻿using OpentimelapseSort.Models;
 using OpenTimelapseSort.Contexts;
-using OpentimelapseSort.Models;
-using System.Diagnostics;
+using OpenTimelapseSort.DataServices;
+using System;
 
 namespace OpenTimelapseSort.ViewModels
 {

@@ -6,10 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using Path = System.IO.Path;
 
 namespace OpenTimelapseSort
@@ -45,10 +41,11 @@ namespace OpenTimelapseSort
                 try
                 {
                     database.Database.EnsureCreated();
-                    
+
                     //service.SeedDatabase();
                     //InitialiseView();
-                } catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     Console.WriteLine(e.StackTrace);
                 }
@@ -103,7 +100,7 @@ namespace OpenTimelapseSort
                                 subDirInfo.DirectoryName
                             )
                             {
-                                id = System.Guid.NewGuid().ToString()
+                                id = Guid.NewGuid().ToString()
                             };
                             imageList.Add(image);
                         }
@@ -117,7 +114,7 @@ namespace OpenTimelapseSort
                             info.DirectoryName
                         )
                         {
-                            id = System.Guid.NewGuid().ToString()
+                            id = Guid.NewGuid().ToString()
                         };
                         imageList.Add(image);
                     }
@@ -139,7 +136,7 @@ namespace OpenTimelapseSort
             var sortingTask = Task
             .Run(() =>
             {
-                matching.SortImages(imageList, async (List<SDirectory> directories) =>
+                matching.SortImages(imageList, (List<SDirectory> directories) =>
                 {
                     var destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                     var mainDirectory = destination + @"\OTS_IMG";

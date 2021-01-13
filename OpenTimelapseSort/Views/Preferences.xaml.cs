@@ -1,9 +1,9 @@
-﻿using System;
+﻿using OpentimelapseSort.Models;
+using OpenTimelapseSort.ViewModels;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using OpentimelapseSort.Models;
-using OpenTimelapseSort.ViewModels;
 
 namespace OpenTimelapseSort.Views
 {
@@ -56,8 +56,8 @@ namespace OpenTimelapseSort.Views
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
-            _preferencesViewModel.SavePreferences(true, (bool)Copy.IsChecked, 
-                (double)IntervalSlider.Value, (int)GenerositySlider.Value, (int)IntervalCountSlider.Value);
+            _preferencesViewModel.SavePreferences(true, (bool)Copy.IsChecked,
+                IntervalSlider.Value, (int)GenerositySlider.Value, (int)IntervalCountSlider.Value);
         }
 
         private void closePreferencesWindow(object sender, RoutedEventArgs e)

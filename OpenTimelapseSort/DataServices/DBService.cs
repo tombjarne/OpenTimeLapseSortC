@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using OpenTimelapseSort.Contexts;
-using System.Linq;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OpenTimelapseSort.DataServices
 {
     class DbService
     {
-        public async System.Threading.Tasks.Task<List<SImport>> ReturnImportsAsync()
+        public async Task<List<SImport>> ReturnImportsAsync()
         {
             await using var context = new ImportContext();
             var imports = await context.Imports
@@ -18,7 +19,6 @@ namespace OpenTimelapseSort.DataServices
             return imports;
         }
 
-
         /**
          * ReturnCurrentImport
          * 
@@ -26,10 +26,10 @@ namespace OpenTimelapseSort.DataServices
          * 
          */
 
-        public async System.Threading.Tasks.Task<SImport> GetImportAsync()
+        public async Task<SImport> GetImportAsync()
         {
             await using var context = new ImportContext();
-            
+
             var import = await context.Imports
                 .SingleAsync(i => i.timestamp == DateTime.Today);
 
@@ -37,7 +37,7 @@ namespace OpenTimelapseSort.DataServices
             return import;
         }
 
-        public async System.Threading.Tasks.Task<bool> ImportExistsAsync()
+        public async Task<bool> ImportExistsAsync()
         {
             try
             {
@@ -50,10 +50,10 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public async System.Threading.Tasks.Task SaveImageAsync(SImage image)
+        public async Task SaveImageAsync(SImage image)
         {
             await using var database = new ImportContext();
-            
+
             try
             {
                 await database.AddAsync(image);
@@ -66,10 +66,10 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public async System.Threading.Tasks.Task SaveImageDirectoryAsync(SDirectory directory)
+        public async Task SaveImageDirectoryAsync(SDirectory directory)
         {
             await using var database = new ImportContext();
-            
+
             try
             {
                 await database.AddAsync(directory);
@@ -82,10 +82,10 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public async System.Threading.Tasks.Task SaveImportAsync(SImport import)
+        public async Task SaveImportAsync(SImport import)
         {
             await using var database = new ImportContext();
-            
+
             try
             {
                 await database.AddAsync(import);
@@ -98,7 +98,7 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public async System.Threading.Tasks.Task UpdateImportAsync(SImport import)
+        public async Task UpdateImportAsync(SImport import)
         {
             await using var database = new ImportContext();
             try
@@ -108,7 +108,7 @@ namespace OpenTimelapseSort.DataServices
 
                 entity.directories = import.directories;
                 entity.length = import.length;
-                
+
                 await database.SaveChangesAsync();
             }
             catch (Exception)
@@ -124,28 +124,34 @@ namespace OpenTimelapseSort.DataServices
             context.Update(import);
         }
 
-        public async System.Threading.Tasks.Task<List<SImage>> GetImagesAsync(string id)
+        public async Task<List<SImage>> GetImagesAsync(string id)
         {
             await using var context = new ImportContext();
 
-            var directory = await context.ImageDirectories
-                .SingleAsync(d => d.id.Equals(id));
-
             var images = await context.Images
-                .Where(i => i.directoryId == directory.id)
+                .Where(i => i.directoryId == id)
                 .ToListAsync();
-            
+
             return images;
         }
 
         // TODO: should return all directories
 
-        public async System.Threading.Tasks.Task<List<SDirectory>> GetDirectoriesAsync()
+        public async Task<List<SDirectory>> GetDirectoriesAsync()
         {
             await using var context = new ImportContext();
-            
+
             var directories = await context.ImageDirectories
                 .ToListAsync();
+
+            foreach (var directory in directories)
+            {
+                directory.imageList = await context.Images
+                    .Where(i => i.directoryId == directory.id)
+                    .ToListAsync();
+            }
+
+            Debug.WriteLine(directories);
 
             return directories;
         }

@@ -1,62 +1,20 @@
-﻿using OpentimelapseSort.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Color = System.Drawing.Color;
-using Image = System.Drawing.Image;
 
 namespace OpenTimelapseSort.DataServices
 {
-    class MatchingService
+    internal class MatchingService
     {
-		public delegate void RenderDelegate(List<SDirectory> imageDirectories);
+        public delegate void RenderDelegate(List<SDirectory> imageDirectories);
 
         private readonly DBPreferencesService _dbPreferencesService = new DBPreferencesService();
         private readonly DbService _dbService = new DbService();
+        private readonly ImageProcessingService _imageProcessingService = new ImageProcessingService();
         private readonly List<SDirectory> _imageDirectories = new List<SDirectory>();
-
-		public bool UseAutoDetection()
-        {
-			return _dbPreferencesService.FetchPreferences().useAutoDetectInterval;
-        }
-
-		public bool UseCopy()
-        {
-			return _dbPreferencesService.FetchPreferences().useCopy;
-        }
 
         private bool WithinSameLocation(double mLocPre, double mLocCur)
         {
             return true;
-        }
-
-        private static List<Color> GetPixels(Bitmap imgBitmap)
-        {
-            var pixels = new List<Color>();
-
-            for (var j = 0; j < imgBitmap.Height; j++)
-            {
-                if (j % 150 == 0)
-                {
-                    for (var i = 0; i < imgBitmap.Width; i++)
-                    {
-                        if (i % 150 == 0)
-                        {
-                            pixels.Add(imgBitmap.GetPixel(i, j));
-                        }
-                    }
-                }
-            }
-
-            return pixels;
         }
 
         private bool WithinSameShot(SImage pImage, SImage cImage)
@@ -64,46 +22,18 @@ namespace OpenTimelapseSort.DataServices
             const int colorSync = 0xffff;
             const int lumenSync = 100;
 
-            long cMatrixPre = 0x00;
-            long cMatrixCur = 0x00;
-            double cLumenPre = 0;
-            double cLumenCur = 0;
+            _imageProcessingService.SetImageMetaValues(pImage);
+            _imageProcessingService.SetImageMetaValues(cImage);
 
-            var pImageBitmap = (Bitmap) Image.FromFile(pImage.target);
-            var cImageBitmap = (Bitmap) Image.FromFile(cImage.target);
-
-            // TODO: fix location matching
-            //var mBitPre = new BitmapMetadata(pImage.target);
-            //var mBitCur = new BitmapMetadata(cImage.target);
-
-            //var mLocPre = double.Parse(mBitPre.Location);
-            //var mLocCur = double.Parse(mBitCur.Location);
-
-            //if (!WithinSameLocation(mLocPre, mLocCur))
-            //return false;
-
-            var pixelsPre = GetPixels(pImageBitmap);
-            var pixelsCur = GetPixels(cImageBitmap);
-
-            foreach (var pixel in pixelsPre)
-            {
-                cMatrixPre += pixel.G;
-                cLumenPre += 0.2126 * pixel.R + 0.7152 * pixel.G + 0.0722 * pixel.B;
-            }
-
-            foreach (var pixel in pixelsCur)
-            {
-                cMatrixCur += pixel.G;
-                cLumenCur += 0.2126 * pixel.R + 0.7152 * pixel.G + 0.0722 * pixel.B;
-            }
-
-            GC.AddMemoryPressure(cMatrixPre);
-            GC.AddMemoryPressure(cMatrixCur);
+            var cMatrixPre = pImage.Colors;
+            var cMatrixCur = cImage.Colors;
+            var cLumenPre = pImage.Lumen;
+            var cLumenCur = cImage.Lumen;
 
             return ((cMatrixPre >= cMatrixCur - colorSync && cMatrixPre <= cMatrixCur + colorSync ||
-                     cMatrixPre <= cMatrixCur - colorSync && cMatrixPre >= cMatrixCur + colorSync) &&
-                    (cLumenPre >= cLumenCur - lumenSync && cLumenPre <= cLumenCur + lumenSync ||
-                     cLumenPre <= cLumenCur - lumenSync && cLumenPre >= cLumenCur + lumenSync));
+                    cMatrixPre <= cMatrixCur - colorSync && cMatrixPre >= cMatrixCur + colorSync) &&
+                   (cLumenPre >= cLumenCur - lumenSync && cLumenPre <= cLumenCur + lumenSync ||
+                    cLumenPre <= cLumenCur - lumenSync && cLumenPre >= cLumenCur + lumenSync));
         }
 
         public bool WithinSameSequence(double curD, double preD, double generosity)
@@ -119,45 +49,45 @@ namespace OpenTimelapseSort.DataServices
             var dirList = new List<SImage>();
             var randomDirList = new List<SImage>();
 
-			var curD = 0.0;
-			var preD = 0.0;
+            var curD = 0.0;
+            var preD = 0.0;
             var lastIndex = imageList.Count - 1;
             var preI = imageList[lastIndex];
 
             var preferences = _dbPreferencesService.FetchPreferences();
-            var deviationGenerosity = preferences.sequenceIntervalGenerosity/100;
-			var runs = preferences.sequenceImageCount;
+            var deviationGenerosity = preferences.sequenceIntervalGenerosity / 100;
+            var runs = preferences.sequenceImageCount;
 
             if (preferences.useAutoDetectInterval)
             {
-				preD = preferences.sequenceInterval;
+                preD = preferences.sequenceInterval;
             }
 
             // TODO: match to fit seconds spec again! Fix milliseconds issue
 
-			for (var i = 0; i < imageList.Count; i++)
+            for (var i = 0; i < imageList.Count; i++)
             {
                 if (i > 0)
-				{
-					preD = Math.Abs((imageList[i].fileTime - imageList[i - 1].fileTime).Milliseconds);
+                {
+                    preD = Math.Abs((imageList[i].fileTime - imageList[i - 1].fileTime).Milliseconds);
                     preI = imageList[i - 1];
 
-					if (i < imageList.Count - 1)
-					{
-						curD = Math.Abs((imageList[i + 1].fileTime - imageList[i].fileTime).Milliseconds);
-					}
-					else
-					{
-						curD = preD;
-					}
-				}
+                    if (i < imageList.Count - 1)
+                    {
+                        curD = Math.Abs((imageList[i + 1].fileTime - imageList[i].fileTime).Milliseconds);
+                    }
+                    else
+                    {
+                        curD = preD;
+                    }
+                }
 
-				if (WithinSameSequence(curD, preD, deviationGenerosity))
-				{
-					dirList.Add(imageList[i]);
-				}
-				else
-				{
+                if (WithinSameSequence(curD, preD, deviationGenerosity))
+                {
+                    dirList.Add(imageList[i]);
+                }
+                else
+                {
                     if (WithinSameShot(preI, imageList[i]))
                     {
                         dirList.Add(imageList[i]);
@@ -194,18 +124,18 @@ namespace OpenTimelapseSort.DataServices
             }
 
             render(_imageDirectories);
-		}
+        }
 
         private async System.Threading.Tasks.Task CreateRandomDirAsync(List<SImage> dirList)
         {
-            
+
             var directory = new SDirectory
             (
                 dirList[0].target,
                 dirList[0].name + "Random"
             )
             {
-                id = System.Guid.NewGuid().ToString(),
+                id = Guid.NewGuid().ToString(),
                 imageList = dirList
             };
 
@@ -213,21 +143,21 @@ namespace OpenTimelapseSort.DataServices
             _imageDirectories.Add(directory);
         }
 
-		private async System.Threading.Tasks.Task CreateDirAsync(List<SImage> dirList)
+        private async System.Threading.Tasks.Task CreateDirAsync(List<SImage> dirList)
         {
             var directory = new SDirectory
                 (
                     dirList[0].target,
-					dirList[0].name
+                    dirList[0].name
                 )
-                {
-                    id = System.Guid.NewGuid().ToString(),
-                    imageList = dirList
-                };
+            {
+                id = Guid.NewGuid().ToString(),
+                imageList = dirList
+            };
 
             await SaveMatch(directory);
             _imageDirectories.Add(directory);
-		}
+        }
 
         private async System.Threading.Tasks.Task SaveMatch(SDirectory directory)
         {
@@ -250,7 +180,7 @@ namespace OpenTimelapseSort.DataServices
             {
                 import = new SImport()
                 {
-                    id = System.Guid.NewGuid().ToString(),
+                    id = Guid.NewGuid().ToString(),
                     name = directory.name,
                     importDate = DateTime.Today.ToShortDateString(),
                     length = 0,

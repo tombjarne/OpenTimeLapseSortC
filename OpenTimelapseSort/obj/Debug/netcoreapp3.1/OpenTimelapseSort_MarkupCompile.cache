@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NETCOREAPP;NETCOREAPP3_1;
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\App.xaml
-2880708076
+3867659113
 
-26-1606004187
+301619332006
 2161618867662
-Views\MainWindow.xaml;Views\Preferences.xaml;
+Views\MainWindow.xaml;Views\Preferences.xaml;Views\StartupScreen.xaml;
 
 False
 

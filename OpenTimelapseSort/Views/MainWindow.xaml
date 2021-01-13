@@ -3,8 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:OpenTimelapseSort.Views"
-        xmlns:viewModels="clr-namespace:OpenTimelapseSort.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" 
         Height="750" 
@@ -20,25 +18,6 @@
             <Setter Property="HorizontalScrollBarVisibility" Value="Hidden" />
             <Setter Property="VerticalScrollBarVisibility" Value="Hidden" />
         </Style>
-
-        <DataTemplate x:Uid="Name" x:Key="TestTemplate">
-            <Label x:Name="Import_Name" Grid.Column="0" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
-        </DataTemplate>
-
-        <!-- Import Visual Template -->
-        <DataTemplate x:Key="SelectButtonColumnDataTemplate">
-            <DockPanel Background="#34404D" Height="100" Width="402">
-                <Grid DockPanel.Dock="Top">
-                    <DockPanel>
-                        <Label x:Name="Import_Name" Grid.Column="0" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
-                        <Button Content="Select" DockPanel.Dock="Right"/>
-                    </DockPanel>
-                </Grid>
-                <Grid DockPanel.Dock="Bottom">
-                    <Label Grid.Column="0" Content="OpenTimelapseSort" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
-                </Grid>
-            </DockPanel>
-        </DataTemplate>
 
         <Style x:Key="HeadlineTemplate" TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -87,10 +66,10 @@
             </Button>
             <Ellipse x:Name="close_btn" HorizontalAlignment="Left" Height="17" Margin="1113,14,0,0" VerticalAlignment="Top" Width="17" Fill="#FFFF5252" MouseDown="closeApplication"/>
             <Ellipse x:Name="minimize_btn" HorizontalAlignment="Left" Height="17" Margin="1091,14,0,0" VerticalAlignment="Top" Width="17" Fill="Coral" MouseDown="minimizeApplication"/>
-            <Rectangle HorizontalAlignment="Left" Height="44" Margin="394,0,0,0" Width="667" MouseDown="moveWindow" Fill="#FF34404D"/>
+            <Rectangle HorizontalAlignment="Left" Height="44" Margin="394,0,0,0" Width="667" MouseDown="MoveWindow" Fill="#FF34404D"/>
         </Grid>
         <DockPanel x:Name="LeftPanel" Background=" #3D4A59" Margin="0,44,0,0">
-            <ScrollViewer x:Name="DirectoryViewer"  Style="{StaticResource ScrollViewerStyle}">
+            <ScrollViewer x:Name="DirectoryViewer"  Style="{StaticResource ScrollViewerStyle}" CanContentScroll="True" MouseWheel="ImageViewer_OnPreviewMouseDown">
                 <ListView x:Name="DirectoryViewer1" Height="Auto" Background="#FF3D4A59" BorderBrush="#FF34404D" MouseDoubleClick="DirectoryViewer1_OnMouseDoubleClick" Foreground="#FFED6558"/>
             </ScrollViewer>
             <Grid>
@@ -100,13 +79,13 @@
             </Grid>
         </DockPanel>
         <Grid  DockPanel.Dock="Bottom" />
-        <DockPanel x:Name="RightPanel" Background=" #3D4A59" Margin="397,44,0,37">
+        <DockPanel x:Name="RightPanel" Background=" #3D4A59" Margin="415,44,0,31">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <Label x:Name="directory_headline1" Content="Nothing to import&#xA;" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Padding="20,0,20,0" FontWeight="Bold" FontSize="35" Foreground="White" Height="44" Width="434" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="34,23,0,0"/>
-                <ScrollViewer x:Name="ImageViewer"  Style="{StaticResource ScrollViewerStyle}" Margin="0,147,-254,0">
+                <ScrollViewer x:Name="ImageViewer"  Style="{StaticResource ScrollViewerStyle}" Margin="0,147,-254,0" CanContentScroll="True" MouseWheel="ImageViewer_OnPreviewMouseDown">
                     <ListView x:Name="ImageViewer1" Height="517" Background="#FF3D4A59" BorderBrush="{x:Null}" Foreground="#FFED6558" IsSynchronizedWithCurrentItem="False" Width="691"/>
                 </ScrollViewer>
                 <Label x:Name="directory_prefix1" Content="Path:" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383" Margin="24,96,0,595" Width="94"/>
@@ -117,9 +96,6 @@
         <!-- Popup Screen Elements -->
         <Popup Name="Import_Popup" Width="Auto" Height="250" IsOpen="False" PlacementTarget="{Binding ElementName=Pane}" Placement="Center">
             <Grid Background="#34404D">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -157,9 +133,6 @@
         </Popup>
         <Popup Name="Warning_Popup" Width="Auto" Height="250" IsOpen="False" PlacementTarget="{Binding ElementName=Pane}" Placement="Center">
             <Grid Background="#34404D">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -183,9 +156,6 @@
         </Popup>
         <Popup Name="Import_Progress_Popup" Width="Auto" IsOpen="False" PlacementTarget="{Binding ElementName=Pane}" Placement="Center">
             <Grid Background="#34404D">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
