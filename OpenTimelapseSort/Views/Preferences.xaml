@@ -1,41 +1,210 @@
-﻿<Window x:Class="OpenTimelapseSort.Views.PreferencesView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:OpenTimelapseSort"
-        mc:Ignorable="d"
-        Title="MainWindow" 
-        Height="522" 
-        Width="402" 
-        FontFamily="Montserrat"
-        WindowStyle="None"
-        AllowsTransparency="True"
-        Background="Transparent"
-        BorderThickness="0">
-    <Grid Background="#FF34404D" Height="Auto" HorizontalAlignment="Left" Width="774" >
-        <Grid x:Name="Name" VerticalAlignment="Top" Height="39" Margin="0,0,390,0">
+﻿<Window
+    x:Class="OpenTimelapseSort.Views.PreferencesView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:OpenTimelapseSort"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="402"
+    Height="522"
+    AllowsTransparency="True"
+    Background="Transparent"
+    BorderThickness="0"
+    FontFamily="Montserrat"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Grid
+        Width="774"
+        Height="Auto"
+        HorizontalAlignment="Left"
+        Background="#FF34404D">
+        <Grid
+            x:Name="Name"
+            Height="39"
+            Margin="0,0,390,0"
+            VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <Label x:Name="window_name" Grid.Column="0" Content="Preferences" HorizontalAlignment="Left" Margin="0,2,0,-2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383">
-            </Label>
-            <Ellipse x:Name="minimize_btn" HorizontalAlignment="Left" Height="17" Margin="365,14,0,0" VerticalAlignment="Top" Width="17" Fill="Coral" MouseDown="closePreferencesWindow"/>
-            <Rectangle HorizontalAlignment="Left" Height="44" Margin="128,0,0,-5" Width="228" MouseDown="MoveWindow" Fill="#FF34404D"/>
-            <Label x:Name="Headline1" Grid.Column="0" Content="Edit your options&#xD;&#xA;" HorizontalAlignment="Left" Margin="17,60,0,-60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="22" Foreground="White"/>
-            <Label Grid.Column="0" Content="Interval&#xD;&#xA;" HorizontalAlignment="Left" Margin="36,191,0,-191" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
-            <Label Grid.Column="0" Content="Interval Generosity&#xA;&#xA;" HorizontalAlignment="Left" Margin="36,276,0,-276" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
-            <Label Grid.Column="0" Content="Interval Image Count&#xA;&#xA;" HorizontalAlignment="Left" Margin="36,362,0,-362" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
+            <Label
+                x:Name="window_name"
+                Grid.Column="0"
+                Margin="0,2,0,-2"
+                Padding="20,0,20,0"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Preferences"
+                FontSize="14px"
+                FontWeight="Bold"
+                Foreground="#FFFF8383" />
+            <Ellipse
+                x:Name="minimize_btn"
+                Width="17"
+                Height="17"
+                Margin="365,14,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Fill="Coral"
+                MouseDown="closePreferencesWindow" />
+            <Rectangle
+                Width="228"
+                Height="44"
+                Margin="128,0,0,-5"
+                HorizontalAlignment="Left"
+                Fill="#FF34404D"
+                MouseDown="MoveWindow" />
+            <Label
+                x:Name="Headline1"
+                Grid.Column="0"
+                Margin="17,60,0,-60"
+                Padding="20,0,20,0"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Edit your options&#xD;&#xA;"
+                FontSize="22"
+                FontWeight="Bold"
+                Foreground="White" />
+            <Label
+                Grid.Column="0"
+                Margin="36,191,0,-191"
+                Padding="20,0,20,0"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Interval&#xD;&#xA;"
+                FontSize="14px"
+                FontWeight="Bold"
+                Foreground="#FFFF8383" />
+            <Label
+                Grid.Column="0"
+                Margin="36,276,0,-276"
+                Padding="20,0,20,0"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Interval Generosity&#xA;&#xA;"
+                FontSize="14px"
+                FontWeight="Bold"
+                Foreground="#FFFF8383" />
+            <Label
+                Grid.Column="0"
+                Margin="36,362,0,-362"
+                Padding="20,0,20,0"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Interval Image Count&#xA;&#xA;"
+                FontSize="14px"
+                FontWeight="Bold"
+                Foreground="#FFFF8383" />
         </Grid>
-        <CheckBox x:Name="Copy" Content="Copy" HorizontalAlignment="Left" Margin="56,116,0,0" VerticalAlignment="Top" Foreground="White" FontSize="14"/>
-        <Slider x:Name="IntervalSlider" Minimum="0" IsSnapToTickEnabled="True" TickFrequency="0.5" Maximum="400" ValueChanged="UpdateSliderIntervalValue" HorizontalAlignment="Left" Margin="56,232,0,0" VerticalAlignment="Top" Width="245"/>
-        <Slider x:Name="IntervalCountSlider" Minimum="0" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="2000" ValueChanged="UpdateSliderCountValue" HorizontalAlignment="Left" Margin="56,393,0,0" VerticalAlignment="Top" Width="245"/>
-        <Label x:Name="Interval" Content="0&#xA;" HorizontalAlignment="Left" Margin="306,233,0,273" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
-        <Label x:Name="IntervalCount" Content="0&#xA;" HorizontalAlignment="Left" Margin="306,393,0,111" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
-        <Button Content="Save Changes" Click="SavePreferences" HorizontalAlignment="Left" Margin="56,446,0,0" VerticalAlignment="Top" Height="39" Width="111" Foreground="#FFFF8383" BorderBrush="{x:Null}" Background="#FF657482"/>
-        <Button Content="Delete Preferences" HorizontalAlignment="Left" Margin="192,446,0,0" VerticalAlignment="Top" Height="39" Width="134" Background="#FFFF8383" Foreground="White" BorderBrush="{x:Null}"/>
-        <CheckBox x:Name="Auto_Detection_btn" Content="Auto Detection" HorizontalAlignment="Left" Margin="56,149,0,0" VerticalAlignment="Top" Foreground="White" FontSize="14" Width="287"/>
-        <Slider x:Name="GenerositySlider" Minimum="0" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="100" ValueChanged="UpdateGenerosityValue" HorizontalAlignment="Left" Margin="56,312,0,0" VerticalAlignment="Top" Width="245" SmallChange="1"/>
-        <Label x:Name="Generosity" Content="0%&#xA;" HorizontalAlignment="Left" Margin="306,312,0,192" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="20,0,20,0" FontWeight="Bold" FontSize="14px" Foreground="#FFFF8383"/>
+        <CheckBox
+            x:Name="Copy"
+            Margin="56,116,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Copy"
+            FontSize="14"
+            Foreground="White" />
+        <Slider
+            x:Name="IntervalSlider"
+            Width="245"
+            Margin="56,232,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            IsSnapToTickEnabled="True"
+            Maximum="400"
+            Minimum="0"
+            TickFrequency="0.5"
+            ValueChanged="UpdateSliderIntervalValue" />
+        <Slider
+            x:Name="IntervalCountSlider"
+            Width="245"
+            Margin="56,393,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            IsSnapToTickEnabled="True"
+            Maximum="2000"
+            Minimum="0"
+            TickFrequency="1"
+            ValueChanged="UpdateSliderCountValue" />
+        <Label
+            x:Name="Interval"
+            Margin="306,233,0,273"
+            Padding="20,0,20,0"
+            HorizontalAlignment="Left"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Content="0&#xA;"
+            FontSize="14px"
+            FontWeight="Bold"
+            Foreground="#FFFF8383" />
+        <Label
+            x:Name="IntervalCount"
+            Margin="306,393,0,111"
+            Padding="20,0,20,0"
+            HorizontalAlignment="Left"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Content="0&#xA;"
+            FontSize="14px"
+            FontWeight="Bold"
+            Foreground="#FFFF8383" />
+        <Button
+            Width="111"
+            Height="39"
+            Margin="56,446,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Background="#FF657482"
+            BorderBrush="{x:Null}"
+            Click="SavePreferences"
+            Content="Save Changes"
+            Foreground="#FFFF8383" />
+        <Button
+            Width="134"
+            Height="39"
+            Margin="192,446,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Background="#FFFF8383"
+            BorderBrush="{x:Null}"
+            Content="Delete Preferences"
+            Foreground="White" />
+        <CheckBox
+            x:Name="Auto_Detection_btn"
+            Width="287"
+            Margin="56,149,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Auto Detection"
+            FontSize="14"
+            Foreground="White" />
+        <Slider
+            x:Name="GenerositySlider"
+            Width="245"
+            Margin="56,312,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            IsSnapToTickEnabled="True"
+            Maximum="100"
+            Minimum="0"
+            SmallChange="1"
+            TickFrequency="1"
+            ValueChanged="UpdateGenerosityValue" />
+        <Label
+            x:Name="Generosity"
+            Margin="306,312,0,192"
+            Padding="20,0,20,0"
+            HorizontalAlignment="Left"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Content="0%&#xA;"
+            FontSize="14px"
+            FontWeight="Bold"
+            Foreground="#FFFF8383" />
     </Grid>
 </Window>

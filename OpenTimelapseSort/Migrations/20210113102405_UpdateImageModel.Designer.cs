@@ -20,33 +20,33 @@ namespace OpenTimelapseSort.Migrations
 
             modelBuilder.Entity("SDirectory", b =>
                 {
-                    b.Property<string>("id")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("importId")
+                    b.Property<string>("ImportId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("target")
+                    b.Property<string>("Target")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("timestamp")
+                    b.Property<DateTime>("Timestamp")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("importId");
+                    b.HasIndex("ImportId");
 
                     b.ToTable("ImageDirectory");
                 });
 
             modelBuilder.Entity("SImage", b =>
                 {
-                    b.Property<string>("id")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<long>("Colors")
@@ -55,36 +55,36 @@ namespace OpenTimelapseSort.Migrations
                     b.Property<double>("Lumen")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("directoryId")
+                    b.Property<string>("DirectoryId")
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("fileSize")
+                    b.Property<long>("FileSize")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("fileTime")
+                    b.Property<DateTime>("FileTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("parentInstance")
+                    b.Property<string>("ParentInstance")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("target")
+                    b.Property<string>("Target")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("directoryId");
+                    b.HasIndex("DirectoryId");
 
                     b.ToTable("Image");
                 });
 
             modelBuilder.Entity("SImport", b =>
                 {
-                    b.Property<string>("id")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("importDate")
@@ -94,45 +94,45 @@ namespace OpenTimelapseSort.Migrations
                     b.Property<int>("length")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("target")
+                    b.Property<string>("Target")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("timestamp")
+                    b.Property<DateTime>("Timestamp")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("Import");
                 });
 
             modelBuilder.Entity("SDirectory", b =>
                 {
-                    b.HasOne("SImport", "parentImport")
+                    b.HasOne("SImport", "ParentImport")
                         .WithMany("directories")
-                        .HasForeignKey("importId")
+                        .HasForeignKey("ImportId")
                         .HasConstraintName("FK_Import_Identifier");
 
-                    b.Navigation("parentImport");
+                    b.Navigation("ParentImport");
                 });
 
             modelBuilder.Entity("SImage", b =>
                 {
-                    b.HasOne("SDirectory", "parentDirectory")
-                        .WithMany("imageList")
-                        .HasForeignKey("directoryId")
+                    b.HasOne("SDirectory", "ParentDirectory")
+                        .WithMany("ImageList")
+                        .HasForeignKey("DirectoryId")
                         .HasConstraintName("FK_Directory_Identifier");
 
-                    b.Navigation("parentDirectory");
+                    b.Navigation("ParentDirectory");
                 });
 
             modelBuilder.Entity("SDirectory", b =>
                 {
-                    b.Navigation("imageList");
+                    b.Navigation("ImageList");
                 });
 
             modelBuilder.Entity("SImport", b =>

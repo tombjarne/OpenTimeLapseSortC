@@ -7,7 +7,7 @@ namespace OpenTimelapseSort.DataServices
     {
         public delegate void RenderDelegate(List<SDirectory> imageDirectories);
 
-        private readonly DBPreferencesService _dbPreferencesService = new DBPreferencesService();
+        private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
         private readonly DbService _dbService = new DbService();
         private readonly ImageProcessingService _imageProcessingService = new ImageProcessingService();
         private readonly List<SDirectory> _imageDirectories = new List<SDirectory>();
@@ -69,12 +69,12 @@ namespace OpenTimelapseSort.DataServices
             {
                 if (i > 0)
                 {
-                    preD = Math.Abs((imageList[i].fileTime - imageList[i - 1].fileTime).Milliseconds);
+                    preD = Math.Abs((imageList[i].FileTime - imageList[i - 1].FileTime).Milliseconds);
                     preI = imageList[i - 1];
 
                     if (i < imageList.Count - 1)
                     {
-                        curD = Math.Abs((imageList[i + 1].fileTime - imageList[i].fileTime).Milliseconds);
+                        curD = Math.Abs((imageList[i + 1].FileTime - imageList[i].FileTime).Milliseconds);
                     }
                     else
                     {
@@ -131,12 +131,12 @@ namespace OpenTimelapseSort.DataServices
 
             var directory = new SDirectory
             (
-                dirList[0].target,
-                dirList[0].name + "Random"
+                dirList[0].Target,
+                dirList[0].Name + "Random"
             )
             {
-                id = Guid.NewGuid().ToString(),
-                imageList = dirList
+                Id = Guid.NewGuid().ToString(),
+                ImageList = dirList
             };
 
             await SaveMatch(directory);
@@ -147,12 +147,12 @@ namespace OpenTimelapseSort.DataServices
         {
             var directory = new SDirectory
                 (
-                    dirList[0].target,
-                    dirList[0].name
+                    dirList[0].Target,
+                    dirList[0].Name
                 )
             {
-                id = Guid.NewGuid().ToString(),
-                imageList = dirList
+                Id = Guid.NewGuid().ToString(),
+                ImageList = dirList
             };
 
             await SaveMatch(directory);
@@ -168,7 +168,7 @@ namespace OpenTimelapseSort.DataServices
             {
                 import = await _dbService.GetImportAsync();
 
-                directory.importId = import.id;
+                directory.ImportId = import.id;
 
                 import.directories = new List<SDirectory>();
                 import.directories.Add(directory);
@@ -181,14 +181,14 @@ namespace OpenTimelapseSort.DataServices
                 import = new SImport()
                 {
                     id = Guid.NewGuid().ToString(),
-                    name = directory.name,
+                    name = directory.Name,
                     importDate = DateTime.Today.ToShortDateString(),
                     length = 0,
-                    target = directory.target,
+                    target = directory.Target,
                     directories = new List<SDirectory>()
                 };
 
-                directory.importId = import.id;
+                directory.ImportId = import.id;
                 import.directories.Add(directory);
 
                 await _dbService.SaveImportAsync(import);

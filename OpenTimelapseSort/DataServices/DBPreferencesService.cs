@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace OpenTimelapseSort.DataServices
 {
-    class DBPreferencesService
+    internal class DbPreferencesService
     {
         public bool SavePreferencesToDataBase(Preferences preferences)
         {
-            bool saveSucceeded = false;
+            var saveSucceeded = false;
             try
             {
                 using (var database = new PreferencesContext())
@@ -45,7 +45,7 @@ namespace OpenTimelapseSort.DataServices
             {
                 using (var database = new PreferencesContext())
                 {
-                    Preferences preferences = new Preferences(true, true, 50, 10, 20);
+                    var preferences = new Preferences(true, true, 50, 10, 20);
                     database.Add(preferences);
                     database.SaveChanges();
                 }
@@ -63,28 +63,26 @@ namespace OpenTimelapseSort.DataServices
 
         public Preferences FetchPreferences()
         {
-            using (var database = new PreferencesContext())
+            using var database = new PreferencesContext();
+            try
             {
-                try
+                var preferences = database.Preferences
+                    .Single(predicate => predicate.id == 1);
+                return preferences;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.StackTrace);
+                if (SeedPreferencesDatabase())
                 {
                     var preferences = database.Preferences
                         .Single(predicate => predicate.id == 1);
                     return preferences;
                 }
-                catch (Exception e)
+                else
                 {
-                    Debug.WriteLine(e.StackTrace);
-                    if (SeedPreferencesDatabase())
-                    {
-                        var preferences = database.Preferences
-                            .Single(predicate => predicate.id == 1);
-                        return preferences;
-                    }
-                    else
-                    {
-                        // TODO: handle exception
-                        return FetchPreferences();
-                    }
+                    // TODO: handle exception
+                    return FetchPreferences();
                 }
             }
         }

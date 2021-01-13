@@ -16,8 +16,6 @@ namespace OpenTimelapseSort
         private DbService _dbService = new DbService();
         private readonly MatchingService matching = new MatchingService();
 
-        private List<SImport> imports;
-
         public delegate void ImageListingProgress(int count, List<SImage> imageList);
         public delegate void ViewUpdate(List<SDirectory> directories);
 
@@ -36,19 +34,17 @@ namespace OpenTimelapseSort
         private void initialiseDBService()
         {
             _dbService = new DbService();
-            using (var database = new ImportContext())
+            using var database = new ImportContext();
+            try
             {
-                try
-                {
-                    database.Database.EnsureCreated();
+                database.Database.EnsureCreated();
 
-                    //service.SeedDatabase();
-                    //InitialiseView();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.StackTrace);
-                }
+                //service.SeedDatabase();
+                //InitialiseView();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
             }
         }
 
@@ -72,7 +68,6 @@ namespace OpenTimelapseSort
         }
 
         public void Import(string name, ImageListingProgress listProgress)
-        //public StackPanel Import(string name)
         {
             var imageList = new List<SImage>();
             var files = Directory.EnumerateFileSystemEntries(name).ToList();
@@ -100,7 +95,7 @@ namespace OpenTimelapseSort
                                 subDirInfo.DirectoryName
                             )
                             {
-                                id = Guid.NewGuid().ToString()
+                                Id = Guid.NewGuid().ToString()
                             };
                             imageList.Add(image);
                         }
@@ -114,7 +109,7 @@ namespace OpenTimelapseSort
                             info.DirectoryName
                         )
                         {
-                            id = Guid.NewGuid().ToString()
+                            Id = Guid.NewGuid().ToString()
                         };
                         imageList.Add(image);
                     }
@@ -148,13 +143,13 @@ namespace OpenTimelapseSort
                     {
                         foreach (var directory in directories)
                         {
-                            destination = mainDirectory + @"\" + directory.name;
+                            destination = mainDirectory + @"\" + directory.Name;
                             Directory.CreateDirectory(destination);
 
-                            foreach (var image in directory.imageList)
+                            foreach (var image in directory.ImageList)
                             {
-                                var source = Path.Combine(image.target);
-                                File.Copy(source, destination + @"\" + image.name, true);
+                                var source = Path.Combine(image.Target);
+                                File.Copy(source, destination + @"\" + image.Name, true);
                             }
                             destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                         }

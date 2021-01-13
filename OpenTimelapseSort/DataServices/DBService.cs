@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OpenTimelapseSort.DataServices
 {
-    class DbService
+    internal class DbService
     {
         public async Task<List<SImport>> ReturnImportsAsync()
         {
@@ -129,7 +129,7 @@ namespace OpenTimelapseSort.DataServices
             await using var context = new ImportContext();
 
             var images = await context.Images
-                .Where(i => i.directoryId == id)
+                .Where(i => i.DirectoryId == id)
                 .ToListAsync();
 
             return images;
@@ -146,8 +146,8 @@ namespace OpenTimelapseSort.DataServices
 
             foreach (var directory in directories)
             {
-                directory.imageList = await context.Images
-                    .Where(i => i.directoryId == directory.id)
+                directory.ImageList = await context.Images
+                    .Where(i => i.DirectoryId == directory.Id)
                     .ToListAsync();
             }
 

@@ -7,7 +7,7 @@ namespace OpenTimelapseSort.ViewModels
 {
     class PreferencesViewModel
     {
-        private readonly DBPreferencesService _dbPreferencesService = new DBPreferencesService();
+        private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
 
         public PreferencesViewModel()
         {

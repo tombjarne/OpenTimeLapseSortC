@@ -37,40 +37,40 @@ namespace OpenTimelapseSort.Contexts
                     .IsRequired();
 
                 entity.HasMany(directory => directory.directories)
-                    .WithOne(import => import.parentImport);
+                    .WithOne(import => import.ParentImport);
             });
 
             modelBuilder.Entity<SDirectory>(entity =>
             {
-                entity.Property(e => e.target)
+                entity.Property(e => e.Target)
                     .IsRequired();
 
-                entity.Property(e => e.name)
+                entity.Property(e => e.Name)
                     .IsRequired();
 
-                entity.HasMany(directory => directory.imageList)
-                    .WithOne(image => image.parentDirectory);
+                entity.HasMany(directory => directory.ImageList)
+                    .WithOne(image => image.ParentDirectory);
 
-                entity.HasOne(directory => directory.parentImport)
+                entity.HasOne(directory => directory.ParentImport)
                     .WithMany(import => import.directories)
-                    .HasForeignKey(directory => directory.importId)
+                    .HasForeignKey(directory => directory.ImportId)
                     .HasConstraintName("FK_Import_Identifier");
             });
 
             modelBuilder.Entity<SImage>(entity =>
             {
-                entity.Property(e => e.id)
+                entity.Property(e => e.Id)
                     .IsRequired();
 
-                entity.Property(e => e.target)
+                entity.Property(e => e.Target)
                     .IsRequired();
 
-                entity.Property(e => e.name)
+                entity.Property(e => e.Name)
                     .IsRequired();
 
-                entity.HasOne(image => image.parentDirectory)
-                    .WithMany(directory => directory.imageList)
-                    .HasForeignKey(image => image.directoryId)
+                entity.HasOne(image => image.ParentDirectory)
+                    .WithMany(directory => directory.ImageList)
+                    .HasForeignKey(image => image.DirectoryId)
                     .HasConstraintName("FK_Directory_Identifier");
 
             });

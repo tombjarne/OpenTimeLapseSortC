@@ -3,10 +3,8 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -208,7 +206,7 @@ namespace OpenTimelapseSort.Views
         }
 
 
-        // alternative to this is an observable list and getting the id from the selectionmodel 
+        // alternative to this is an observable list and getting the Id from the selectionmodel 
         // but this alt only works properly if elements dont have to be generated manually 
 
         private async Task RenderImages(List<SImage> imageList)
@@ -222,8 +220,8 @@ namespace OpenTimelapseSort.Views
             var panelStyle = this.FindResource("PanelTemplate") as Style;
             var width = GetRelativeSize() * 402;
 
-            directory_headline1.Content = imageList[0].parentInstance;
-            directory_name1_Copy.Content = imageList[0].target;
+            directory_headline1.Content = imageList[0].ParentInstance;
+            directory_name1_Copy.Content = imageList[0].Target;
 
             foreach (var image in imageList)
             {
@@ -231,13 +229,13 @@ namespace OpenTimelapseSort.Views
 
                 var imageName = new Label
                 {
-                    Content = image.name,
+                    Content = image.Name,
                     Style = headlineStyle
                 };
 
                 var imageSize = new Label
                 {
-                    Content = image.fileSize
+                    Content = image.FileSize
                 };
                 imageName.Style = subHeadlineStyle;
 
@@ -246,7 +244,7 @@ namespace OpenTimelapseSort.Views
                 detailGrid.Children.Add(imageSize);
 
                 //Image previewImage = new Image();
-                //previewImage.Source = new Uri(image.target);
+                //previewImage.Source = new Uri(image.Target);
 
                 var dockWrapper = new DockPanel
                 {
@@ -290,8 +288,8 @@ namespace OpenTimelapseSort.Views
                     {
                         _directories.Add(directory);
 
-                        var name = directory.name.Length <= 20 ?
-                            directory.name : directory.name.Substring(directory.name.Length - 20);
+                        var name = directory.Name.Length <= 20 ?
+                            directory.Name : directory.Name.Substring(directory.Name.Length - 20);
 
                         var directoryName = new Label
                         {
@@ -301,13 +299,13 @@ namespace OpenTimelapseSort.Views
 
                         var directoryImageCount = new Label
                         {
-                            Content = directory.imageList.Count + " Images",
+                            Content = directory.ImageList.Count + " Images",
                             Style = headlineStyle
                         };
 
                         var importDetails = new Label
                         {
-                            Content = directory.timestamp,
+                            Content = directory.Timestamp,
                             Style = subHeadlineStyle
                         };
 
@@ -403,7 +401,7 @@ namespace OpenTimelapseSort.Views
 
         private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var imageList = _directories[DirectoryViewer1.SelectedIndex].imageList;
+            var imageList = _directories[DirectoryViewer1.SelectedIndex].ImageList;
             var fetchImagesTask = RenderImages(imageList);
         }
 

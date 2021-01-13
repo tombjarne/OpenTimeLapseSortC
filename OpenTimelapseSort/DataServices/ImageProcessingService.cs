@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -7,8 +6,7 @@ namespace OpenTimelapseSort.DataServices
     {
         public byte[] ImageToByteArray(SImage image)
         {
-            Debug.WriteLine(image);
-            return System.IO.File.ReadAllBytes(image.target);
+            return System.IO.File.ReadAllBytes(image.Target);
         }
 
         public void SetImageMetaValues(SImage image)

@@ -40,7 +40,7 @@ namespace OpenTimelapseSort.Migrations
                         name: "FK_Import_Identifier",
                         column: x => x.importId,
                         principalTable: "Import",
-                        principalColumn: "id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -63,19 +63,19 @@ namespace OpenTimelapseSort.Migrations
                         name: "FK_Directory_Identifier",
                         column: x => x.directoryId,
                         principalTable: "ImageDirectory",
-                        principalColumn: "id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Image_directoryId",
                 table: "Image",
-                column: "directoryId");
+                column: "DirectoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ImageDirectory_importId",
                 table: "ImageDirectory",
-                column: "importId");
+                column: "ImportId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

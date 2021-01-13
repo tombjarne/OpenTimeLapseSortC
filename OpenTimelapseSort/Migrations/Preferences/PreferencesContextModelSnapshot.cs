@@ -15,7 +15,7 @@ namespace OpenTimelapseSort.Migrations.Preferences
 
             modelBuilder.Entity("OpentimelapseSort.Models.Preferences", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -34,7 +34,7 @@ namespace OpenTimelapseSort.Migrations.Preferences
                     b.Property<bool>("useCopy")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("Preferences");
                 });

@@ -35,17 +35,17 @@ namespace OpenTimelapseSort.Migrations
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Import",
                 table: "Import",
-                column: "id");
+                column: "Id");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_ImageDirectory",
                 table: "ImageDirectory",
-                column: "id");
+                column: "Id");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Image",
                 table: "Image",
-                column: "id");
+                column: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -73,17 +73,17 @@ namespace OpenTimelapseSort.Migrations
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Import_Identifier",
                 table: "Import",
-                column: "id");
+                column: "Id");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Directory_Identifier",
                 table: "ImageDirectory",
-                column: "id");
+                column: "Id");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Image_Identifier",
                 table: "Image",
-                column: "id");
+                column: "Id");
         }
     }
 }
