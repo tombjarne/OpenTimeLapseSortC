@@ -14,7 +14,7 @@ namespace OpenTimelapseSort
     {
 
         private DbService _dbService = new DbService();
-        private readonly MatchingService matching = new MatchingService();
+        private readonly MatchingService _matching = new MatchingService();
 
         public delegate void ImageListingProgress(int count, List<SImage> imageList);
         public delegate void ViewUpdate(List<SDirectory> directories);
@@ -27,11 +27,11 @@ namespace OpenTimelapseSort
 
             //fetch db entries
             //initialize local values
-            //initialiseDBService();
+            //InitialiseDbService();
             //InitialiseView();
         }
 
-        private void initialiseDBService()
+        private void InitialiseDbService()
         {
             _dbService = new DbService();
             using var database = new ImportContext();
@@ -75,7 +75,7 @@ namespace OpenTimelapseSort
 
             if (length > 0)
             {
-                for (int i = 0; i < length; i++)
+                for (var i = 0; i < length; i++)
                 {
                     var file = files[i];
                     var info = new FileInfo(file);
@@ -86,7 +86,7 @@ namespace OpenTimelapseSort
                         var subDirInfo = new FileInfo(subDirImages[i]);
                         var subDirLength = Directory.EnumerateFiles(file).ToList().Count();
 
-                        for (int p = 0; p < subDirLength; p++)
+                        for (var p = 0; p < subDirLength; p++)
                         {
                             var image = new SImage
                             (
@@ -95,7 +95,8 @@ namespace OpenTimelapseSort
                                 subDirInfo.DirectoryName
                             )
                             {
-                                Id = Guid.NewGuid().ToString()
+                                Id = Guid.NewGuid().ToString(),
+                                FileSize = subDirInfo.Length/1000
                             };
                             imageList.Add(image);
                         }
@@ -109,7 +110,8 @@ namespace OpenTimelapseSort
                             info.DirectoryName
                         )
                         {
-                            Id = Guid.NewGuid().ToString()
+                            Id = Guid.NewGuid().ToString(),
+                            FileSize = info.Length/1000
                         };
                         imageList.Add(image);
                     }
@@ -131,7 +133,7 @@ namespace OpenTimelapseSort
             var sortingTask = Task
             .Run(() =>
             {
-                matching.SortImages(imageList, (List<SDirectory> directories) =>
+                _matching.SortImages(imageList, (List<SDirectory> directories) =>
                 {
                     var destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                     var mainDirectory = destination + @"\OTS_IMG";

@@ -1,8 +1,9 @@
 ﻿namespace OpenTimelapseSort.Constants
 {
-    enum META_ATTRIBUTE
+    public enum MetaAttribute
     {
         Timestamp,
-        Filesize
+        FileSize,
+        Location
     }
 }

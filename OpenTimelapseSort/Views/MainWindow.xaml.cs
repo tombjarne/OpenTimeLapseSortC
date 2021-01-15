@@ -3,6 +3,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace OpenTimelapseSort.Views
 
         //private delegate void WarningReference(string errorHeadline, string errorDetails);
 
-        private readonly ObservableCollection<StackPanel> _panels = new ObservableCollection<StackPanel>();
+        private ObservableCollection<StackPanel> _panels = new ObservableCollection<StackPanel>();
         private readonly ObservableCollection<SDirectory> _directories = new ObservableCollection<SDirectory>();
         private readonly ObservableCollection<SImage> _images = new ObservableCollection<SImage>();
 
@@ -100,7 +101,7 @@ namespace OpenTimelapseSort.Views
             // TODO: find way to pass functions as Click events generically
         }
 
-        private void minimizeApplication(object sender, RoutedEventArgs e)
+        private void MinimizeApplication(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
         }
@@ -205,10 +206,6 @@ namespace OpenTimelapseSort.Views
             timer.Start();
         }
 
-
-        // alternative to this is an observable list and getting the Id from the selectionmodel 
-        // but this alt only works properly if elements dont have to be generated manually 
-
         private async Task RenderImages(List<SImage> imageList)
         {
 
@@ -218,50 +215,69 @@ namespace OpenTimelapseSort.Views
             var headlineStyle = this.FindResource("HeadlineTemplate") as Style;
             var subHeadlineStyle = this.FindResource("SubHeadlineTemplate") as Style;
             var panelStyle = this.FindResource("PanelTemplate") as Style;
-            var width = GetRelativeSize() * 402;
+            var width = ImageViewer1.Width - 65;
 
             directory_headline1.Content = imageList[0].ParentInstance;
-            directory_name1_Copy.Content = imageList[0].Target;
+            directory_prefix1.Content = "Path: " + imageList[0].Target;
 
             foreach (var image in imageList)
             {
-                _images.Add(image);
-
-                var imageName = new Label
+                try
                 {
-                    Content = image.Name,
-                    Style = headlineStyle
-                };
+                    _images.Add(image);
 
-                var imageSize = new Label
+                    var imageName = new Label
+                    {
+                        Content = image.Name,
+                        Style = headlineStyle
+                    };
+
+                    var imageSize = new Label
+                    {
+                        Content = image.FileSize+" kB",
+                        Style = subHeadlineStyle
+                    };
+                    var imageDetailsWrapper = new DockPanel();
+                    _ = imageDetailsWrapper.Children.Add(imageName);
+                    _ = imageDetailsWrapper.Children.Add(imageSize);
+                    DockPanel.SetDock(imageName, Dock.Left);
+                    DockPanel.SetDock(imageSize, Dock.Right);
+
+                    var imageLocation = new Label
+                    {
+                        Content = "12.34343, 15.15675"
+                    };
+
+                    var detailGrid = new Grid();
+                    _ = detailGrid.Children.Add(imageLocation);
+
+                    var imageDetailsExpander = new Expander()
+                    {
+                        Content = detailGrid
+                    };
+
+                    var dockWrapper = new DockPanel
+                    {
+                        Width = width
+                    };
+                    _ = dockWrapper.Children.Add(imageDetailsWrapper);
+                    _ = dockWrapper.Children.Add(imageDetailsExpander);
+                    DockPanel.SetDock(imageDetailsWrapper, Dock.Top);
+                    DockPanel.SetDock(imageDetailsExpander, Dock.Bottom);
+
+                    var directoryPanel = new StackPanel
+                    {
+                        Style = panelStyle,
+                        Width = width
+                    };
+                    _ = directoryPanel.Children.Add(dockWrapper);
+
+                    _ = ImageViewer1.Items.Add(directoryPanel);
+                }
+                catch (Exception e)
                 {
-                    Content = image.FileSize
-                };
-                imageName.Style = subHeadlineStyle;
-
-                var detailGrid = new Grid();
-                detailGrid.Children.Add(imageName);
-                detailGrid.Children.Add(imageSize);
-
-                //Image previewImage = new Image();
-                //previewImage.Source = new Uri(image.Target);
-
-                var dockWrapper = new DockPanel
-                {
-                    Width = width
-                };
-                dockWrapper.Children.Add(detailGrid);
-                DockPanel.SetDock(detailGrid, Dock.Top);
-                //DockPanel.SetDock(previewImage, Dock.Bottom);
-
-                var directoryPanel = new StackPanel
-                {
-                    Style = panelStyle,
-                    Width = ImageViewer.Width
-                };
-                directoryPanel.Children.Add(dockWrapper);
-
-                ImageViewer1.Items.Add(directoryPanel);
+                    Debug.WriteLine(e.InnerException);
+                }
             }
         }
 
@@ -286,7 +302,7 @@ namespace OpenTimelapseSort.Views
 
                     foreach (var directory in dirList)
                     {
-                        _directories.Add(directory);
+                        _directories.Insert(0, directory);
 
                         var name = directory.Name.Length <= 20 ?
                             directory.Name : directory.Name.Substring(directory.Name.Length - 20);
@@ -340,9 +356,9 @@ namespace OpenTimelapseSort.Views
                         };
                         directoryPanel.Children.Add(dockWrapper);
 
-                        DirectoryViewer1.Items.Add(directoryPanel);
-                        _panels.Add(directoryPanel);
-
+                        //DirectoryViewer1.Items.Add(directoryPanel);
+                        DirectoryViewer1.Items.Insert(0, directoryPanel);
+                        _panels.Insert(0, directoryPanel);
                     }
                     HideLoader();
                 }
@@ -351,11 +367,10 @@ namespace OpenTimelapseSort.Views
 
         private void ShowLoader()
         {
-            Style panelStyle = this.FindResource("PanelTemplate") as Style;
+            var panelStyle = this.FindResource("PanelTemplate") as Style;
+            var width = GetRelativeSize() * 402;
 
-            int width = GetRelativeSize() * 402;
-
-            ImageAwesome loadingIcon = new ImageAwesome()
+            var loadingIcon = new ImageAwesome()
             {
                 Icon = FontAwesomeIcon.CircleOutlineNotch,
                 Spin = true,
@@ -379,8 +394,8 @@ namespace OpenTimelapseSort.Views
 
             directoryPanel.Children.Add(loadingIcon);
 
-            DirectoryViewer1.Items.Add(directoryPanel);
-            _panels.Add(directoryPanel);
+            DirectoryViewer1.Items.Insert(0, directoryPanel);
+            _panels.Insert(0, directoryPanel);
         }
 
         private void HideLoader()
@@ -402,12 +417,19 @@ namespace OpenTimelapseSort.Views
         private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var imageList = _directories[DirectoryViewer1.SelectedIndex].ImageList;
-            var fetchImagesTask = RenderImages(imageList);
+            _ = RenderImages(imageList);
         }
 
         private void ImageViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
-            ScrollViewer scv = (ScrollViewer)sender;
+            var scv = (ScrollViewer)sender;
+            scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+            e.Handled = true;
+        }
+
+        private void DirectoryViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
+        {
+            var scv = (ScrollViewer)sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }

@@ -8,7 +8,7 @@ public class SImage
     public string Id { get; set; }
     public string DirectoryId { get; set; }
 
-    private readonly Dictionary<META_ATTRIBUTE, string> Meta = new Dictionary<META_ATTRIBUTE, string>();
+    public Dictionary<MetaAttribute, string> Meta;
     public string Name { get; set; }
     public string Target { get; set; }
     public DateTime FileTime { get; set; }
@@ -28,11 +28,16 @@ public class SImage
 
     public void SetTimestamp(string value)
     {
-        Meta.Add(META_ATTRIBUTE.Timestamp, value);
+        Meta.Add(MetaAttribute.Timestamp, value);
     }
 
     public void SetSize(string value)
     {
-        Meta.Add(META_ATTRIBUTE.Filesize, value);
+        Meta.Add(MetaAttribute.FileSize, value);
+    }
+
+    public void SetLocation(string value)
+    {
+        Meta.Add(MetaAttribute.Location, value);
     }
 }
