@@ -42,6 +42,32 @@ namespace OpenTimelapseSort.DataServices
                    preD <= curD - syncValue && preD >= curD + syncValue;
         }
 
+        // TODO: make algorithm work and pretty! Needs to support pure recognition features
+        public async void SortImagesAuto(List<SImage> imageList, RenderDelegate render)
+        {
+            var dirList = new List<SImage>();
+            var randomDirList = new List<SImage>();
+
+            for (var i = 0; i < imageList.Count; i++)
+            {
+                var image = imageList[i];
+
+                if (i == 0)
+                {
+                    dirList.Add(image);
+                }
+                else if(WithinSameShot(imageList[i-1], image))
+                {
+                    dirList.Add(image);
+                } else
+                {
+                    randomDirList.Add(image);
+                }
+            }
+
+            await CreateRandomDirAsync(randomDirList);
+        }
+
         public async void SortImages(List<SImage> imageList, RenderDelegate render)
         {
             var dirList = new List<SImage>();
