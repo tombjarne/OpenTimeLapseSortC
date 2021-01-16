@@ -65,3 +65,4 @@ C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcor
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Debug\netcoreapp3.1\FontAwesome.WPF.dll
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\StartupScreen.g.cs
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\StartupScreen.baml
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\GeneratedInternalTypeHelper.g.cs

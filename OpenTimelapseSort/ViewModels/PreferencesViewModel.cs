@@ -5,7 +5,7 @@ using System;
 
 namespace OpenTimelapseSort.ViewModels
 {
-    class PreferencesViewModel
+    internal class PreferencesViewModel
     {
         private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
 
@@ -14,7 +14,7 @@ namespace OpenTimelapseSort.ViewModels
             InitialisePreferencesDB();
         }
 
-        private async void EnsureDatabaseIsCreatedAsync()
+        private static async void EnsureDatabaseIsCreatedAsync()
         {
             await using var database = new PreferencesContext();
             await database.Database.EnsureCreatedAsync();
@@ -25,14 +25,14 @@ namespace OpenTimelapseSort.ViewModels
         public bool SavePreferences(bool useAutoDetectInterval, bool copyIsEnabled, double imageInterval, int generosity, int imageCount)
         {
 
-            bool success = false;
+            var success = false;
             using var database = new PreferencesContext();
 
             try
             {
                 EnsureDatabaseIsCreatedAsync();
 
-                Preferences preferences = new Preferences(
+                var preferences = new Preferences(
                     useAutoDetectInterval,
                     copyIsEnabled,
                     imageInterval,

@@ -31,7 +31,7 @@ namespace OpenTimelapseSort.DataServices
             await using var context = new ImportContext();
 
             var import = await context.Imports
-                .SingleAsync(i => i.timestamp == DateTime.Today);
+                .SingleAsync(i => i.Timestamp == DateTime.Today);
 
             Debug.WriteLine(import);
             return import;
@@ -47,38 +47,6 @@ namespace OpenTimelapseSort.DataServices
             catch (Exception)
             {
                 return false;
-            }
-        }
-
-        public async Task SaveImageAsync(SImage image)
-        {
-            await using var database = new ImportContext();
-
-            try
-            {
-                await database.AddAsync(image);
-                await database.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.StackTrace);
-                Debug.WriteLine(e.Message);
-            }
-        }
-
-        public async Task SaveImageDirectoryAsync(SDirectory directory)
-        {
-            await using var database = new ImportContext();
-
-            try
-            {
-                await database.AddAsync(directory);
-                await database.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.StackTrace);
-                Debug.WriteLine(e.StackTrace);
             }
         }
 
@@ -104,10 +72,10 @@ namespace OpenTimelapseSort.DataServices
             try
             {
                 var entity = database.Imports
-                    .Single(i => i.timestamp == DateTime.Today);
+                    .Single(i => i.Timestamp == DateTime.Today);
 
-                entity.directories = import.directories;
-                entity.length = import.length;
+                entity.Directories = import.Directories;
+                entity.Length = import.Length;
 
                 await database.SaveChangesAsync();
             }
@@ -116,26 +84,6 @@ namespace OpenTimelapseSort.DataServices
                 // handle exception
             }
         }
-
-        public void UpdateImport(SImport import)
-        {
-            using var context = new ImportContext();
-
-            context.Update(import);
-        }
-
-        public async Task<List<SImage>> GetImagesAsync(string id)
-        {
-            await using var context = new ImportContext();
-
-            var images = await context.Images
-                .Where(i => i.DirectoryId == id)
-                .ToListAsync();
-
-            return images;
-        }
-
-        // TODO: should return all directories
 
         public async Task<List<SDirectory>> GetDirectoriesAsync()
         {

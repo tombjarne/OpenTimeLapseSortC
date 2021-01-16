@@ -15,7 +15,7 @@ namespace OpenTimelapseSort.DataServices
             {
                 using (var database = new PreferencesContext())
                 {
-                    var entity = database.Preferences.FirstOrDefault(p => p.id == 1);
+                    var entity = database.Preferences.FirstOrDefault(p => p.Id == 1);
 
                     if (entity != null)
                     {
@@ -40,7 +40,7 @@ namespace OpenTimelapseSort.DataServices
 
         public bool SeedPreferencesDatabase()
         {
-            bool seedSucceeded = false;
+            var seedSucceeded = false;
             try
             {
                 using (var database = new PreferencesContext())
@@ -67,7 +67,7 @@ namespace OpenTimelapseSort.DataServices
             try
             {
                 var preferences = database.Preferences
-                    .Single(predicate => predicate.id == 1);
+                    .Single(predicate => predicate.Id == 1);
                 return preferences;
             }
             catch (Exception e)
@@ -76,7 +76,7 @@ namespace OpenTimelapseSort.DataServices
                 if (SeedPreferencesDatabase())
                 {
                     var preferences = database.Preferences
-                        .Single(predicate => predicate.id == 1);
+                        .Single(predicate => predicate.Id == 1);
                     return preferences;
                 }
                 else

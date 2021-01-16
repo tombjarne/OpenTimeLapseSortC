@@ -9,8 +9,8 @@ using OpenTimelapseSort.Contexts;
 namespace OpenTimelapseSort.Migrations
 {
     [DbContext(typeof(ImportContext))]
-    [Migration("20210109190233_SimplifyKeyAttributes")]
-    partial class SimplifyKeyAttributes
+    [Migration("20210116160437_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,6 +49,9 @@ namespace OpenTimelapseSort.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
+                    b.Property<long>("Colors")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("DirectoryId")
                         .HasColumnType("TEXT");
 
@@ -57,6 +60,9 @@ namespace OpenTimelapseSort.Migrations
 
                     b.Property<DateTime>("FileTime")
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Lumen")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -81,11 +87,11 @@ namespace OpenTimelapseSort.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("importDate")
+                    b.Property<string>("ImportDate")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("length")
+                    b.Property<int>("Length")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -107,7 +113,7 @@ namespace OpenTimelapseSort.Migrations
             modelBuilder.Entity("SDirectory", b =>
                 {
                     b.HasOne("SImport", "ParentImport")
-                        .WithMany("directories")
+                        .WithMany("Directories")
                         .HasForeignKey("ImportId")
                         .HasConstraintName("FK_Import_Identifier");
 
@@ -131,7 +137,7 @@ namespace OpenTimelapseSort.Migrations
 
             modelBuilder.Entity("SImport", b =>
                 {
-                    b.Navigation("directories");
+                    b.Navigation("Directories");
                 });
 #pragma warning restore 612, 618
         }

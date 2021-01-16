@@ -3,29 +3,29 @@ using System.ComponentModel.DataAnnotations;
 namespace OpentimelapseSort.Models
 {
 
-    class Preferences
+    internal class Preferences
     {
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public bool useCopy { get; set; }
+        public bool UseCopy { get; set; }
 
-        public bool useAutoDetectInterval { get; set; }
+        public bool UseAutoDetectInterval { get; set; }
 
-        public double sequenceInterval { get; set; }
+        public double SequenceInterval { get; set; }
 
-        public int sequenceIntervalGenerosity { get; set; }
+        public int SequenceIntervalGenerosity { get; set; }
 
-        public int sequenceImageCount { get; set; }
+        public int SequenceImageCount { get; set; }
 
         public Preferences(bool useAutoDetectInterval, bool useCopy, double sequenceInterval, int sequenceIntervalGenerosity, int sequenceImageCount)
         {
-            this.useAutoDetectInterval = useAutoDetectInterval;
-            this.useCopy = useCopy;
-            this.sequenceInterval = sequenceInterval;
-            this.sequenceIntervalGenerosity = sequenceIntervalGenerosity;
-            this.sequenceImageCount = sequenceImageCount;
-            id = 1;
+            UseAutoDetectInterval = useAutoDetectInterval;
+            UseCopy = useCopy;
+            SequenceInterval = sequenceInterval;
+            SequenceIntervalGenerosity = sequenceIntervalGenerosity;
+            SequenceImageCount = sequenceImageCount;
+            Id = 1;
         }
     }
 }

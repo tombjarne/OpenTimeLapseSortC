@@ -16,17 +16,17 @@ namespace OpenTimelapseSort.Views
 
         private void minimizeApplication(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            WindowState = WindowState.Minimized;
         }
 
         private void MoveWindow(object sender, MouseButtonEventArgs e)
         {
-            this.DragMove();
+            DragMove();
         }
 
         private void closeApplication(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

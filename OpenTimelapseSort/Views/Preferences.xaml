@@ -115,6 +115,7 @@
             Margin="56,232,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
+            IsEnabled="{Binding ElementName=Auto_Detection_btn, Path=IsChecked, TargetNullValue=false}"
             IsSnapToTickEnabled="True"
             Maximum="400"
             Minimum="0"
@@ -126,6 +127,7 @@
             Margin="56,393,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
+            IsEnabled="{Binding ElementName=Auto_Detection_btn, Path=IsChecked, TargetNullValue=false}"
             IsSnapToTickEnabled="True"
             Maximum="2000"
             Minimum="0"
@@ -180,7 +182,7 @@
             Margin="56,149,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Content="Auto Detection"
+            Content="Use Manual Settings"
             FontSize="14"
             Foreground="White" />
         <Slider
@@ -189,6 +191,7 @@
             Margin="56,312,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
+            IsEnabled="{Binding ElementName=Auto_Detection_btn, Path=IsChecked, TargetNullValue=false}"
             IsSnapToTickEnabled="True"
             Maximum="100"
             Minimum="0"

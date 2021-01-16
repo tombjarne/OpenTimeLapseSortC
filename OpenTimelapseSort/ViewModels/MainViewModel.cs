@@ -1,70 +1,34 @@
-﻿using OpenTimelapseSort.Contexts;
-using OpenTimelapseSort.DataServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Path = System.IO.Path;
+using OpenTimelapseSort.Contexts;
+using OpenTimelapseSort.DataServices;
 
-namespace OpenTimelapseSort
+namespace OpenTimelapseSort.ViewModels
 {
-    class MainViewModel
+    internal class MainViewModel
     {
-
         private DbService _dbService = new DbService();
         private readonly MatchingService _matching = new MatchingService();
 
         public delegate void ImageListingProgress(int count, List<SImage> imageList);
+
         public delegate void ViewUpdate(List<SDirectory> directories);
-
-        public MainViewModel()
-        {
-            //init db service 
-            //service = new DBService();
-            //service.
-
-            //fetch db entries
-            //initialize local values
-            //InitialiseDbService();
-            //InitialiseView();
-        }
 
         private void InitialiseDbService()
         {
             _dbService = new DbService();
             using var database = new ImportContext();
-            try
-            {
-                database.Database.EnsureCreated();
-
-                //service.SeedDatabase();
-                //InitialiseView();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
-        }
-
-        public bool PerformAutoSave()
-        {
-            // collect currently active instances and try to save them into database
-            // empty memory before closing
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            return true;
+            database.Database.EnsureCreated();
+            //service.SeedDatabase();
         }
 
         public async Task<List<SDirectory>> GetDirectoriesAsync()
         {
             return await _dbService.GetDirectoriesAsync();
-        }
-
-        public async Task<List<SImage>> GetImagesAsync(string id)
-        {
-            return await _dbService.GetImagesAsync(id);
         }
 
         public void Import(string name, ImageListingProgress listProgress)
@@ -96,7 +60,7 @@ namespace OpenTimelapseSort
                             )
                             {
                                 Id = Guid.NewGuid().ToString(),
-                                FileSize = subDirInfo.Length/1000
+                                FileSize = subDirInfo.Length / 1000
                             };
                             imageList.Add(image);
                         }
@@ -111,11 +75,12 @@ namespace OpenTimelapseSort
                         )
                         {
                             Id = Guid.NewGuid().ToString(),
-                            FileSize = info.Length/1000
+                            FileSize = info.Length / 1000
                         };
                         imageList.Add(image);
                     }
                 }
+
                 listProgress(imageList.Count, imageList);
             }
         }
@@ -127,42 +92,43 @@ namespace OpenTimelapseSort
          *
          * @param event         trigger for delete button being clicked
          */
-
         public void SortImages(List<SImage> imageList, ViewUpdate update)
         {
             var sortingTask = Task
-            .Run(() =>
-            {
-                _matching.SortImages(imageList, (List<SDirectory> directories) =>
+                .Run(() =>
                 {
-                    var destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                    var mainDirectory = destination + @"\OTS_IMG";
-
-                    if (!Directory.Exists(mainDirectory))
-                        Directory.CreateDirectory(mainDirectory);
-
-                    try
+                    _matching.SortImages(imageList, directories =>
                     {
-                        foreach (var directory in directories)
+                        var destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                        var mainDirectory = destination + @"\OTS_IMG";
+
+                        if (!Directory.Exists(mainDirectory))
+                            Directory.CreateDirectory(mainDirectory);
+
+                        try
                         {
-                            destination = mainDirectory + @"\" + directory.Name;
-                            Directory.CreateDirectory(destination);
-
-                            foreach (var image in directory.ImageList)
+                            foreach (var directory in directories)
                             {
-                                var source = Path.Combine(image.Target);
-                                File.Copy(source, destination + @"\" + image.Name, true);
+                                destination = mainDirectory + @"\" + directory.Name;
+                                Directory.CreateDirectory(destination);
+
+                                foreach (var image in directory.ImageList)
+                                {
+                                    var source = Path.Combine(image.Target);
+                                    File.Copy(source, destination + @"\" + image.Name, true);
+                                }
+
+                                destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                             }
-                            destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e.StackTrace);
-                    }
-                    update(directories);
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e.StackTrace);
+                        }
+
+                        update(directories);
+                    });
                 });
-            });
         }
     }
 }

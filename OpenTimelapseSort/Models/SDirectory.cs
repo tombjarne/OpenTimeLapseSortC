@@ -6,7 +6,7 @@ public class SDirectory
 {
     public string Id { get; set; }
     public string ImportId { get; set; }
-    public virtual List<SImage> ImageList { get; set; }
+    public List<SImage> ImageList { get; set; }
     public DateTime Timestamp { get; set; }
     public string Target { get; set; }
     public string Name { get; set; }

@@ -21,22 +21,22 @@ namespace OpenTimelapseSort.Contexts
 
             modelBuilder.Entity<SImport>(entity =>
             {
-                entity.Property(e => e.id)
+                entity.Property(e => e.Id)
                     .IsRequired();
 
-                entity.Property(e => e.target)
+                entity.Property(e => e.Target)
                     .IsRequired();
 
-                entity.Property(e => e.name)
+                entity.Property(e => e.Name)
                     .IsRequired();
 
-                entity.Property(e => e.timestamp)
+                entity.Property(e => e.Timestamp)
                     .IsRequired();
 
-                entity.Property(e => e.importDate)
+                entity.Property(e => e.ImportDate)
                     .IsRequired();
 
-                entity.HasMany(directory => directory.directories)
+                entity.HasMany(directory => directory.Directories)
                     .WithOne(import => import.ParentImport);
             });
 
@@ -52,7 +52,7 @@ namespace OpenTimelapseSort.Contexts
                     .WithOne(image => image.ParentDirectory);
 
                 entity.HasOne(directory => directory.ParentImport)
-                    .WithMany(import => import.directories)
+                    .WithMany(import => import.Directories)
                     .HasForeignKey(directory => directory.ImportId)
                     .HasConstraintName("FK_Import_Identifier");
             });

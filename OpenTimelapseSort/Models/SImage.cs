@@ -20,9 +20,9 @@ public class SImage
 
     public SImage(string name, string target, string parentInstance)
     {
-        this.Name = name;
-        this.Target = target;
-        this.ParentInstance = parentInstance;
+        Name = name;
+        Target = target;
+        ParentInstance = parentInstance;
         FileTime = File.GetCreationTime(target);
     }
 

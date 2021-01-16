@@ -28,10 +28,10 @@ namespace OpenTimelapseSort.Migrations.Preferences
                     b.Property<int>("sequenceIntervalGenerosity")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("useAutoDetectInterval")
+                    b.Property<bool>("UseAutoDetectInterval")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("useCopy")
+                    b.Property<bool>("UseCopy")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

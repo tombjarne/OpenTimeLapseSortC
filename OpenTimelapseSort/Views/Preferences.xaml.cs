@@ -19,39 +19,39 @@ namespace OpenTimelapseSort.Views
 
         // TODO: simplify
 
-        void UpdateSliderCountValue(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void UpdateSliderCountValue(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            Slider slider = (Slider)sender;
-            int value = (int)Math.Round(slider.Value, 0);
-            this.IntervalCount.Content = value;
+            var slider = (Slider)sender;
+            var value = (int)Math.Round(slider.Value, 0);
+            IntervalCount.Content = value;
         }
 
-        void UpdateSliderIntervalValue(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void UpdateSliderIntervalValue(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            Slider slider = (Slider)sender;
-            double value = Math.Round(slider.Value, 2);
-            this.Interval.Content = value;
+            var slider = (Slider)sender;
+            var value = Math.Round(slider.Value, 2);
+            Interval.Content = value;
         }
 
-        void UpdateGenerosityValue(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void UpdateGenerosityValue(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            Slider slider = (Slider)sender;
-            double value = Math.Round(slider.Value, 2);
-            this.Generosity.Content = value + " %";
+            var slider = (Slider)sender;
+            var value = Math.Round(slider.Value, 2);
+            Generosity.Content = value + " %";
         }
 
         private void SetPreferences(Preferences preferences)
         {
-            IntervalCount.Content = preferences.sequenceImageCount.ToString();
-            IntervalCountSlider.Value = preferences.sequenceImageCount;
+            IntervalCount.Content = preferences.SequenceImageCount;
+            IntervalCountSlider.Value = preferences.SequenceImageCount;
 
-            Interval.Content = preferences.sequenceInterval.ToString();
-            IntervalSlider.Value = preferences.sequenceInterval;
+            Interval.Content = preferences.SequenceInterval;
+            IntervalSlider.Value = preferences.SequenceInterval;
 
-            Generosity.Content = preferences.sequenceIntervalGenerosity.ToString();
-            GenerositySlider.Value = preferences.sequenceIntervalGenerosity;
+            Generosity.Content = preferences.SequenceIntervalGenerosity;
+            GenerositySlider.Value = preferences.SequenceIntervalGenerosity;
 
-            Copy.IsChecked = preferences.useCopy;
+            Copy.IsChecked = preferences.UseCopy;
         }
 
         public void SavePreferences(object sender, RoutedEventArgs e)
@@ -67,7 +67,7 @@ namespace OpenTimelapseSort.Views
 
         private void MoveWindow(object sender, MouseButtonEventArgs e)
         {
-            this.DragMove();
+            DragMove();
         }
     }
 }

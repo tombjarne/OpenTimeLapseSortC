@@ -3,7 +3,7 @@ using OpentimelapseSort.Models;
 
 namespace OpenTimelapseSort.Contexts
 {
-    class PreferencesContext : DbContext
+    internal class PreferencesContext : DbContext
     {
         public DbSet<Preferences> Preferences { get; set; }
 
