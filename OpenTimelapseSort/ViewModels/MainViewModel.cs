@@ -15,7 +15,6 @@ namespace OpenTimelapseSort.ViewModels
         private readonly MatchingService _matching = new MatchingService();
 
         public delegate void ImageListingProgress(int count, List<SImage> imageList);
-
         public delegate void ViewUpdate(List<SDirectory> directories);
 
         private void InitialiseDbService()

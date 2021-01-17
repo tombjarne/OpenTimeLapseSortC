@@ -11,6 +11,7 @@ namespace OpenTimelapseSort.Views
         public StartupScreen()
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            Topmost = true;
             InitializeComponent();
         }
 
@@ -27,6 +28,11 @@ namespace OpenTimelapseSort.Views
         private void closeApplication(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

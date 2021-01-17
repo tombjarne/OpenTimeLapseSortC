@@ -135,6 +135,16 @@
             <Setter Property="Margin" Value="197,7,0,3" />
         </Style>
 
+        <Style x:Key="BigButtonTemplate" TargetType="Button">
+            <Setter Property="Padding" Value="20,0,20,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Width" Value="115" />
+            <Setter Property="Height" Value="75" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="#FFFF8383" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+        </Style>
+
         <Style x:Key="ScrollViewerStyle" TargetType="{x:Type ScrollViewer}">
             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
@@ -421,7 +431,6 @@
                         x:Name="ImageViewer1"
                         Background="#FF3D4A59"
                         BorderBrush="{x:Null}"
-                        Cursor="Hand"
                         Foreground="#FFED6558"
                         ItemsSource="{Binding}" />
                 </ScrollViewer>
@@ -615,44 +624,58 @@
                     Grid.Row="0"
                     Margin="20"
                     Background="#34404D">
-                    <Grid DockPanel.Dock="Top">
-                        <Label
-                            Margin="0,24,0,0"
-                            Padding="20,0,20,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Top"
-                            Content="Ready?"
-                            DockPanel.Dock="Top"
-                            FontSize="36"
-                            FontWeight="Bold"
-                            Foreground="White" />
-                        <TextBlock
-                            x:Name="Import_Progress_Count"
-                            Grid.Column="0"
-                            Margin="0,2,0,-2"
-                            Padding="20,0,20,0"
-                            HorizontalAlignment="Left"
-                            FontSize="18"
-                            FontWeight="Bold"
-                            Foreground="#FFFF8383">
-                            processing...
-                        </TextBlock>
-                    </Grid>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Grid DockPanel.Dock="Top">
+                            <Label
+                                Margin="0,24,0,0"
+                                Padding="20,0,20,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Top"
+                                Content="Ready?"
+                                DockPanel.Dock="Top"
+                                FontSize="36"
+                                FontWeight="Bold"
+                                Foreground="White" />
+                            <TextBlock
+                                x:Name="Import_Progress_Count"
+                                Grid.Column="0"
+                                Margin="0,2,0,-2"
+                                Padding="20,0,20,0"
+                                HorizontalAlignment="Left"
+                                FontSize="18"
+                                FontWeight="Bold"
+                                Foreground="#FFFF8383">
+                                processing...
+                            </TextBlock>
+                        </Grid>
+                        <Grid DockPanel.Dock="Bottom">
+                            <TextBlock
+                                x:Name="Sorting_Countdown"
+                                Grid.Column="0"
+                                Margin="0,2,0,-2"
+                                Padding="60,0,60,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="56"
+                                FontWeight="Bold"
+                                Foreground="#FFFF8383">
+                                10
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
                     <Grid DockPanel.Dock="Bottom">
-                        <TextBlock
-                            x:Name="Sorting_Countdown"
-                            Grid.Column="0"
-                            Margin="0,2,0,-2"
-                            Padding="60,0,60,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="56"
-                            FontWeight="Bold"
-                            Foreground="#FFFF8383">
-                            10
-                        </TextBlock>
+                        <Button
+                            Click="ButtonBase_OnClick"
+                            Content="Cancel"
+                            Style="{StaticResource BigButtonTemplate}">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="5" />
+                                </Style>
+                            </Button.Resources>
+                        </Button>
                     </Grid>
                 </DockPanel>
             </Grid>

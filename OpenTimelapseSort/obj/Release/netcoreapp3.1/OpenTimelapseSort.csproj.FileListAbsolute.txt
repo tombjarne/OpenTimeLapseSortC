@@ -61,3 +61,8 @@ C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Release\netc
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Release\netcoreapp3.1\OpenTimelapseSort.dll
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Release\netcoreapp3.1\OpenTimelapseSort.pdb
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Release\netcoreapp3.1\OpenTimelapseSort.genruntimeconfig.cache
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\bin\Release\netcoreapp3.1\FontAwesome.WPF.dll
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Release\netcoreapp3.1\OpenTimelapseSort.csprojAssemblyReference.cache
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Release\netcoreapp3.1\Views\StartupScreen.baml
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Release\netcoreapp3.1\Views\StartupScreen.g.cs
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Release\netcoreapp3.1\GeneratedInternalTypeHelper.g.cs

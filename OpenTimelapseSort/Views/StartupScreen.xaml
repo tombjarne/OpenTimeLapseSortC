@@ -5,10 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="StartupScreen"
-    Width="800"
-    Height="420"
+    Width="744"
+    Height="430"
     AllowsTransparency="True"
-    Background="Transparent"
     FontFamily="Montserrat"
     WindowStyle="None"
     mc:Ignorable="d">
@@ -40,58 +39,72 @@
             <Setter Property="Background" Value="#FF34404D" />
         </Style>
 
+        <Style x:Key="ButtonTemplate" TargetType="Button">
+            <Setter Property="Width" Value="95" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Padding" Value="10,0,10,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="Coral" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+        </Style>
+
     </Window.Resources>
+    <Window.Background>
+        <ImageBrush ImageSource="/Views/opentimelapsesort-startup-image.jpg" />
+    </Window.Background>
 
     <Grid
         x:Name="Pane"
         Height="Auto"
-        Margin="0,35,0,0"
-        Background="#34404D">
-        <Image
-            Width="800"
-            Height="410"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            Source="/Resources/img/startup-screen-1.jpg"
-            Stretch="UniformToFill"
-            StretchDirection="Both" />
-        <Label
-            Width="552"
-            Height="123"
-            Margin="0,161,0,0"
-            Padding="20,0,20,0"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Left"
-            VerticalContentAlignment="Top"
-            Content="OpenTimelapseSort"
-            DockPanel.Dock="Top"
-            FontSize="48"
-            FontWeight="UltraBlack"
-            Foreground="White" />
-        <Ellipse
-            x:Name="close_btn"
-            Width="17"
-            Height="17"
-            Margin="1113,14,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Fill="#FFFF5252"
-            MouseDown="closeApplication" />
-        <Ellipse
-            x:Name="minimize_btn"
-            Width="17"
-            Height="17"
-            Margin="1091,14,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Fill="Coral"
-            MouseDown="minimizeApplication" />
-        <Rectangle
-            Width="800"
-            Margin="0,0,0,384"
-            HorizontalAlignment="Center"
-            Fill="#FF34404D"
-            MouseDown="MoveWindow" />
+        Margin="0,35,0,0">
+        <DockPanel>
+            <Grid DockPanel.Dock="Top">
+                <Label
+                    Margin="0,135,0,0"
+                    Padding="20,0,20,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Top"
+                    Content="OpenTimelapseSort"
+                    DockPanel.Dock="Top"
+                    FontSize="48"
+                    FontWeight="UltraBlack"
+                    Foreground="White">
+                    <Label.Background>
+                        <ImageBrush />
+                    </Label.Background>
+                </Label>
+            </Grid>
+            <Grid DockPanel.Dock="Bottom">
+                <DockPanel Width="202" HorizontalAlignment="Center">
+                    <Button
+                        Width="95"
+                        Content="Tutorial"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource ButtonTemplate}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button
+                        Width="95"
+                        Click="ButtonBase_OnClick"
+                        Content="Dismiss"
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource ButtonTemplate}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </DockPanel>
+            </Grid>
+        </DockPanel>
     </Grid>
 </Window>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using OpentimelapseSort.Models;
@@ -68,9 +67,6 @@ namespace OpenTimelapseSort.DataServices
         {
             var syncValue = preD * _deviationGenerosity;
 
-            Debug.WriteLine(preD >= curD - syncValue && preD <= curD + syncValue ||
-                            preD <= curD - syncValue && preD >= curD + syncValue);
-
             return preD >= curD - syncValue && preD <= curD + syncValue ||
                    preD <= curD - syncValue && preD >= curD + syncValue;
         }
@@ -83,6 +79,7 @@ namespace OpenTimelapseSort.DataServices
         public async void SortImagesAuto(List<SImage> imageList, RenderDelegate render)
         {
             for (var i = 0; i < imageList.Count - 1; i++)
+            {
                 if (WithinSameShot(imageList[i], imageList[i + 1]) &&
                     BelongToEachOther(imageList[i], imageList[i + 1]))
                 {
@@ -90,14 +87,17 @@ namespace OpenTimelapseSort.DataServices
                 }
                 else
                 {
-                    // TODO: tilpass til endringene i andre funksjonen
                     if (dirList.Count >= _runs)
+                    {
                         await CreateDirAsync();
+                        dirList.Clear();
+                    }
                     else
+                    {
                         randomDirList.Add(imageList[i]);
-
-                    dirList.Clear();
+                    }
                 }
+            }
 
             HandleLastElement(imageList);
 
@@ -126,7 +126,10 @@ namespace OpenTimelapseSort.DataServices
                 await CreateRandomDirAsync();
             }
 
-            if (dirList.Count >= _runs) await CreateDirAsync();
+            if (dirList.Count >= _runs)
+            {
+                await CreateDirAsync();
+            }
 
             render(_imageDirectories);
         }

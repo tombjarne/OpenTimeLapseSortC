@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,6 +25,8 @@ namespace OpenTimelapseSort.Views
         private readonly ObservableCollection<SImport> _imports = new ObservableCollection<SImport>();
         private readonly ObservableCollection<SImage> _images = new ObservableCollection<SImage>();
         private readonly MainViewModel _mainViewModel = new MainViewModel();
+
+        private DispatcherTimer _timer = new DispatcherTimer();
 
         //////////////////////////////////////////////////////////
         //////                   CONSTRUCTOR                //////
@@ -98,26 +101,18 @@ namespace OpenTimelapseSort.Views
                 Multiselect = false
             };
 
-            if (targetChooser.ShowDialog() == CommonFileDialogResult.Ok)
+            if (targetChooser.ShowDialog() == CommonFileDialogResult.Ok &&
+                targetChooser.FileName != "Default" &&
+                !targetChooser.FileName.Contains("Windows") &&
+                Directory.Exists(targetChooser.FileName))
             {
-                if (targetChooser.FileName != "Default" &&
-                    !targetChooser.FileName.Contains("Windows"))
-                {
-                    if (Directory.Exists(targetChooser.FileName))
-                    {
-                        Import_Popup.IsOpen = true;
-                        Import_Target.Text = targetChooser.FileName;
-                        Import_Confirm_Btn.IsEnabled = true;
-                    }
-                    else
-                    {
-                        Import_Target.Text = "Invalid location.";
-                    }
-                }
-                else
-                {
-                    Import_Target.Text = "Not able to import from this location.";
-                }
+                Import_Popup.IsOpen = true;
+                Import_Target.Text = targetChooser.FileName;
+                Import_Confirm_Btn.IsEnabled = true;
+            }
+            else
+            {
+                Import_Target.Text = "Invalid location.";
             }
         }
 
@@ -154,30 +149,22 @@ namespace OpenTimelapseSort.Views
         {
             Import_Progress_Count.Text = "Found " + count + " images";
 
-            var timer = new DispatcherTimer();
-            TimeSpan timeSpan;
-
-            timeSpan = TimeSpan.FromSeconds(9);
-            timer = new DispatcherTimer(new TimeSpan(0, 0, 1), DispatcherPriority.Normal, delegate
+            var timeSpan = TimeSpan.FromSeconds(9);
+            _timer = new DispatcherTimer(new TimeSpan(0, 0, 1), 
+                DispatcherPriority.Normal, delegate
             {
                 Sorting_Countdown.Text = timeSpan.ToString(@"\ s");
                 if (timeSpan == TimeSpan.Zero)
                 {
-                    timer.Stop();
+                    _timer.Stop();
                     Import_Progress_Popup.IsOpen = false;
 
-                    var sortingTask = Task.Run(() => { _mainViewModel.SortImages(imageList, Render); });
-
-                    var taskAwaiter = sortingTask.GetAwaiter();
-                    taskAwaiter.OnCompleted(() =>
-                    {
-                        //
-                    });
+                    Task.Run(() => { _mainViewModel.SortImages(imageList, Render); });
                 }
 
                 timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
             }, Application.Current.Dispatcher);
-            timer.Start();
+            _timer.Start();
         }
 
         private void RenderImages(List<SImage> imageList)
@@ -195,6 +182,7 @@ namespace OpenTimelapseSort.Views
                     ImageViewer1.DataContext = _images;
                 }
             });
+            GC.Collect();
         }
 
         private void AddImportIfNotExists(SImport import)
@@ -211,11 +199,15 @@ namespace OpenTimelapseSort.Views
          */
         private void Render(List<SDirectory> dirList)
         {
+            Debug.WriteLine(dirList);
             Dispatcher.Invoke(() =>
             {
                 lock (_directories)
                 {
-                    foreach (var directory in dirList) _directories.Insert(0, directory);
+                    foreach (var directory in dirList)
+                    {
+                        _directories.Insert(0, directory);
+                    }
 
                     AddImportIfNotExists(dirList[0].ParentImport);
                     DirectoryViewer1.DataContext = _directories;
@@ -223,6 +215,7 @@ namespace OpenTimelapseSort.Views
                     HideLoader();
                 }
             });
+            GC.Collect();
         }
 
         private void ShowLoader()
@@ -238,6 +231,7 @@ namespace OpenTimelapseSort.Views
         private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var imageList = _directories[DirectoryViewer1.SelectedIndex].ImageList;
+            Debug.WriteLine(imageList);
             RenderImages(imageList);
         }
 
@@ -253,6 +247,14 @@ namespace OpenTimelapseSort.Views
             var scv = (ScrollViewer) sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            _timer.Stop();
+            Import_Progress_Popup.IsOpen = false;
+            HideLoader();
+            GC.Collect();
         }
     }
 }
