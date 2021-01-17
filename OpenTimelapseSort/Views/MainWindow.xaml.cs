@@ -148,6 +148,7 @@ namespace OpenTimelapseSort.Views
         private void HandleListingProgress(int count, List<SImage> imageList)
         {
             Import_Progress_Count.Text = "Found " + count + " images";
+            //GC.Collect();
 
             var timeSpan = TimeSpan.FromSeconds(9);
             _timer = new DispatcherTimer(new TimeSpan(0, 0, 1), 
@@ -182,7 +183,7 @@ namespace OpenTimelapseSort.Views
                     ImageViewer1.DataContext = _images;
                 }
             });
-            GC.Collect();
+            //GC.Collect();
         }
 
         private void AddImportIfNotExists(SImport import)
@@ -199,7 +200,6 @@ namespace OpenTimelapseSort.Views
          */
         private void Render(List<SDirectory> dirList)
         {
-            Debug.WriteLine(dirList);
             Dispatcher.Invoke(() =>
             {
                 lock (_directories)
@@ -215,7 +215,7 @@ namespace OpenTimelapseSort.Views
                     HideLoader();
                 }
             });
-            GC.Collect();
+            //GC.Collect();
         }
 
         private void ShowLoader()
@@ -231,7 +231,6 @@ namespace OpenTimelapseSort.Views
         private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var imageList = _directories[DirectoryViewer1.SelectedIndex].ImageList;
-            Debug.WriteLine(imageList);
             RenderImages(imageList);
         }
 
@@ -254,7 +253,7 @@ namespace OpenTimelapseSort.Views
             _timer.Stop();
             Import_Progress_Popup.IsOpen = false;
             HideLoader();
-            GC.Collect();
+            //GC.Collect();
         }
     }
 }

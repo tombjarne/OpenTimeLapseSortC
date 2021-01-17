@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using OpentimelapseSort.Models;
@@ -49,13 +50,15 @@ namespace OpenTimelapseSort.DataServices
             const int colorSync = 0xffff;
             const int lumenSync = 500;
 
-            _imageProcessingService.SetImageMetaValues(pImage);
-            _imageProcessingService.SetImageMetaValues(cImage);
+            _imageProcessingService.SetImageMetaValuesLite(pImage);
+            _imageProcessingService.SetImageMetaValuesLite(cImage);
 
             var cMatrixPre = pImage.Colors;
             var cMatrixCur = cImage.Colors;
             var cLumenPre = pImage.Lumen;
             var cLumenCur = cImage.Lumen;
+
+            //GC.Collect();
 
             return (cMatrixPre >= cMatrixCur - colorSync && cMatrixPre <= cMatrixCur + colorSync ||
                     cMatrixPre <= cMatrixCur - colorSync && cMatrixPre >= cMatrixCur + colorSync) &&
@@ -80,6 +83,8 @@ namespace OpenTimelapseSort.DataServices
         {
             for (var i = 0; i < imageList.Count - 1; i++)
             {
+                Debug.WriteLine("Image " + i);
+
                 if (WithinSameShot(imageList[i], imageList[i + 1]) &&
                     BelongToEachOther(imageList[i], imageList[i + 1]))
                 {
@@ -136,10 +141,9 @@ namespace OpenTimelapseSort.DataServices
 
         public async void SortImages(List<SImage> imageList, RenderDelegate render)
         {
-            // TODO: match to fit seconds spec again! Fix milliseconds issue
-
             for (var i = 1; i < imageList.Count - 1; i++)
             {
+                Debug.WriteLine("Image "+i);
                 var preD = imageList[i].FileTime - imageList[i - 1].FileTime;
                 var curD = imageList[i + 1].FileTime - imageList[i].FileTime;
 
@@ -175,7 +179,7 @@ namespace OpenTimelapseSort.DataServices
 
         private async Task CreateRandomDirAsync()
         {
-            var name = Path.GetDirectoryName(randomDirList[0].Target) + "_R";
+            var name = Path.GetFileName( randomDirList[0].Target) + "_R";
             var directory = new SDirectory
             (
                 randomDirList[0].Target,
@@ -192,7 +196,7 @@ namespace OpenTimelapseSort.DataServices
 
         private async Task CreateDirAsync()
         {
-            var name = Path.GetDirectoryName(dirList[0].Target);
+            var name = Path.GetFileName(dirList[0].Target);
             var directory = new SDirectory
             (
                 dirList[0].Target,

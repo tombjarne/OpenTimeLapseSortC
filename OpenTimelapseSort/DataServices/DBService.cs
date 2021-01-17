@@ -33,7 +33,6 @@ namespace OpenTimelapseSort.DataServices
             var import = await context.Imports
                 .SingleAsync(i => i.Timestamp == DateTime.Today);
 
-            Debug.WriteLine(import);
             return import;
         }
 
@@ -87,6 +86,8 @@ namespace OpenTimelapseSort.DataServices
 
         public async Task<List<SDirectory>> GetDirectoriesAsync()
         {
+            //GC.Collect();
+
             await using var context = new ImportContext();
 
             var directories = await context.ImageDirectories

@@ -40,6 +40,7 @@ namespace OpenTimelapseSort.ViewModels
             {
                 for (var i = 0; i < length; i++)
                 {
+
                     var file = files[i];
                     var info = new FileInfo(file);
 
@@ -63,6 +64,7 @@ namespace OpenTimelapseSort.ViewModels
                             };
                             imageList.Add(image);
                         }
+                        //GC.Collect();
                     }
                     else
                     {
@@ -82,6 +84,7 @@ namespace OpenTimelapseSort.ViewModels
 
                 listProgress(imageList.Count, imageList);
             }
+            //GC.Collect();
         }
 
         /**
@@ -108,12 +111,15 @@ namespace OpenTimelapseSort.ViewModels
                         {
                             foreach (var directory in directories)
                             {
+                                Debug.WriteLine("Copy ");
+
                                 destination = mainDirectory + @"\" + directory.Name;
                                 Directory.CreateDirectory(destination);
 
                                 foreach (var image in directory.ImageList)
                                 {
                                     var source = Path.Combine(image.Target);
+                                    Debug.WriteLine(destination + @"\" + image.Name);
                                     File.Copy(source, destination + @"\" + image.Name, true);
                                 }
 
@@ -128,6 +134,7 @@ namespace OpenTimelapseSort.ViewModels
                         update(directories);
                     });
                 });
+            //GC.Collect();
         }
     }
 }
