@@ -127,7 +127,6 @@
             Margin="56,393,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            IsEnabled="{Binding ElementName=Auto_Detection_btn, Path=IsChecked, TargetNullValue=false}"
             IsSnapToTickEnabled="True"
             Maximum="2000"
             Minimum="0"

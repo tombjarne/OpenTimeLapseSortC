@@ -1,7 +1,7 @@
-using OpenTimelapseSort.Constants;
-using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using OpenTimelapseSort.Constants;
 
 public class SImage
 {
@@ -11,7 +11,7 @@ public class SImage
     public Dictionary<MetaAttribute, string> Meta;
     public string Name { get; set; }
     public string Target { get; set; }
-    public DateTime FileTime { get; set; }
+    public long FileTime { get; set; }
     public long FileSize { get; set; }
     public string ParentInstance { get; set; }
     public SDirectory ParentDirectory { get; set; }
@@ -23,7 +23,8 @@ public class SImage
         Name = name;
         Target = target;
         ParentInstance = parentInstance;
-        FileTime = File.GetCreationTime(target);
+        FileTime = File.GetLastWriteTime(target).ToFileTime();
+        Debug.WriteLine(FileTime);
     }
 
     public void SetTimestamp(string value)

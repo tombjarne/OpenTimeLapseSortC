@@ -97,7 +97,7 @@ namespace OpenTimelapseSort.ViewModels
             var sortingTask = Task
                 .Run(() =>
                 {
-                    _matching.SortImages(imageList, directories =>
+                    _matching.SortImagesAsync(imageList, directories =>
                     {
                         var destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                         var mainDirectory = destination + @"\OTS_IMG";

@@ -52,11 +52,12 @@ namespace OpenTimelapseSort.Views
             GenerositySlider.Value = preferences.SequenceIntervalGenerosity;
 
             Copy.IsChecked = preferences.UseCopy;
+            Auto_Detection_btn.IsChecked = preferences.UseAutoDetectInterval;
         }
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
-            _preferencesViewModel.SavePreferences(true, (bool)Copy.IsChecked,
+            _preferencesViewModel.SavePreferences((bool)Auto_Detection_btn.IsChecked, (bool)Copy.IsChecked,
                 IntervalSlider.Value, (int)GenerositySlider.Value, (int)IntervalCountSlider.Value);
         }
 

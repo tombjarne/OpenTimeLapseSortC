@@ -99,8 +99,6 @@ namespace OpenTimelapseSort.DataServices
                     .ToListAsync();
             }
 
-            Debug.WriteLine(directories);
-
             return directories;
         }
     }
