@@ -124,6 +124,17 @@
             </Setter>
         </Style>
 
+        <Style x:Key="ButtonTemplate" TargetType="Button">
+            <Setter Property="Width" Value="95" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Padding" Value="10,0,10,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="#FF3D4A59" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="Margin" Value="197,7,0,3" />
+        </Style>
+
         <Style x:Key="ScrollViewerStyle" TargetType="{x:Type ScrollViewer}">
             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
@@ -173,12 +184,18 @@
         <DataTemplate DataType="{x:Type local:SImage}">
             <StackPanel Style="{StaticResource PanelTemplate}">
                 <DockPanel>
-                    <Expander DockPanel.Dock="Bottom">
+                    <Expander DockPanel.Dock="Right">
                         <Grid>
-                            <Label Content="TestValue" />
+                            <Button Content="Delete" Style="{StaticResource ButtonTemplate}">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="5" />
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
                         </Grid>
                     </Expander>
-                    <Grid DockPanel.Dock="Top">
+                    <Grid DockPanel.Dock="Left">
                         <DockPanel Style="{StaticResource DockPanelTemplate}">
                             <Label
                                 Content="{Binding FileSize}"
@@ -199,18 +216,33 @@
                 <DockPanel>
                     <Grid DockPanel.Dock="Bottom">
                         <DockPanel Style="{StaticResource DockPanelTemplate}">
-                            <Label
-                                Content="{Binding Timestamp}"
-                                DockPanel.Dock="Left"
-                                Style="{StaticResource SubHeadlineTemplate}" />
+                            <Grid DockPanel.Dock="Left">
+                                <Label
+                                    Content="{Binding Timestamp}"
+                                    DockPanel.Dock="Left"
+                                    Style="{StaticResource SubHeadlineTemplate}" />
+                            </Grid>
+                            <Grid DockPanel.Dock="Right">
+                                <Label
+                                    Content="{Binding ImageList.Count}"
+                                    DockPanel.Dock="Right"
+                                    Style="{StaticResource SubHeadlineTemplate}" />
+                                <Button
+                                    Content="Reimport"
+                                    Foreground="White"
+                                    Style="{StaticResource ButtonTemplate}"
+                                    ToolTip="Re-import the original directory">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="5" />
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                            </Grid>
                         </DockPanel>
                     </Grid>
                     <Grid DockPanel.Dock="Top">
                         <DockPanel Style="{StaticResource DockPanelTemplate}">
-                            <Label
-                                Content="{Binding ImageList.Count}"
-                                DockPanel.Dock="Right"
-                                Style="{StaticResource HeadlineTemplate}" />
                             <Label
                                 Content="{Binding Name}"
                                 DockPanel.Dock="Left"
@@ -366,7 +398,7 @@
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
                 <Label
-                    x:Name="directory_headline1"
+                    x:Name="Directory_Name"
                     Height="44"
                     Margin="0,0,-9,640"
                     Padding="20,0,20,0"
@@ -383,21 +415,18 @@
                     Width="679"
                     Margin="0,147,0,0"
                     CanContentScroll="True"
-                    MouseWheel="ImageViewer_OnPreviewMouseDown"
+                    PreviewMouseWheel="ImageViewer_OnPreviewMouseDown"
                     Style="{StaticResource ScrollViewerStyle}">
                     <ListView
                         x:Name="ImageViewer1"
-                        Width="691"
-                        Height="517"
                         Background="#FF3D4A59"
                         BorderBrush="{x:Null}"
-                        Cursor=""
+                        Cursor="Hand"
                         Foreground="#FFED6558"
-                        IsSynchronizedWithCurrentItem="False"
                         ItemsSource="{Binding}" />
                 </ScrollViewer>
                 <Label
-                    x:Name="directory_prefix1"
+                    x:Name="Directory_Path"
                     Width="408"
                     Margin="21,93,0,598"
                     Padding="0,0,20,0"

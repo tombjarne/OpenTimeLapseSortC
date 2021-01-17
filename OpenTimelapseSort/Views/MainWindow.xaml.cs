@@ -184,6 +184,8 @@ namespace OpenTimelapseSort.Views
         {
             Dispatcher.Invoke(() =>
             {
+                Directory_Name.Content = imageList[0].ParentDirectory.Name;
+                Directory_Path.Content = "Path " + imageList[0].ParentDirectory.Target;
                 _images.Clear();
                 lock (_images)
                 {

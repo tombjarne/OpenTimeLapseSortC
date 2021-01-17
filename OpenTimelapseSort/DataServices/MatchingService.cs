@@ -23,7 +23,6 @@ namespace OpenTimelapseSort.DataServices
 
         private readonly List<SImage> dirList;
         private readonly List<SImage> randomDirList;
-        private long _mostOccuredInterval;
 
         public MatchingService()
         {
@@ -157,7 +156,8 @@ namespace OpenTimelapseSort.DataServices
                         {
                             await CreateDirAsync();
                             dirList.Clear();
-                        } else
+                        }
+                        else
                         {
                             randomDirList.Add(imageList[i]);
                         }
