@@ -61,9 +61,9 @@ namespace OpenTimelapseSort.Views
                 IntervalSlider.Value, (int)GenerositySlider.Value, (int)IntervalCountSlider.Value);
         }
 
-        private void closePreferencesWindow(object sender, RoutedEventArgs e)
+        private void ClosePreferencesWindow(object sender, RoutedEventArgs e)
         {
-            App.Current.Windows[1].Close();
+            Close();
         }
 
         private void MoveWindow(object sender, MouseButtonEventArgs e)

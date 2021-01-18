@@ -25,14 +25,9 @@ namespace OpenTimelapseSort.Views
             DragMove();
         }
 
-        private void closeApplication(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

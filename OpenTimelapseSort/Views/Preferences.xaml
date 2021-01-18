@@ -47,7 +47,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Fill="Coral"
-                MouseDown="closePreferencesWindow" />
+                MouseDown="ClosePreferencesWindow" />
             <Rectangle
                 Width="228"
                 Height="44"
