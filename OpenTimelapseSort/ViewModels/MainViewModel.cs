@@ -13,8 +13,10 @@ namespace OpenTimelapseSort.ViewModels
     {
         private DbService _dbService = new DbService();
         private readonly MatchingService _matching = new MatchingService();
+        private List<SDirectory> _directories = new List<SDirectory>();
+        private List<SImage> _images = new List<SImage>();
 
-        public delegate void ImageListingProgress(int count, List<SImage> imageList);
+        public delegate void ImageListingProgress(int count);
         public delegate void ViewUpdate(List<SDirectory> directories);
 
         private void InitialiseDbService()
@@ -32,7 +34,8 @@ namespace OpenTimelapseSort.ViewModels
 
         public void Import(string name, ImageListingProgress listProgress)
         {
-            var imageList = new List<SImage>();
+            _images.Clear();
+
             var files = Directory.EnumerateFileSystemEntries(name).ToList();
             var length = files.Count();
 
@@ -62,9 +65,8 @@ namespace OpenTimelapseSort.ViewModels
                                 Id = Guid.NewGuid().ToString(),
                                 FileSize = subDirInfo.Length / 1000
                             };
-                            imageList.Add(image);
+                            _images.Add(image);
                         }
-                        //GC.Collect();
                     }
                     else
                     {
@@ -78,13 +80,11 @@ namespace OpenTimelapseSort.ViewModels
                             Id = Guid.NewGuid().ToString(),
                             FileSize = info.Length / 1000
                         };
-                        imageList.Add(image);
+                        _images.Add(image);
                     }
                 }
-
-                listProgress(imageList.Count, imageList);
+                listProgress(_images.Count);
             }
-            //GC.Collect();
         }
 
         /**
@@ -94,47 +94,49 @@ namespace OpenTimelapseSort.ViewModels
          *
          * @param event         trigger for delete button being clicked
          */
-        public void SortImages(List<SImage> imageList, ViewUpdate update)
+        public void SortImages(ViewUpdate update)
         {
-            var sortingTask = Task
-                .Run(() =>
+            var sortingTask = Task.Run( () =>
+            {
+                _directories = _matching.MatchImages(_images);
+            });
+
+            sortingTask.ContinueWith( task =>
+            {
+                Callback(update);
+            });
+        }
+
+        private void Callback(ViewUpdate update)
+        {
+            var destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            var mainDirectory = destination + @"\OTS_IMG";
+
+            if (!Directory.Exists(mainDirectory))
+                Directory.CreateDirectory(mainDirectory);
+
+            try
+            {
+                foreach (var directory in _directories)
                 {
-                    _matching.SortImagesAsync(imageList, directories =>
+                    destination = mainDirectory + @"\" + directory.Name;
+                    Directory.CreateDirectory(destination);
+
+                    foreach (var image in directory.ImageList)
                     {
-                        var destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                        var mainDirectory = destination + @"\OTS_IMG";
+                        var source = Path.Combine(image.Target);
+                        File.Copy(source, destination + @"\" + image.Name, true);
+                    }
 
-                        if (!Directory.Exists(mainDirectory))
-                            Directory.CreateDirectory(mainDirectory);
+                    destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.StackTrace);
+            }
 
-                        try
-                        {
-                            foreach (var directory in directories)
-                            {
-                                Debug.WriteLine("Copy ");
-
-                                destination = mainDirectory + @"\" + directory.Name;
-                                Directory.CreateDirectory(destination);
-
-                                foreach (var image in directory.ImageList)
-                                {
-                                    var source = Path.Combine(image.Target);
-                                    Debug.WriteLine(destination + @"\" + image.Name);
-                                    File.Copy(source, destination + @"\" + image.Name, true);
-                                }
-
-                                destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine(e.StackTrace);
-                        }
-
-                        update(directories);
-                    });
-                });
-            //GC.Collect();
+            update(_directories);
         }
     }
 }

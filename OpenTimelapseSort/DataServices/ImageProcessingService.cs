@@ -40,7 +40,7 @@ namespace OpenTimelapseSort.DataServices
 
             for (var i = 4; i < iBytes.Length; i++)
             {
-                if (i % 120000 == 0)
+                if (i % 1000000 == 0)
                 {
                     var pixel = Color.FromArgb(iBytes[i], iBytes[i - 1], iBytes[i - 2], iBytes[i - 3]);
                     iMatrix += pixel.G;

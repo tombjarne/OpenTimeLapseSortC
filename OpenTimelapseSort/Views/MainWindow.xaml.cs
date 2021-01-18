@@ -145,10 +145,9 @@ namespace OpenTimelapseSort.Views
         //////                    FUNCTIONS                 //////
         //////////////////////////////////////////////////////////
 
-        private void HandleListingProgress(int count, List<SImage> imageList)
+        private void HandleListingProgress(int count)
         {
             Import_Progress_Count.Text = "Found " + count + " images";
-            //GC.Collect();
 
             var timeSpan = TimeSpan.FromSeconds(9);
             _timer = new DispatcherTimer(new TimeSpan(0, 0, 1), 
@@ -160,7 +159,7 @@ namespace OpenTimelapseSort.Views
                     _timer.Stop();
                     Import_Progress_Popup.IsOpen = false;
 
-                    Task.Run(() => { _mainViewModel.SortImages(imageList, Render); });
+                    _mainViewModel.SortImages(Render);
                 }
 
                 timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
@@ -174,6 +173,7 @@ namespace OpenTimelapseSort.Views
             {
                 Directory_Name.Content = imageList[0].ParentDirectory.Name;
                 Directory_Path.Content = "Path " + imageList[0].ParentDirectory.Target;
+
                 _images.Clear();
                 lock (_images)
                 {
@@ -200,8 +200,9 @@ namespace OpenTimelapseSort.Views
          */
         private void Render(List<SDirectory> dirList)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.InvokeAsync(() =>
             {
+                Debug.WriteLine("Render");
                 lock (_directories)
                 {
                     foreach (var directory in dirList)
@@ -215,7 +216,6 @@ namespace OpenTimelapseSort.Views
                     HideLoader();
                 }
             });
-            //GC.Collect();
         }
 
         private void ShowLoader()
