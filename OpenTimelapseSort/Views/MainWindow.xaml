@@ -278,31 +278,10 @@
         x:Name="Pane"
         Height="Auto"
         Background="#34404D">
-        <StackPanel
-            x:Name="Loader"
-            Visibility="Hidden"
-            ZIndex="10000">
-            <fa:FontAwesome
-                x:Name="LoaderImage"
-                HorizontalAlignment="Right"
-                FontSize="20"
-                Foreground="LightSlateGray"
-                Icon="Cog"
-                Spin="True"
-                SpinDuration="10">
-                <fa:FontAwesome.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform />
-                        <TranslateTransform X="-85" Y="13" />
-                    </TransformGroup>
-                </fa:FontAwesome.RenderTransform>
-            </fa:FontAwesome>
-        </StackPanel>
         <Grid
             x:Name="MenuBar"
             Height="39"
+            Margin="0,5,0,0"
             VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
@@ -357,31 +336,71 @@
                     </Style>
                 </Button.Resources>
             </Button>
-            <Ellipse
-                x:Name="close_btn"
-                Width="17"
-                Height="17"
-                Margin="1113,14,0,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Fill="#FFFF5252"
-                MouseDown="CloseApplication" />
-            <Ellipse
-                x:Name="minimize_btn"
-                Width="17"
-                Height="17"
-                Margin="1091,14,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Fill="Coral"
-                MouseDown="MinimizeApplication" />
+            <DockPanel Margin="1072,9,-76,10">
+                <fa:FontAwesome
+                    x:Name="Loader"
+                    Width="20"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Panel.ZIndex="10000"
+                    DockPanel.Dock="Left"
+                    FontSize="20"
+                    Foreground="LightSlateGray"
+                    Icon="Cog"
+                    Spin="True"
+                    SpinDuration="10"
+                    Visibility="Hidden" />
+                <Grid Width="45" DockPanel.Dock="Right">
+                    <Ellipse
+                        x:Name="close_btn"
+                        Width="17"
+                        Height="17"
+                        Margin="27,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Fill="#FFFF5252"
+                        MouseDown="CloseApplication" />
+                    <Ellipse
+                        x:Name="minimize_btn"
+                        Width="17"
+                        Height="16"
+                        Margin="5,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Fill="Coral"
+                        MouseDown="MinimizeApplication" />
+                </Grid>
+            </DockPanel>
             <Rectangle
-                Width="667"
+                Width="648"
                 Height="44"
-                Margin="394,0,0,0"
+                Margin="394,0,0,-5"
                 HorizontalAlignment="Left"
                 Fill="#FF34404D"
                 MouseDown="MoveWindow" />
+            <Grid
+                Width="335"
+                Height="20"
+                Margin="694,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center">
+                <fa:FontAwesome
+                    x:Name="WarningIcon"
+                    Margin="6,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    FontSize="16"
+                    Foreground="#FFDE4D4D"
+                    Icon="Warning"
+                    MouseDown="ImportDateSortOption"
+                    Style="{StaticResource SortIconTemplate}" />
+                <TextBox
+                    Margin="24,4,0,-4"
+                    Background="{x:Null}"
+                    BorderBrush="{x:Null}"
+                    Foreground="#FFDE4D4D"
+                    Text="Invalid Import Location." />
+            </Grid>
         </Grid>
         <DockPanel
             x:Name="LeftPanel"
