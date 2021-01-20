@@ -22,8 +22,10 @@ namespace OpenTimelapseSort.Views
         //private delegate void WarningReference(string errorHeadline, string errorDetails);
 
         private readonly ObservableCollection<SDirectory> _directories = new ObservableCollection<SDirectory>();
+        private readonly ObservableCollection<SDirectory> _sortedDirectories = new ObservableCollection<SDirectory>();
         private readonly ObservableCollection<SImport> _imports = new ObservableCollection<SImport>();
         private readonly ObservableCollection<SImage> _images = new ObservableCollection<SImage>();
+
         private readonly MainViewModel _mainViewModel = new MainViewModel();
 
         private DispatcherTimer _timer = new DispatcherTimer();
@@ -188,7 +190,10 @@ namespace OpenTimelapseSort.Views
 
         private void AddImportIfNotExists(SImport import)
         {
-            if (!_imports.Contains(import)) _imports.Insert(0, import);
+            if (!_imports.Contains(import)) {
+                _imports.Insert(0, import);
+                Debug.WriteLine(_imports);
+            }
         }
 
         /**
@@ -208,9 +213,9 @@ namespace OpenTimelapseSort.Views
                     foreach (var directory in dirList)
                     {
                         _directories.Insert(0, directory);
+                        AddImportIfNotExists(directory.ParentImport);
                     }
 
-                    AddImportIfNotExists(dirList[0].ParentImport);
                     DirectoryViewer1.DataContext = _directories;
 
                     HideLoader();
@@ -253,7 +258,42 @@ namespace OpenTimelapseSort.Views
             _timer.Stop();
             Import_Progress_Popup.IsOpen = false;
             HideLoader();
-            //GC.Collect();
+        }
+
+        private void SortDirectoriesAfterSelectedDate(object sender, RoutedEventArgs e)
+        {
+            var calendar = (Calendar) sender;
+            var targetDate = calendar.SelectedDate;
+
+            _sortedDirectories.Clear();
+            foreach(var import in _imports)
+            {
+                if (import.Timestamp == targetDate)
+                {
+                    foreach (var directory in import.Directories)
+                    {
+                        _sortedDirectories.Insert(0, directory);
+                    }
+                }
+            }
+
+            DirectoryViewer1.DataContext = _sortedDirectories;
+        }
+
+        private void ImportDateSortOption(object sender, RoutedEventArgs e)
+        {
+            DateTakenBackground.Opacity = 100;
+            ImportDateBackground.Opacity = 80;
+
+            SortingCalendar.IsEnabled = true;
+        }
+
+        private void DateTakenSortOption(object sender, RoutedEventArgs e)
+        {
+            ImportDateBackground.Opacity = 100;
+            DateTakenBackground.Opacity = 80;
+
+            SortingCalendar.IsEnabled = true;
         }
     }
 }

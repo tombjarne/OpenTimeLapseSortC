@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +13,10 @@ namespace OpenTimelapseSort.ViewModels
         private DbService _dbService = new DbService();
         private readonly MatchingService _matching = new MatchingService();
         private List<SDirectory> _directories = new List<SDirectory>();
-        private List<SImage> _images = new List<SImage>();
+        private readonly List<SImage> _images = new List<SImage>();
 
         public delegate void ImageListingProgress(int count);
+
         public delegate void ViewUpdate(List<SDirectory> directories);
 
         private void InitialiseDbService()
@@ -43,9 +43,7 @@ namespace OpenTimelapseSort.ViewModels
             {
                 for (var i = 0; i < length; i++)
                 {
-
                     var file = files[i];
-                    var info = new FileInfo(file);
 
                     if (Directory.Exists(file))
                     {
@@ -55,36 +53,35 @@ namespace OpenTimelapseSort.ViewModels
 
                         for (var p = 0; p < subDirLength; p++)
                         {
-                            var image = new SImage
-                            (
-                                Path.GetFileName(subDirImages[i]),
-                                subDirInfo.FullName,
-                                subDirInfo.DirectoryName
-                            )
-                            {
-                                Id = Guid.NewGuid().ToString(),
-                                FileSize = subDirInfo.Length / 1000
-                            };
-                            _images.Add(image);
+                            var subDirFile = subDirImages[i];
+                            _images.Add(CreateImage(subDirFile, subDirInfo));
                         }
                     }
                     else
                     {
-                        var image = new SImage
-                        (
-                            Path.GetFileName(file),
-                            info.FullName,
-                            info.DirectoryName
-                        )
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            FileSize = info.Length / 1000
-                        };
-                        _images.Add(image);
+                        var info = new FileInfo(file);
+                        _images.Add(CreateImage(file, info));
                     }
                 }
+
                 listProgress(_images.Count);
             }
+        }
+
+        private SImage CreateImage(string file, FileInfo info)
+        {
+            var image = new SImage
+            (
+                Path.GetFileName(file),
+                info.FullName,
+                info.DirectoryName
+            )
+            {
+                Id = Guid.NewGuid().ToString(),
+                FileSize = info.Length / 1000
+            };
+
+            return image;
         }
 
         /**
@@ -96,15 +93,9 @@ namespace OpenTimelapseSort.ViewModels
          */
         public void SortImages(ViewUpdate update)
         {
-            var sortingTask = Task.Run( () =>
-            {
-                _directories = _matching.MatchImages(_images);
-            });
+            var sortingTask = Task.Run(() => { _directories = _matching.MatchImages(_images); });
 
-            sortingTask.ContinueWith( task =>
-            {
-                Callback(update);
-            });
+            sortingTask.ContinueWith(task => { Callback(update); });
         }
 
         private void Callback(ViewUpdate update)
@@ -115,25 +106,16 @@ namespace OpenTimelapseSort.ViewModels
             if (!Directory.Exists(mainDirectory))
                 Directory.CreateDirectory(mainDirectory);
 
-            try
+            foreach (var directory in _directories)
             {
-                foreach (var directory in _directories)
+                destination = mainDirectory + @"\" + directory.Name;
+                Directory.CreateDirectory(destination);
+
+                foreach (var image in directory.ImageList)
                 {
-                    destination = mainDirectory + @"\" + directory.Name;
-                    Directory.CreateDirectory(destination);
-
-                    foreach (var image in directory.ImageList)
-                    {
-                        var source = Path.Combine(image.Target);
-                        File.Copy(source, destination + @"\" + image.Name, true);
-                    }
-
-                    destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                    var source = Path.Combine(image.Target);
+                    File.Copy(source, destination + @"\" + image.Name, true);
                 }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.StackTrace);
             }
 
             update(_directories);

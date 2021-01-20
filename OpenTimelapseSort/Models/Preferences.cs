@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace OpentimelapseSort.Models
+namespace OpenTimelapseSort.Models
 {
-
     internal class Preferences
     {
         [Key]

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using OpentimelapseSort.Models;
+using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -22,8 +22,8 @@ namespace OpenTimelapseSort.DataServices
         private readonly double _deviationGenerosity;
         private readonly int _runs;
 
-        private List<SImage> dirList;
-        private List<SImage> randomDirList;
+        private List<SImage> _dirList;
+        private List<SImage> _randomDirList;
 
         public MatchingService()
         {
@@ -31,14 +31,14 @@ namespace OpenTimelapseSort.DataServices
             _deviationGenerosity = _preferences.SequenceIntervalGenerosity / 100;
             _runs = _preferences.SequenceImageCount;
 
-            dirList = new List<SImage>();
-            randomDirList = new List<SImage>();
+            _dirList = new List<SImage>();
+            _randomDirList = new List<SImage>();
         }
 
         public List<SDirectory> MatchImages(List<SImage> imageList)
         {
-            dirList = new List<SImage>();
-            randomDirList = new List<SImage>();
+            _dirList = new List<SImage>();
+            _randomDirList = new List<SImage>();
 
             //dirList.Clear();
             //randomDirList.Clear();
@@ -106,19 +106,19 @@ namespace OpenTimelapseSort.DataServices
                 if (WithinSameShot(imageList[i], imageList[i + 1]) &&
                     BelongToEachOther(imageList[i], imageList[i + 1]))
                 {
-                    dirList.Add(imageList[i]);
+                    _dirList.Add(imageList[i]);
                 }
                 else
                 {
-                    if (dirList.Count >= _runs)
+                    if (_dirList.Count >= _runs)
                     {
                         CreateDirAsync();
-                        dirList = new List<SImage>();
+                        _dirList = new List<SImage>();
                         //dirList.Clear();
                     }
                     else
                     {
-                        randomDirList.Add(imageList[i]);
+                        _randomDirList.Add(imageList[i]);
                     }
                 }
                 Debug.WriteLine(_imageDirectories);
@@ -135,31 +135,31 @@ namespace OpenTimelapseSort.DataServices
             var lastIndex = imageList.Count - 1;
 
             if (WithinSameShot(imageList[lastIndex - 1], imageList[lastIndex]))
-                dirList.Add(imageList[lastIndex]);
+                _dirList.Add(imageList[lastIndex]);
             else
-                randomDirList.Add(imageList[lastIndex]);
+                _randomDirList.Add(imageList[lastIndex]);
         }
 
         private void CompleteDirectories()
         {
-            if (dirList.Count < _runs && dirList.Count > 0)
+            if (_dirList.Count < _runs && _dirList.Count > 0)
             {
-                randomDirList.AddRange(dirList);
+                _randomDirList.AddRange(_dirList);
                 CreateRandomDirAsync();
-                randomDirList = new List<SImage>();
+                _randomDirList = new List<SImage>();
                 //randomDirList.Clear();
             }
-            else if (randomDirList.Count > 0)
+            else if (_randomDirList.Count > 0)
             {
                 CreateRandomDirAsync();
-                randomDirList = new List<SImage>();
+                _randomDirList = new List<SImage>();
                 //randomDirList.Clear();
             }
 
-            if (dirList.Count >= _runs)
+            if (_dirList.Count >= _runs)
             {
                 CreateDirAsync();
-                dirList = new List<SImage>();
+                _dirList = new List<SImage>();
                 //dirList.Clear();
             }
             Debug.WriteLine(_imageDirectories);
@@ -175,19 +175,19 @@ namespace OpenTimelapseSort.DataServices
 
                 if (WithinSameSequence(curD, preD))
                 {
-                    dirList.Add(imageList[i]);
+                    _dirList.Add(imageList[i]);
                 }
                 else
                 {
-                    if (dirList.Count >= _runs)
+                    if (_dirList.Count >= _runs)
                     {
                         CreateDirAsync();
-                        dirList = new List<SImage>();
+                        _dirList = new List<SImage>();
                         //dirList.Clear();
                     }
                     else
                     {
-                        randomDirList.Add(imageList[i]);
+                        _randomDirList.Add(imageList[i]);
                     }
                 }
                 Debug.WriteLine(_imageDirectories);
@@ -203,15 +203,15 @@ namespace OpenTimelapseSort.DataServices
         {
             Debug.WriteLine("CreateRandomDirAsync ");
 
-            var name = Path.GetFileName(randomDirList[0].Target) + "_R";
+            var name = Path.GetFileName(_randomDirList[0].Target) + "_R";
             var directory = new SDirectory
             (
-                randomDirList[0].Target,
+                _randomDirList[0].Target,
                 name
             )
             {
                 Id = Guid.NewGuid().ToString(),
-                ImageList = randomDirList
+                ImageList = _randomDirList
             };
 
             var saveTask = SaveMatch(directory);
@@ -221,18 +221,18 @@ namespace OpenTimelapseSort.DataServices
         {
             Debug.WriteLine("CreateDirAsync ");
 
-            var name = Path.GetFileName(dirList[0].Target);
+            var name = Path.GetFileName(_dirList[0].Target);
 
-            Debug.WriteLine(dirList);
+            Debug.WriteLine(_dirList);
 
             var directory = new SDirectory
             (
-                dirList[0].Target,
+                _dirList[0].Target,
                 name
             )
             {
                 Id = Guid.NewGuid().ToString(),
-                ImageList = dirList
+                ImageList = _dirList
             };
 
             var saveTask = SaveMatch(directory);

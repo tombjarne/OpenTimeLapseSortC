@@ -12,32 +12,6 @@
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
-        <Style x:Key="ScrollViewerStyle" TargetType="{x:Type ScrollViewer}">
-            <Setter Property="HorizontalScrollBarVisibility" Value="Hidden" />
-            <Setter Property="VerticalScrollBarVisibility" Value="Hidden" />
-        </Style>
-
-        <Style x:Key="HeadlineTemplate" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="FontSize" Value="18px" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-        </Style>
-
-        <Style x:Key="SubHeadlineTemplate" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="FontSize" Value="12px" />
-            <Setter Property="Foreground" Value="Coral" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-        </Style>
-
-        <Style x:Key="PanelTemplate" TargetType="{x:Type StackPanel}">
-            <Setter Property="Background" Value="#FF34404D" />
-        </Style>
 
         <Style x:Key="ButtonTemplate" TargetType="Button">
             <Setter Property="Width" Value="95" />
@@ -55,10 +29,7 @@
         <ImageBrush ImageSource="/Views/opentimelapsesort-startup-image.jpg" />
     </Window.Background>
 
-    <Grid
-        x:Name="Pane"
-        Height="Auto"
-        Margin="0,35,0,0">
+    <Grid Height="Auto" Margin="0,35,0,0">
         <DockPanel>
             <Grid DockPanel.Dock="Top">
                 <Label
@@ -81,7 +52,6 @@
             <Grid DockPanel.Dock="Bottom">
                 <DockPanel Width="202" HorizontalAlignment="Center">
                     <Button
-                        Width="95"
                         Content="Tutorial"
                         DockPanel.Dock="Left"
                         Style="{StaticResource ButtonTemplate}">
@@ -92,7 +62,6 @@
                         </Button.Resources>
                     </Button>
                     <Button
-                        Width="95"
                         Click="ButtonBase_OnClick"
                         Content="Dismiss"
                         DockPanel.Dock="Right"

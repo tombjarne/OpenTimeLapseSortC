@@ -49,7 +49,7 @@
             </Setter>
         </Style>
         <!--  ScrollBars  -->
-        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+        <Style TargetType="{x:Type ScrollBar}">
             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
             <Setter Property="Foreground" Value="#FFFF8383" />
             <Setter Property="Background" Value="Transparent" />
@@ -122,6 +122,15 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <Style x:Key="SortIconTemplate" TargetType="fa:FontAwesome">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
         </Style>
 
         <Style x:Key="ButtonTemplate" TargetType="Button">
@@ -382,23 +391,82 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Expander
+                    Width="384"
+                    Margin="0,2,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Panel.ZIndex="1000"
+                    Background="#FF34404D"
+                    BorderBrush="{x:Null}"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Foreground="#FFFF8383"
+                    Header="Sort Imports">
+                    <DockPanel>
+                        <Viewbox
+                            Width="239"
+                            HorizontalAlignment="Right"
+                            DockPanel.Dock="Right">
+                            <Calendar
+                                x:Name="SortingCalendar"
+                                Width="180"
+                                Height="161"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Background="White"
+                                BorderBrush="{x:Null}"
+                                Foreground="{x:Null}"
+                                SelectedDatesChanged="SortDirectoriesAfterSelectedDate"
+                                SelectionMode="SingleDate" />
+                        </Viewbox>
+                        <Grid Height="140" DockPanel.Dock="Left">
+                            <Grid VerticalAlignment="Top">
+                                <fa:FontAwesome
+                                    x:Name="ImportDateIcon"
+                                    Icon="Download"
+                                    MouseDown="ImportDateSortOption"
+                                    Style="{StaticResource SortIconTemplate}" />
+                                <Ellipse
+                                    x:Name="ImportDateBackground"
+                                    Width="55"
+                                    Height="55"
+                                    Panel.ZIndex="-1"
+                                    Fill="#FFFF8383" />
+                            </Grid>
+                            <Grid VerticalAlignment="Bottom">
+                                <fa:FontAwesome
+                                    x:Name="DateTakenIcon"
+                                    Icon="Photo"
+                                    MouseDown="DateTakenSortOption"
+                                    Style="{StaticResource SortIconTemplate}" />
+                                <Ellipse
+                                    x:Name="DateTakenBackground"
+                                    Width="55"
+                                    Height="55"
+                                    Panel.ZIndex="-1"
+                                    Fill="#FFFF8383" />
+                            </Grid>
+                        </Grid>
+                    </DockPanel>
+                </Expander>
                 <ScrollViewer
                     x:Name="DirectoryViewer"
+                    Margin="0,28,0,0"
                     CanContentScroll="True"
                     PreviewMouseWheel="DirectoryViewer_OnPreviewMouseDown"
                     Style="{StaticResource ScrollViewerStyle}">
                     <ListView
                         x:Name="DirectoryViewer1"
-                        Cursor="Hand"
+                        Height="693"
                         IsSynchronizedWithCurrentItem="False"
                         ItemsSource="{Binding}"
                         MouseDoubleClick="DirectoryViewer1_OnMouseDoubleClick"
                         Style="{StaticResource DirectoryListTemplate}"
-                        ToolTip="Double click to show images" />
+                        ToolTip="Double click to show images" Cursor="Hand" />
                 </ScrollViewer>
             </Grid>
         </DockPanel>
-        <Grid DockPanel.Dock="Bottom" />
         <DockPanel
             x:Name="RightPanel"
             Margin="442,44,0,0"
@@ -480,7 +548,6 @@
                         Foreground="White" />
                     <TextBlock
                         x:Name="Import_Target"
-                        Grid.Column="0"
                         Margin="0,2,0,-2"
                         Padding="20,0,20,0"
                         HorizontalAlignment="Left"
@@ -580,7 +647,6 @@
                         Foreground="White" />
                     <TextBlock
                         x:Name="Error_Desc"
-                        Grid.Column="0"
                         Margin="0,2,0,-2"
                         Padding="20,0,20,0"
                         HorizontalAlignment="Left"

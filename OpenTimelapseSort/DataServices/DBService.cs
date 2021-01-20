@@ -86,7 +86,6 @@ namespace OpenTimelapseSort.DataServices
 
         public async Task<List<SDirectory>> GetDirectoriesAsync()
         {
-            //GC.Collect();
 
             await using var context = new ImportContext();
 
@@ -98,6 +97,9 @@ namespace OpenTimelapseSort.DataServices
                 directory.ImageList = await context.Images
                     .Where(i => i.DirectoryId == directory.Id)
                     .ToListAsync();
+
+                directory.ParentImport = await context.Imports
+                    .SingleAsync(i => i.Id == directory.ImportId);
             }
 
             return directories;

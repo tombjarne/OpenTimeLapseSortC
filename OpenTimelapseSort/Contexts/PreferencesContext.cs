@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OpentimelapseSort.Models;
+using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.Contexts
 {

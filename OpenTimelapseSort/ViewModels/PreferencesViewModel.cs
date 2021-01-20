@@ -1,4 +1,4 @@
-﻿using OpentimelapseSort.Models;
+﻿using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.DataServices;
 using System;
