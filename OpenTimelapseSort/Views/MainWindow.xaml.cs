@@ -179,7 +179,10 @@ namespace OpenTimelapseSort.Views
                 _images.Clear();
                 lock (_images)
                 {
-                    foreach (var image in imageList) _images.Add(image);
+                    foreach (var image in imageList)
+                    {
+                        _images.Add(image);
+                    }
 
                     AddImportIfNotExists(imageList[0].ParentDirectory.ParentImport);
                     ImageViewer1.DataContext = _images;
@@ -235,6 +238,7 @@ namespace OpenTimelapseSort.Views
 
         private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            // TODO: fix filtration issue - _sortedDirectories when sorting is enabled
             var imageList = _directories[DirectoryViewer1.SelectedIndex].ImageList;
             RenderImages(imageList);
         }

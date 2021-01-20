@@ -52,7 +52,7 @@ namespace OpenTimelapseSort.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/OpenTimelapseSort;component/views/startupscreen.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/OpenTimelapseSort;V1.0.0.0;component/views/startupscreen.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\StartupScreen.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

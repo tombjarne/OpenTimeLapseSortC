@@ -458,12 +458,12 @@
                     Style="{StaticResource ScrollViewerStyle}">
                     <ListView
                         x:Name="DirectoryViewer1"
-                        Height="693"
+                        Cursor="Hand"
                         IsSynchronizedWithCurrentItem="False"
                         ItemsSource="{Binding}"
                         MouseDoubleClick="DirectoryViewer1_OnMouseDoubleClick"
                         Style="{StaticResource DirectoryListTemplate}"
-                        ToolTip="Double click to show images" Cursor="Hand" />
+                        ToolTip="Double click to show images" />
                 </ScrollViewer>
             </Grid>
         </DockPanel>

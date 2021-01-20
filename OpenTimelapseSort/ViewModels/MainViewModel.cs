@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,6 +45,7 @@ namespace OpenTimelapseSort.ViewModels
                 for (var i = 0; i < length; i++)
                 {
                     var file = files[i];
+                    Debug.WriteLine(i);
 
                     if (Directory.Exists(file))
                     {
@@ -53,7 +55,8 @@ namespace OpenTimelapseSort.ViewModels
 
                         for (var p = 0; p < subDirLength; p++)
                         {
-                            var subDirFile = subDirImages[i];
+                            Debug.WriteLine(p);
+                            var subDirFile = subDirImages[p];
                             _images.Add(CreateImage(subDirFile, subDirInfo));
                         }
                     }
@@ -68,7 +71,7 @@ namespace OpenTimelapseSort.ViewModels
             }
         }
 
-        private SImage CreateImage(string file, FileInfo info)
+        private static SImage CreateImage(string file, FileInfo info)
         {
             var image = new SImage
             (
@@ -94,21 +97,21 @@ namespace OpenTimelapseSort.ViewModels
         public void SortImages(ViewUpdate update)
         {
             var sortingTask = Task.Run(() => { _directories = _matching.MatchImages(_images); });
-
+            Debug.WriteLine(_directories);
             sortingTask.ContinueWith(task => { Callback(update); });
         }
 
         private void Callback(ViewUpdate update)
         {
-            var destination = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            var mainDirectory = destination + @"\OTS_IMG";
+            var mainDirectory = 
+                Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\OTS_IMG";
 
             if (!Directory.Exists(mainDirectory))
                 Directory.CreateDirectory(mainDirectory);
 
             foreach (var directory in _directories)
             {
-                destination = mainDirectory + @"\" + directory.Name;
+                var destination = mainDirectory + @"\" + directory.Name;
                 Directory.CreateDirectory(destination);
 
                 foreach (var image in directory.ImageList)
