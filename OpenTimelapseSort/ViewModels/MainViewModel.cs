@@ -1,11 +1,11 @@
-﻿using System;
+﻿using OpenTimelapseSort.Contexts;
+using OpenTimelapseSort.DataServices;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using OpenTimelapseSort.Contexts;
-using OpenTimelapseSort.DataServices;
 
 namespace OpenTimelapseSort.ViewModels
 {
@@ -103,7 +103,7 @@ namespace OpenTimelapseSort.ViewModels
 
         private void Callback(ViewUpdate update)
         {
-            var mainDirectory = 
+            var mainDirectory =
                 Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\OTS_IMG";
 
             if (!Directory.Exists(mainDirectory))

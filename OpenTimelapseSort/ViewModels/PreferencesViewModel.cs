@@ -1,6 +1,6 @@
-﻿using OpenTimelapseSort.Models;
-using OpenTimelapseSort.Contexts;
+﻿using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.DataServices;
+using OpenTimelapseSort.Models;
 using System;
 
 namespace OpenTimelapseSort.ViewModels
@@ -11,7 +11,7 @@ namespace OpenTimelapseSort.ViewModels
 
         public PreferencesViewModel()
         {
-            InitialisePreferencesDB();
+            InitialisePreferencesDb();
         }
 
         private static async void EnsureDatabaseIsCreatedAsync()
@@ -22,7 +22,8 @@ namespace OpenTimelapseSort.ViewModels
 
         //TODO: refactor and optimize!
 
-        public bool SavePreferences(bool useAutoDetectInterval, bool copyIsEnabled, double imageInterval, int generosity, int imageCount)
+        public bool SavePreferences(bool useAutoDetectInterval,
+            bool copyIsEnabled, double imageInterval, int generosity, int imageCount)
         {
 
             var success = false;
@@ -50,21 +51,17 @@ namespace OpenTimelapseSort.ViewModels
             return success;
         }
 
-        private void InitialisePreferencesDB()
+        private static void InitialisePreferencesDb()
         {
-            using (var database = new PreferencesContext())
+            using var database = new PreferencesContext();
+            try
             {
-                try
-                {
-                    EnsureDatabaseIsCreatedAsync();
-
-                    //service.SeedPreferencesDatabase();
-                    //InitialiseView();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.StackTrace);
-                }
+                EnsureDatabaseIsCreatedAsync();
+                //service.SeedPreferencesDatabase();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
             }
         }
 

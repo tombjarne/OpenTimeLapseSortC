@@ -1,10 +1,10 @@
-﻿using System;
+﻿using OpenTimelapseSort.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -19,7 +19,7 @@ namespace OpenTimelapseSort.DataServices
         private readonly List<SDirectory> _imageDirectories = new List<SDirectory>();
 
         private readonly Preferences _preferences;
-        private readonly double _deviationGenerosity;
+        private readonly int _deviationGenerosity;
         private readonly int _runs;
 
         private List<SImage> _dirList;
@@ -249,8 +249,10 @@ namespace OpenTimelapseSort.DataServices
 
                 directory.ImportId = import.Id;
 
-                import.Directories = new List<SDirectory>();
-                import.Directories.Add(directory);
+                import.Directories = new List<SDirectory>
+                {
+                    directory
+                };
                 import.Length++;
 
                 await _dbService.UpdateImportAsync(import);

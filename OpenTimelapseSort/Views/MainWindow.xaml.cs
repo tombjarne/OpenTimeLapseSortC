@@ -1,19 +1,15 @@
-﻿using System;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using OpenTimelapseSort.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using OpenTimelapseSort.ViewModels;
 
 namespace OpenTimelapseSort.Views
 {
@@ -23,13 +19,10 @@ namespace OpenTimelapseSort.Views
         //////                    VARIABLES                 //////
         //////////////////////////////////////////////////////////
 
-        //private delegate void WarningReference(string errorHeadline, string errorDetails);
-
         private readonly ObservableCollection<SDirectory> _directories = new ObservableCollection<SDirectory>();
         private readonly ObservableCollection<SDirectory> _sortedDirectories = new ObservableCollection<SDirectory>();
         private readonly ObservableCollection<SImport> _imports = new ObservableCollection<SImport>();
         private readonly ObservableCollection<SImage> _images = new ObservableCollection<SImage>();
-
         private readonly MainViewModel _mainViewModel = new MainViewModel();
 
         private DispatcherTimer _timer = new DispatcherTimer();
@@ -74,15 +67,23 @@ namespace OpenTimelapseSort.Views
             Application.Current.Shutdown();
         }
 
-        private void InvokeWarningPopup(string errorHeadline, string errorDetails, Action<object> callback)
+        private void InvokeWarningPopup(string errorDetails)
         {
-            Warning_Popup.IsOpen = true;
-            Error_Head.Content = errorHeadline;
-            Error_Desc.Text = errorDetails;
+            Warning.Visibility = Visibility.Visible;
+            ErrorMessage.Text = errorDetails;
 
-            //Error_Btn.Click += new RoutedEventHandler(callback);
-
-            // TODO: find way to pass functions as Click events generically
+            var timeSpan = TimeSpan.FromSeconds(15);
+            _timer = new DispatcherTimer(new TimeSpan(0, 0, 1),
+                DispatcherPriority.Normal, delegate
+                {
+                    if (timeSpan == TimeSpan.Zero)
+                    {
+                        _timer.Stop();
+                        Warning.Visibility = Visibility.Hidden;
+                    }
+                    timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
+                }, Application.Current.Dispatcher);
+            _timer.Start();
         }
 
         private void MinimizeApplication(object sender, RoutedEventArgs e)
@@ -97,7 +98,7 @@ namespace OpenTimelapseSort.Views
 
         private void InvokeTargetChooser(object sender, RoutedEventArgs e)
         {
-            Import_Popup.IsOpen = false;
+            ImportPopup.IsOpen = false;
 
             var targetChooser = new CommonOpenFileDialog
             {
@@ -107,43 +108,51 @@ namespace OpenTimelapseSort.Views
                 Multiselect = false
             };
 
-            if (targetChooser.ShowDialog() == CommonFileDialogResult.Ok &&
-                targetChooser.FileName != "Default" &&
-                !targetChooser.FileName.Contains("Windows") &&
-                Directory.Exists(targetChooser.FileName))
+            if (targetChooser.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                Import_Popup.IsOpen = true;
-                Import_Target.Text = targetChooser.FileName;
-                Import_Confirm_Btn.IsEnabled = true;
-            }
-            else
-            {
-                Import_Target.Text = "Invalid location.";
+                ImportPopup.IsOpen = true;
+                if (
+                    targetChooser.FileName != "Default" &&
+                    !targetChooser.FileName.Contains("Windows") &&
+                    Directory.Exists(targetChooser.FileName))
+                {
+                    ImportTarget.Text = targetChooser.FileName;
+                    ImportConfirmBtn.IsEnabled = true;
+                }
+                else
+                {
+                    const string errorMessage = "Invalid location. Choose a different directory.";
+                    ImportTarget.Text = errorMessage;
+                    InvokeWarningPopup(errorMessage);
+                }
             }
         }
 
         private void InvokeImportPopup(object sender, RoutedEventArgs e)
         {
-            Import_Popup.IsOpen = !Import_Popup.IsOpen;
+            ImportPopup.IsOpen = !ImportPopup.IsOpen;
         }
 
         private void ConfirmImportSettings(object sender, RoutedEventArgs e)
         {
-            if (Directory.Exists(Import_Target.Text))
+            if (Directory.Exists(ImportTarget.Text))
             {
-                Import_Target.Text = Import_Target.Text;
-                Import_Confirm_Btn.IsEnabled = true;
-                Import_Popup.IsOpen = false;
+                ImportTarget.Text = ImportTarget.Text;
+                ImportConfirmBtn.IsEnabled = true;
+                ImportPopup.IsOpen = false;
 
-                Import_Progress_Popup.IsOpen = true;
+                ImportProgressPopup.IsOpen = true;
 
                 ShowLoader();
-                _mainViewModel.Import(Import_Target.Text, HandleListingProgress);
+                _mainViewModel.Import(ImportTarget.Text, HandleListingProgress);
             }
             else
             {
-                Import_Confirm_Btn.IsEnabled = false;
-                Import_Target.Text = "Location unreachable, did you delete something?";
+                const string errorMessage = "Location unreachable, did you delete something?";
+                ImportConfirmBtn.IsEnabled = false;
+                ImportTarget.Text = errorMessage;
+
+                InvokeWarningPopup(errorMessage);
             }
         }
 
@@ -153,17 +162,17 @@ namespace OpenTimelapseSort.Views
 
         private void HandleListingProgress(int count)
         {
-            Import_Progress_Count.Text = "Found " + count + " images";
+            ImportProgressCount.Text = "Found " + count + " images";
 
             var timeSpan = TimeSpan.FromSeconds(9);
-            _timer = new DispatcherTimer(new TimeSpan(0, 0, 1), 
+            _timer = new DispatcherTimer(new TimeSpan(0, 0, 1),
                 DispatcherPriority.Normal, delegate
             {
-                Sorting_Countdown.Text = timeSpan.ToString(@"\ s");
+                SortingCountdown.Text = timeSpan.ToString(@"\ s");
                 if (timeSpan == TimeSpan.Zero)
                 {
                     _timer.Stop();
-                    Import_Progress_Popup.IsOpen = false;
+                    ImportProgressPopup.IsOpen = false;
 
                     _mainViewModel.SortImages(Render);
                 }
@@ -177,8 +186,8 @@ namespace OpenTimelapseSort.Views
         {
             Dispatcher.Invoke(() =>
             {
-                Directory_Name.Content = imageList[0].ParentDirectory.Name;
-                Directory_Path.Content = "Path " + imageList[0].ParentDirectory.Target;
+                DirectoryName.Content = imageList[0].ParentDirectory.Name;
+                DirectoryPath.Content = "Path " + imageList[0].ParentDirectory.Target;
 
                 _images.Clear();
                 lock (_images)
@@ -192,12 +201,12 @@ namespace OpenTimelapseSort.Views
                     ImageViewer1.DataContext = _images;
                 }
             });
-            //GC.Collect();
         }
 
         private void AddImportIfNotExists(SImport import)
         {
-            if (!_imports.Contains(import)) {
+            if (!_imports.Contains(import))
+            {
                 _imports.Insert(0, import);
                 Debug.WriteLine(_imports);
             }
@@ -208,7 +217,7 @@ namespace OpenTimelapseSort.Views
          * 
          * Renders the imported _directories into the view component
          * @param dirList, type List
-         * <ImageDirectory>
+         * <ImageDirectory/>
          */
         private void Render(List<SDirectory> dirList)
         {
@@ -242,21 +251,22 @@ namespace OpenTimelapseSort.Views
 
         private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // TODO: fix filtration issue - _sortedDirectories when sorting is enabled
-            var imageList = _directories[DirectoryViewer1.SelectedIndex].ImageList;
+            var imageList = SortingCalendar.SelectedDate == null ?
+            _directories[DirectoryViewer1.SelectedIndex].ImageList :
+            _sortedDirectories[DirectoryViewer1.SelectedIndex].ImageList;
             RenderImages(imageList);
         }
 
         private void ImageViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
-            var scv = (ScrollViewer) sender;
+            var scv = (ScrollViewer)sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }
 
         private void DirectoryViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
-            var scv = (ScrollViewer) sender;
+            var scv = (ScrollViewer)sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }
@@ -264,44 +274,28 @@ namespace OpenTimelapseSort.Views
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             _timer.Stop();
-            Import_Progress_Popup.IsOpen = false;
+            ImportProgressPopup.IsOpen = false;
             HideLoader();
         }
 
         private void SortDirectoriesAfterSelectedDate(object sender, RoutedEventArgs e)
         {
-            var calendar = (Calendar) sender;
+            var calendar = (Calendar)sender;
             var targetDate = calendar.SelectedDate;
 
             _sortedDirectories.Clear();
-            foreach(var import in _imports)
-            {
+            foreach (var import in _imports)
                 if (import.Timestamp == targetDate)
-                {
                     foreach (var directory in import.Directories)
-                    {
                         _sortedDirectories.Insert(0, directory);
-                    }
-                }
-            }
 
             DirectoryViewer1.DataContext = _sortedDirectories;
         }
 
-        private void ImportDateSortOption(object sender, RoutedEventArgs e)
+        private void CancelSortAfterDate(object sender, MouseButtonEventArgs e)
         {
-            DateTakenBackground.Opacity = 100;
-            ImportDateBackground.Opacity = 80;
-
-            SortingCalendar.IsEnabled = true;
-        }
-
-        private void DateTakenSortOption(object sender, RoutedEventArgs e)
-        {
-            ImportDateBackground.Opacity = 100;
-            DateTakenBackground.Opacity = 80;
-
-            SortingCalendar.IsEnabled = true;
+            SortingCalendar.SelectedDate = null;
+            DirectoryViewer1.DataContext = _directories;
         }
     }
 }

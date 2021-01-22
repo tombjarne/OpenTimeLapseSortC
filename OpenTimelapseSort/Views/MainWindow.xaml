@@ -51,7 +51,7 @@
         <!--  ScrollBars  -->
         <Style TargetType="{x:Type ScrollBar}">
             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
-            <Setter Property="Foreground" Value="#FFFF8383" />
+            <Setter Property="Foreground" Value="CornflowerBlue" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Width" Value="8" />
             <Setter Property="Template">
@@ -175,7 +175,7 @@
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontSize" Value="12px" />
-            <Setter Property="Foreground" Value="Coral" />
+            <Setter Property="Foreground" Value="#FFED6558" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
@@ -271,23 +271,22 @@
                 </DockPanel>
             </StackPanel>
         </DataTemplate>
-
     </Window.Resources>
 
     <Grid
         x:Name="Pane"
         Height="Auto"
-        Background="#34404D">
+        Background="#FF2D3742">
         <Grid
             x:Name="MenuBar"
             Height="39"
-            Margin="0,5,0,0"
+            Margin="0,0,0,0"
             VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <Label
-                x:Name="application_name"
+                x:Name="ApplicationName"
                 Grid.Column="0"
                 Margin="0,2,0,-2"
                 Padding="20,0,20,0"
@@ -299,7 +298,7 @@
                 FontWeight="Bold"
                 Foreground="#FFFF8383" />
             <Button
-                x:Name="preferences_btn"
+                x:Name="PreferencesBtn"
                 Width="95"
                 Margin="197,7,0,3"
                 Padding="10,0,10,0"
@@ -318,7 +317,7 @@
                 </Button.Resources>
             </Button>
             <Button
-                x:Name="import_btn"
+                x:Name="ImportBtn"
                 Width="95"
                 Margin="296,7,0,3"
                 Padding="10,0,10,0"
@@ -345,14 +344,14 @@
                     Panel.ZIndex="10000"
                     DockPanel.Dock="Left"
                     FontSize="20"
-                    Foreground="LightSlateGray"
+                    Foreground="CornflowerBlue"
                     Icon="Cog"
                     Spin="True"
                     SpinDuration="10"
                     Visibility="Hidden" />
                 <Grid Width="45" DockPanel.Dock="Right">
                     <Ellipse
-                        x:Name="close_btn"
+                        x:Name="CloseBtn"
                         Width="17"
                         Height="17"
                         Margin="27,0,0,0"
@@ -361,13 +360,13 @@
                         Fill="#FFFF5252"
                         MouseDown="CloseApplication" />
                     <Ellipse
-                        x:Name="minimize_btn"
+                        x:Name="MinimizeBtn"
                         Width="17"
                         Height="16"
                         Margin="5,0,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Fill="Coral"
+                        Fill="#FFED6558"
                         MouseDown="MinimizeApplication" />
                 </Grid>
             </DockPanel>
@@ -376,14 +375,16 @@
                 Height="44"
                 Margin="394,0,0,-5"
                 HorizontalAlignment="Left"
-                Fill="#FF34404D"
+                Fill="#FF2D3742"
                 MouseDown="MoveWindow" />
             <Grid
+                x:Name="Warning"
                 Width="335"
                 Height="20"
                 Margin="694,0,0,0"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                Visibility="Hidden">
                 <fa:FontAwesome
                     x:Name="WarningIcon"
                     Margin="6,5,0,0"
@@ -392,20 +393,20 @@
                     FontSize="16"
                     Foreground="#FFDE4D4D"
                     Icon="Warning"
-                    MouseDown="ImportDateSortOption"
                     Style="{StaticResource SortIconTemplate}" />
                 <TextBox
+                    x:Name="ErrorMessage"
                     Margin="24,4,0,-4"
                     Background="{x:Null}"
                     BorderBrush="{x:Null}"
                     Foreground="#FFDE4D4D"
-                    Text="Invalid Import Location." />
+                    IsReadOnly="True" />
             </Grid>
         </Grid>
         <DockPanel
             x:Name="LeftPanel"
             Margin="0,44,0,0"
-            Background=" #3D4A59">
+            Background="#FF2D3742">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -416,9 +417,9 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Panel.ZIndex="1000"
-                    Background="#FF34404D"
+                    Background="#2D3742"
                     BorderBrush="{x:Null}"
-                    FontSize="16"
+                    FontSize="14"
                     FontWeight="Bold"
                     Foreground="#FFFF8383"
                     Header="Sort Imports">
@@ -439,32 +440,29 @@
                                 SelectedDatesChanged="SortDirectoriesAfterSelectedDate"
                                 SelectionMode="SingleDate" />
                         </Viewbox>
-                        <Grid Height="140" DockPanel.Dock="Left">
+                        <Grid Height="80" DockPanel.Dock="Left">
                             <Grid VerticalAlignment="Top">
                                 <fa:FontAwesome
                                     x:Name="ImportDateIcon"
-                                    Icon="Download"
-                                    MouseDown="ImportDateSortOption"
+                                    Icon="MinusCircle"
+                                    MouseDown="CancelSortAfterDate"
                                     Style="{StaticResource SortIconTemplate}" />
                                 <Ellipse
                                     x:Name="ImportDateBackground"
                                     Width="55"
                                     Height="55"
                                     Panel.ZIndex="-1"
-                                    Fill="#FFFF8383" />
+                                    Fill="CornflowerBlue" />
                             </Grid>
                             <Grid VerticalAlignment="Bottom">
-                                <fa:FontAwesome
-                                    x:Name="DateTakenIcon"
-                                    Icon="Photo"
-                                    MouseDown="DateTakenSortOption"
-                                    Style="{StaticResource SortIconTemplate}" />
-                                <Ellipse
-                                    x:Name="DateTakenBackground"
-                                    Width="55"
-                                    Height="55"
-                                    Panel.ZIndex="-1"
-                                    Fill="#FFFF8383" />
+                                <Label
+                                    Grid.Column="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Content="Abort sorting"
+                                    FontSize="14px"
+                                    FontWeight="Bold"
+                                    Foreground="White" />
                             </Grid>
                         </Grid>
                     </DockPanel>
@@ -477,7 +475,8 @@
                     Style="{StaticResource ScrollViewerStyle}">
                     <ListView
                         x:Name="DirectoryViewer1"
-                        Cursor="Hand"
+                        Background="#FF2D3742"
+                        BorderBrush="{x:Null}"
                         IsSynchronizedWithCurrentItem="False"
                         ItemsSource="{Binding}"
                         MouseDoubleClick="DirectoryViewer1_OnMouseDoubleClick"
@@ -488,14 +487,14 @@
         </DockPanel>
         <DockPanel
             x:Name="RightPanel"
-            Margin="442,44,0,0"
-            Background=" #3D4A59">
+            Margin="401,44,0,0"
+            Background="#FF313C47">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
                 <Label
-                    x:Name="Directory_Name"
+                    x:Name="DirectoryName"
                     Height="44"
                     Margin="0,0,-9,640"
                     Padding="20,0,20,0"
@@ -509,20 +508,19 @@
                     Foreground="White" />
                 <ScrollViewer
                     x:Name="ImageViewer"
-                    Width="679"
                     Margin="0,147,0,0"
                     CanContentScroll="True"
                     PreviewMouseWheel="ImageViewer_OnPreviewMouseDown"
                     Style="{StaticResource ScrollViewerStyle}">
                     <ListView
                         x:Name="ImageViewer1"
-                        Background="#FF3D4A59"
+                        Background="{x:Null}"
                         BorderBrush="{x:Null}"
                         Foreground="#FFED6558"
                         ItemsSource="{Binding}" />
                 </ScrollViewer>
                 <Label
-                    x:Name="Directory_Path"
+                    x:Name="DirectoryPath"
                     Width="408"
                     Margin="21,93,0,598"
                     Padding="0,0,20,0"
@@ -537,7 +535,7 @@
         </DockPanel>
         <!--  Popup Screen Elements  -->
         <Popup
-            Name="Import_Popup"
+            Name="ImportPopup"
             Width="Auto"
             Height="250"
             IsOpen="False"
@@ -553,7 +551,7 @@
                     Margin="15"
                     Background="#34404D">
                     <Label
-                        x:Name="import_headline1"
+                        x:Name="ImportHeadline"
                         Margin="0,24,0,0"
                         Padding="20,0,20,0"
                         HorizontalAlignment="Left"
@@ -566,19 +564,19 @@
                         FontWeight="Bold"
                         Foreground="White" />
                     <TextBlock
-                        x:Name="Import_Target"
+                        x:Name="ImportTarget"
                         Margin="0,2,0,-2"
                         Padding="20,0,20,0"
                         HorizontalAlignment="Left"
                         FontSize="14px"
                         FontWeight="Bold"
                         Foreground="#FFFF8383">
-                        Default
+                        Nothing selected
                     </TextBlock>
                 </DockPanel>
                 <DockPanel Grid.Row="1" Margin="15">
                     <Button
-                        x:Name="Choose_Directory_Btn"
+                        x:Name="ChooseDirectoryBtn"
                         Width="95"
                         Padding="10,0,10,0"
                         HorizontalAlignment="Left"
@@ -596,7 +594,7 @@
                         </Button.Resources>
                     </Button>
                     <Button
-                        x:Name="Import_Abort_Btn"
+                        x:Name="ImportAbortBtn"
                         Width="95"
                         Padding="10,0,10,0"
                         HorizontalAlignment="Left"
@@ -614,7 +612,7 @@
                         </Button.Resources>
                     </Button>
                     <Button
-                        x:Name="Import_Confirm_Btn"
+                        x:Name="ImportConfirmBtn"
                         Width="95"
                         Padding="10,0,10,0"
                         HorizontalAlignment="Left"
@@ -636,7 +634,7 @@
             </Grid>
         </Popup>
         <Popup
-            Name="Warning_Popup"
+            Name="WarningPopup"
             Width="Auto"
             Height="250"
             IsOpen="False"
@@ -652,7 +650,7 @@
                     Margin="15"
                     Background="#34404D">
                     <Label
-                        x:Name="Error_Head"
+                        x:Name="ErrorHead"
                         Margin="0,24,0,0"
                         Padding="20,0,20,0"
                         HorizontalAlignment="Left"
@@ -665,7 +663,7 @@
                         FontWeight="Bold"
                         Foreground="White" />
                     <TextBlock
-                        x:Name="Error_Desc"
+                        x:Name="ErrorDesc"
                         Margin="0,2,0,-2"
                         Padding="20,0,20,0"
                         HorizontalAlignment="Left"
@@ -675,7 +673,7 @@
                 </DockPanel>
                 <DockPanel Grid.Row="1" Margin="15">
                     <Button
-                        x:Name="Error_Btn"
+                        x:Name="ErrorBtn"
                         Width="95"
                         Padding="10,0,10,0"
                         HorizontalAlignment="Left"
@@ -695,7 +693,7 @@
             </Grid>
         </Popup>
         <Popup
-            Name="Import_Progress_Popup"
+            Name="ImportProgressPopup"
             Width="Auto"
             IsOpen="False"
             Placement="Center"
@@ -724,7 +722,7 @@
                                 FontWeight="Bold"
                                 Foreground="White" />
                             <TextBlock
-                                x:Name="Import_Progress_Count"
+                                x:Name="ImportProgressCount"
                                 Grid.Column="0"
                                 Margin="0,2,0,-2"
                                 Padding="20,0,20,0"
@@ -737,7 +735,7 @@
                         </Grid>
                         <Grid DockPanel.Dock="Bottom">
                             <TextBlock
-                                x:Name="Sorting_Countdown"
+                                x:Name="SortingCountdown"
                                 Grid.Column="0"
                                 Margin="0,2,0,-2"
                                 Padding="60,0,60,0"

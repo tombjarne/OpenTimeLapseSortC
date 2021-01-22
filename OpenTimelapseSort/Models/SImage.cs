@@ -1,7 +1,7 @@
+using OpenTimelapseSort.Constants;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using OpenTimelapseSort.Constants;
 
 public class SImage
 {
