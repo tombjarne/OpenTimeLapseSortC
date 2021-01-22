@@ -10,8 +10,6 @@ namespace OpenTimelapseSort.DataServices
 {
     internal class MatchingService
     {
-        public delegate void RenderDelegate(List<SDirectory> imageDirectories);
-
         private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
         private readonly DbService _dbService = new DbService();
 
@@ -53,25 +51,6 @@ namespace OpenTimelapseSort.DataServices
 
             _imageProcessingService.SetImageMetaValues(pImage);
             _imageProcessingService.SetImageMetaValues(cImage);
-
-            var cMatrixPre = pImage.Colors;
-            var cMatrixCur = cImage.Colors;
-            var cLumenPre = pImage.Lumen;
-            var cLumenCur = cImage.Lumen;
-
-            return (cMatrixPre >= cMatrixCur - colorSync && cMatrixPre <= cMatrixCur + colorSync ||
-                    cMatrixPre <= cMatrixCur - colorSync && cMatrixPre >= cMatrixCur + colorSync) &&
-                   (cLumenPre >= cLumenCur - lumenSync && cLumenPre <= cLumenCur + lumenSync ||
-                    cLumenPre <= cLumenCur - lumenSync && cLumenPre >= cLumenCur + lumenSync);
-        }
-
-        private bool WithinSameShotLite(SImage pImage, SImage cImage)
-        {
-            const int colorSync = 0xffff;
-            const int lumenSync = 500;
-
-            _imageProcessingService.SetImageMetaValuesLite(pImage);
-            _imageProcessingService.SetImageMetaValuesLite(cImage);
 
             var cMatrixPre = pImage.Colors;
             var cMatrixCur = cImage.Colors;

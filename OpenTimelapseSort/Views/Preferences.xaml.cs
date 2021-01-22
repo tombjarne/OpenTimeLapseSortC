@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace OpenTimelapseSort.Views
 {
-    public partial class PreferencesView : Window
+    public partial class PreferencesView
     {
         private readonly PreferencesViewModel _preferencesViewModel = new PreferencesViewModel();
 
@@ -52,12 +52,12 @@ namespace OpenTimelapseSort.Views
             GenerositySlider.Value = preferences.SequenceIntervalGenerosity;
 
             Copy.IsChecked = preferences.UseCopy;
-            Auto_Detection_btn.IsChecked = preferences.UseAutoDetectInterval;
+            AutoDetectionBtn.IsChecked = preferences.UseAutoDetectInterval;
         }
 
         public void SavePreferences(object sender, RoutedEventArgs e)
         {
-            _preferencesViewModel.SavePreferences((bool)Auto_Detection_btn.IsChecked, (bool)Copy.IsChecked,
+            _preferencesViewModel.SavePreferences((bool)AutoDetectionBtn.IsChecked, (bool)Copy.IsChecked,
                 IntervalSlider.Value, (int)GenerositySlider.Value, (int)IntervalCountSlider.Value);
         }
 

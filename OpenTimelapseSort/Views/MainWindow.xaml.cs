@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.Views
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         //////////////////////////////////////////////////////////
         //////                    VARIABLES                 //////

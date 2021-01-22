@@ -27,7 +27,6 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <Label
-                x:Name="window_name"
                 Grid.Column="0"
                 Margin="0,2,0,-2"
                 Padding="20,0,20,0"
@@ -39,7 +38,6 @@
                 FontWeight="Bold"
                 Foreground="#FFFF8383" />
             <Ellipse
-                x:Name="minimize_btn"
                 Width="17"
                 Height="17"
                 Margin="365,14,0,0"
@@ -175,7 +173,7 @@
             Content="Delete Preferences"
             Foreground="White" />
         <CheckBox
-            x:Name="Auto_Detection_btn"
+            x:Name="AutoDetectionBtn"
             Width="287"
             Margin="56,149,0,0"
             HorizontalAlignment="Left"

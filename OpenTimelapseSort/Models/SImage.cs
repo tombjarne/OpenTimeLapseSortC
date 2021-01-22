@@ -1,5 +1,3 @@
-using OpenTimelapseSort.Constants;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -9,8 +7,6 @@ namespace OpenTimelapseSort.Models
     {
         public string Id { get; set; }
         public string DirectoryId { get; set; }
-
-        public Dictionary<MetaAttribute, string> Meta;
         public string Name { get; set; }
         public string Target { get; set; }
         public long FileTime { get; set; }
@@ -27,21 +23,6 @@ namespace OpenTimelapseSort.Models
             ParentInstance = parentInstance;
             FileTime = File.GetLastWriteTime(target).ToFileTime();
             Debug.WriteLine(FileTime);
-        }
-
-        public void SetTimestamp(string value)
-        {
-            Meta.Add(MetaAttribute.Timestamp, value);
-        }
-
-        public void SetSize(string value)
-        {
-            Meta.Add(MetaAttribute.FileSize, value);
-        }
-
-        public void SetLocation(string value)
-        {
-            Meta.Add(MetaAttribute.Location, value);
         }
     }
 }

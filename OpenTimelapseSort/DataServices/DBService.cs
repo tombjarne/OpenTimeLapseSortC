@@ -11,14 +11,6 @@ namespace OpenTimelapseSort.DataServices
 {
     internal class DbService
     {
-        public async Task<List<SImport>> ReturnImportsAsync()
-        {
-            await using var context = new ImportContext();
-            var imports = await context.Imports
-                .ToListAsync();
-
-            return imports;
-        }
 
         /**
          * ReturnCurrentImport
