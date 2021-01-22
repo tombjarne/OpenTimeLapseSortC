@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.DataServices
 {

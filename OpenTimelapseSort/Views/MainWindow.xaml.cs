@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using System.Windows.Threading;
+using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.Views
 {
@@ -81,6 +83,7 @@ namespace OpenTimelapseSort.Views
                         _timer.Stop();
                         Warning.Visibility = Visibility.Hidden;
                     }
+
                     timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
                 }, Application.Current.Dispatcher);
             _timer.Start();
@@ -167,18 +170,18 @@ namespace OpenTimelapseSort.Views
             var timeSpan = TimeSpan.FromSeconds(9);
             _timer = new DispatcherTimer(new TimeSpan(0, 0, 1),
                 DispatcherPriority.Normal, delegate
-            {
-                SortingCountdown.Text = timeSpan.ToString(@"\ s");
-                if (timeSpan == TimeSpan.Zero)
                 {
-                    _timer.Stop();
-                    ImportProgressPopup.IsOpen = false;
+                    SortingCountdown.Text = timeSpan.ToString(@"\ s");
+                    if (timeSpan == TimeSpan.Zero)
+                    {
+                        _timer.Stop();
+                        ImportProgressPopup.IsOpen = false;
 
-                    _mainViewModel.SortImages(Render);
-                }
+                        _mainViewModel.SortImages(Render);
+                    }
 
-                timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
-            }, Application.Current.Dispatcher);
+                    timeSpan = timeSpan.Add(TimeSpan.FromSeconds(-1));
+                }, Application.Current.Dispatcher);
             _timer.Start();
         }
 
@@ -251,22 +254,22 @@ namespace OpenTimelapseSort.Views
 
         private void DirectoryViewer1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var imageList = SortingCalendar.SelectedDate == null ?
-            _directories[DirectoryViewer1.SelectedIndex].ImageList :
-            _sortedDirectories[DirectoryViewer1.SelectedIndex].ImageList;
+            var imageList = SortingCalendar.SelectedDate == null
+                ? _directories[DirectoryViewer1.SelectedIndex].ImageList
+                : _sortedDirectories[DirectoryViewer1.SelectedIndex].ImageList;
             RenderImages(imageList);
         }
 
         private void ImageViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
-            var scv = (ScrollViewer)sender;
+            var scv = (ScrollViewer) sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }
 
         private void DirectoryViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
-            var scv = (ScrollViewer)sender;
+            var scv = (ScrollViewer) sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }
@@ -280,7 +283,7 @@ namespace OpenTimelapseSort.Views
 
         private void SortDirectoriesAfterSelectedDate(object sender, RoutedEventArgs e)
         {
-            var calendar = (Calendar)sender;
+            var calendar = (Calendar) sender;
             var targetDate = calendar.SelectedDate;
 
             _sortedDirectories.Clear();

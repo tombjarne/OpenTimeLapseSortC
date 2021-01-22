@@ -2,34 +2,37 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-public class SDirectory
+namespace OpenTimelapseSort.Models
 {
-    public string Id { get; set; }
-    public string ImportId { get; set; }
-    public List<SImage> ImageList { get; set; }
-    public DateTime Timestamp { get; set; }
-    public string Target { get; set; }
-    public string Name { get; set; }
-    public SImport ParentImport { get; set; }
-
-    public SDirectory(string target, string name)
+    public class SDirectory
     {
-        // TODO: enable only on first creation!
-        Timestamp = DateTime.Today;
-        Target = target;
-        Name = name;
-        ImageList = new List<SImage>();
-    }
+        public string Id { get; set; }
+        public string ImportId { get; set; }
+        public List<SImage> ImageList { get; set; }
+        public DateTime Timestamp { get; set; }
+        public string Target { get; set; }
+        public string Name { get; set; }
+        public SImport ParentImport { get; set; }
 
-    public void Delete(SImage image)
-    {
-        try
+        public SDirectory(string target, string name)
         {
-            File.Delete(Path.GetFullPath(image.Target));
+            // TODO: enable only on first creation!
+            Timestamp = DateTime.Today;
+            Target = target;
+            Name = name;
+            ImageList = new List<SImage>();
         }
-        catch (FileNotFoundException e)
+
+        public void Delete(SImage image)
         {
-            Console.WriteLine(e);
+            try
+            {
+                File.Delete(Path.GetFullPath(image.Target));
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }
