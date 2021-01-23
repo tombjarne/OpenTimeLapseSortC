@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.IO;
 
 namespace OpenTimelapseSort.Models
@@ -22,7 +21,19 @@ namespace OpenTimelapseSort.Models
             Target = target;
             ParentInstance = parentInstance;
             FileTime = File.GetLastWriteTime(target).ToFileTime();
-            Debug.WriteLine(FileTime);
+        }
+
+        public bool Delete()
+        {
+            try
+            {
+                File.Delete(Path.GetFullPath(Target));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

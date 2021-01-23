@@ -22,11 +22,10 @@ namespace OpenTimelapseSort.ViewModels
 
         //TODO: refactor and optimize!
 
-        public bool SavePreferences(bool useAutoDetectInterval,
+        public void SavePreferences(bool useAutoDetectInterval,
             bool copyIsEnabled, double imageInterval, int generosity, int imageCount)
         {
 
-            var success = false;
             using var database = new PreferencesContext();
 
             try
@@ -41,14 +40,13 @@ namespace OpenTimelapseSort.ViewModels
                     imageCount
                 );
 
-                success = _dbPreferencesService.SavePreferencesToDataBase(preferences);
+                _dbPreferencesService.SavePreferencesToDataBase(preferences);
             }
             catch (Exception)
             {
                 // handle exception
             }
 
-            return success;
         }
 
         private static void InitialisePreferencesDb()

@@ -16,22 +16,22 @@ namespace OpenTimelapseSort.Models
 
         public SDirectory(string target, string name)
         {
-            // TODO: enable only on first creation!
             Timestamp = DateTime.Today;
             Target = target;
             Name = name;
             ImageList = new List<SImage>();
         }
 
-        public void Delete(SImage image)
+        public bool Delete()
         {
             try
             {
-                File.Delete(Path.GetFullPath(image.Target));
+                File.Delete(Path.GetFullPath(Target));
+                return true;
             }
-            catch (FileNotFoundException e)
+            catch
             {
-                Console.WriteLine(e);
+                return false;
             }
         }
     }

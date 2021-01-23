@@ -135,15 +135,42 @@
             <Setter Property="Cursor" Value="Hand" />
         </Style>
 
+        <Style x:Key="DirectoryListWidth" TargetType="Grid">
+            <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}, Path=ActualWidth}" />
+        </Style>
+
+        <Style x:Key="SmallIconTemplate" TargetType="fa:FontAwesome">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
         <Style x:Key="ButtonTemplate" TargetType="Button">
             <Setter Property="Width" Value="95" />
             <Setter Property="Height" Value="40" />
             <Setter Property="Padding" Value="10,0,10,0" />
+            <Setter Property="Margin" Value="0,0,0,8" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Background" Value="#FF3D4A59" />
             <Setter Property="BorderBrush" Value="{x:Null}" />
-            <Setter Property="Margin" Value="197,7,0,3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="CornflowerBlue" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="BigButtonTemplate" TargetType="Button">
@@ -243,22 +270,45 @@
                                     DockPanel.Dock="Left"
                                     Style="{StaticResource SubHeadlineTemplate}" />
                             </Grid>
-                            <Grid DockPanel.Dock="Right">
+                            <Grid DockPanel.Dock="Right" Style="{StaticResource DirectoryListWidth}">
                                 <Label
                                     Content="{Binding ImageList.Count}"
                                     DockPanel.Dock="Right"
                                     Style="{StaticResource SubHeadlineTemplate}" />
-                                <Button
-                                    Content="Reimport"
-                                    Foreground="White"
-                                    Style="{StaticResource ButtonTemplate}"
-                                    ToolTip="Re-import the original directory">
-                                    <Button.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="5" />
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
+                                <DockPanel Margin="50,0,0,0">
+                                    <DockPanel DockPanel.Dock="Left">
+                                        <Grid Margin="0,0,5,0" DockPanel.Dock="Left">
+                                            <fa:FontAwesome
+                                                Icon="MinusCircle"
+                                                MouseDown="DeleteDirectory"
+                                                Style="{StaticResource SmallIconTemplate}" />
+                                            <Ellipse
+                                                Width="26"
+                                                Height="26"
+                                                Panel.ZIndex="-1"
+                                                Fill="OrangeRed" />
+                                        </Grid>
+                                        <Grid DockPanel.Dock="Right">
+                                            <fa:FontAwesome Icon="FolderOpen" Style="{StaticResource SmallIconTemplate}" />
+                                            <Ellipse
+                                                Width="26"
+                                                Height="26"
+                                                Panel.ZIndex="-1"
+                                                Fill="CadetBlue" />
+                                        </Grid>
+                                    </DockPanel>
+                                    <Button
+                                        Content="Reimport"
+                                        DockPanel.Dock="Right"
+                                        Foreground="White"
+                                        Style="{StaticResource ButtonTemplate}">
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="5" />
+                                            </Style>
+                                        </Button.Resources>
+                                    </Button>
+                                </DockPanel>
                             </Grid>
                         </DockPanel>
                     </Grid>
@@ -334,7 +384,7 @@
                     VerticalContentAlignment="Center"
                     Background="#FF3D4A59"
                     BorderBrush="{x:Null}"
-                    Click="InvokeImportPopup"
+                    Click="ChangeImportPopupVisibility"
                     Content="Import new"
                     Foreground="#FFFF8383">
                     <Button.Resources>
@@ -370,7 +420,7 @@
                         <Ellipse
                             x:Name="MinimizeBtn"
                             Width="17"
-                            Height="16"
+                            Height="17"
                             Margin="5,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
@@ -384,7 +434,8 @@
                     Margin="394,0,0,-5"
                     HorizontalAlignment="Left"
                     Fill="#FF2D3742"
-                    MouseDown="MoveWindow" />
+                    MouseDown="MoveWindow"
+                    RenderTransformOrigin="1,0.5" />
                 <Grid
                     x:Name="Warning"
                     Width="335"
@@ -488,8 +539,7 @@
                             IsSynchronizedWithCurrentItem="False"
                             ItemsSource="{Binding}"
                             MouseDoubleClick="DirectoryViewer1_OnMouseDoubleClick"
-                            Style="{StaticResource DirectoryListTemplate}"
-                            ToolTip="Double click to show images" />
+                            Style="{StaticResource DirectoryListTemplate}" />
                     </ScrollViewer>
                 </Grid>
             </DockPanel>
@@ -497,48 +547,73 @@
                 x:Name="RightPanel"
                 Margin="401,44,0,0"
                 Background="#FF313C47">
-                <Grid>
+                <Grid
+                    Height="600"
+                    DockPanel.Dock="Bottom"
+                    RenderTransformOrigin="1,1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
-                    <Label
-                        x:Name="DirectoryName"
-                        Height="44"
-                        Margin="0,0,-9,640"
-                        Padding="20,0,20,0"
-                        VerticalAlignment="Bottom"
-                        HorizontalContentAlignment="Left"
-                        VerticalContentAlignment="Top"
-                        Content="No files selected!&#xA;"
-                        DockPanel.Dock="Top"
-                        FontSize="35"
-                        FontWeight="Bold"
-                        Foreground="White" />
                     <ScrollViewer
                         x:Name="ImageViewer"
-                        Margin="0,147,0,0"
+                        Width="723"
+                        Margin="0,10,0,0"
                         CanContentScroll="True"
                         PreviewMouseWheel="ImageViewer_OnPreviewMouseDown"
                         Style="{StaticResource ScrollViewerStyle}">
                         <ListView
                             x:Name="ImageViewer1"
+                            Width="Auto"
                             Background="{x:Null}"
                             BorderBrush="{x:Null}"
                             Foreground="#FFED6558"
                             ItemsSource="{Binding}" />
                     </ScrollViewer>
-                    <Label
-                        x:Name="DirectoryPath"
-                        Width="408"
-                        Margin="21,93,0,598"
-                        Padding="0,0,20,0"
-                        HorizontalAlignment="Left"
-                        HorizontalContentAlignment="Left"
-                        VerticalContentAlignment="Top"
-                        DockPanel.Dock="Top"
-                        FontSize="14px"
-                        FontWeight="Bold"
-                        Foreground="#FFFF8383" />
+                </Grid>
+                <Grid
+                    Height="75"
+                    VerticalAlignment="Top"
+                    DockPanel.Dock="Top">
+                    <DockPanel>
+                        <Grid DockPanel.Dock="Top">
+                            <TextBox
+                                x:Name="DirectoryName"
+                                Width="345"
+                                Height="42"
+                                Margin="0,0,387,0"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                BorderBrush="{x:Null}"
+                                DockPanel.Dock="Top"
+                                FontSize="35"
+                                FontWeight="Bold"
+                                Foreground="White"
+                                IsReadOnly="True"
+                                Text="No files selected!&#xA;" />
+                            <Grid VerticalAlignment="Center">
+                                <fa:FontAwesome
+                                    Cursor="Hand"
+                                    Icon="Pencil"
+                                    MouseDown="SetDirectoryName"
+                                    Style="{StaticResource SmallIconTemplate}" />
+                                <Ellipse
+                                    Width="26"
+                                    Height="26"
+                                    Panel.ZIndex="-1"
+                                    Fill="CornflowerBlue" />
+                            </Grid>
+                        </Grid>
+                        <Label
+                            x:Name="DirectoryPath"
+                            HorizontalAlignment="Left"
+                            HorizontalContentAlignment="Left"
+                            VerticalContentAlignment="Top"
+                            DockPanel.Dock="Bottom"
+                            FontSize="14px"
+                            FontWeight="Bold"
+                            Foreground="#FFFF8383" />
+                    </DockPanel>
                 </Grid>
             </DockPanel>
             <!--  Popup Screen Elements  -->
@@ -610,7 +685,7 @@
                             VerticalContentAlignment="Center"
                             Background="#FF3D4A59"
                             BorderBrush="{x:Null}"
-                            Click="InvokeImportPopup"
+                            Click="ChangeImportPopupVisibility"
                             Content="Cancel"
                             Foreground="#FFFF8383">
                             <Button.Resources>

@@ -18,7 +18,7 @@ namespace OpenTimelapseSort.ViewModels
         private readonly List<SImage> _images = new List<SImage>();
 
         public delegate void ImageListingProgress(int count);
-
+        public delegate void DeletionErrorCallback(string message);
         public delegate void ViewUpdate(List<SDirectory> directories);
 
         private void InitialiseDbService()
@@ -32,6 +32,43 @@ namespace OpenTimelapseSort.ViewModels
         public async Task<List<SDirectory>> GetDirectoriesAsync()
         {
             return await _dbService.GetDirectoriesAsync();
+        }
+
+        public async Task DeleteImageDirectory(SDirectory directory, DeletionErrorCallback callback)
+        {
+            if (directory.Delete())
+            {
+                var import = directory.ParentImport;
+                import.Directories.Remove(directory);
+
+                if (import.Directories.Count == 0)
+                    await _dbService.DeleteImportAsync(import.Id);
+                else
+                    await _dbService.UpdateImportAsync(import);
+
+                callback("Directory was deleted successfully.");
+            }
+            callback("Directory could not be deleted.");
+        }
+
+        public async Task UpdateImageDirectory(SDirectory directory)
+        {
+            await _dbService.UpdateDirectoryAsync(directory);
+        }
+
+        public async Task DeleteImage(SImage image, DeletionErrorCallback callback)
+        {
+            if (image.Delete())
+            {
+                var directory = image.ParentDirectory;
+                directory.ImageList.Remove(image);
+
+                if (directory.ImageList.Count == 0)
+                    await DeleteImageDirectory(directory, callback);
+
+                callback("Image was deleted successfully.");
+            }
+            callback("Image could not be deleted.");
         }
 
         public void Import(string name, ImageListingProgress listProgress)

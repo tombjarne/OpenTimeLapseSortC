@@ -180,13 +180,13 @@ namespace OpenTimelapseSort.DataServices
 
         private void CreateRandomDirAsync()
         {
-            Debug.WriteLine("CreateRandomDirAsync ");
+            var name = Path.GetFileName(_randomDirList[0].Target);
+            var sanitizedName = name.Length > 15 ? name.Substring(0, 13) + "_R" : name + "_R";
 
-            var name = Path.GetFileName(_randomDirList[0].Target) + "_R";
             var directory = new SDirectory
             (
                 _randomDirList[0].Target,
-                name
+                sanitizedName
             )
             {
                 Id = Guid.NewGuid().ToString(),
@@ -198,16 +198,14 @@ namespace OpenTimelapseSort.DataServices
 
         private void CreateDirAsync()
         {
-            Debug.WriteLine("CreateDirAsync ");
-
+            // TODO: fix names!
             var name = Path.GetFileName(_dirList[0].Target);
-
-            Debug.WriteLine(_dirList);
+            var sanitizedName = name.Length > 15 ? name.Substring(0, 15) : name;
 
             var directory = new SDirectory
             (
                 _dirList[0].Target,
-                name
+                sanitizedName
             )
             {
                 Id = Guid.NewGuid().ToString(),
