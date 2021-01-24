@@ -4,8 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.fontawesome.io/icons/"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:OpenTimelapseSort.Models"
+    xmlns:viewModels="clr-namespace:OpenTimelapseSort.ViewModels"
     Title="MainWindow"
     Width="1150"
     Height="750"
@@ -261,7 +263,7 @@
 
         <DataTemplate DataType="{x:Type models:SDirectory}">
             <StackPanel Style="{StaticResource PanelTemplate}">
-                <DockPanel>
+                <DockPanel x:Name="DirectoryDockPanel">
                     <Grid DockPanel.Dock="Bottom">
                         <DockPanel Style="{StaticResource DockPanelTemplate}">
                             <Grid DockPanel.Dock="Left">
@@ -277,17 +279,20 @@
                                     Style="{StaticResource SubHeadlineTemplate}" />
                                 <DockPanel Margin="50,0,0,0">
                                     <DockPanel DockPanel.Dock="Left">
-                                        <Grid Margin="0,0,5,0" DockPanel.Dock="Left">
-                                            <fa:FontAwesome
-                                                Icon="MinusCircle"
-                                                MouseDown="DeleteDirectory"
-                                                Style="{StaticResource SmallIconTemplate}" />
-                                            <Ellipse
-                                                Width="26"
-                                                Height="26"
-                                                Panel.ZIndex="-1"
-                                                Fill="OrangeRed" />
-                                        </Grid>
+                                        <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.DeleteDirectoryCommand, UpdateSourceTrigger=Explicit}" CommandParameter="{Binding Id}">
+                                            <Button.Template>
+                                                <ControlTemplate>
+                                                    <Grid Margin="0,0,5,0" DockPanel.Dock="Left">
+                                                        <fa:FontAwesome Icon="MinusCircle" Style="{StaticResource SmallIconTemplate}" />
+                                                        <Ellipse
+                                                            Width="26"
+                                                            Height="26"
+                                                            Panel.ZIndex="-1"
+                                                            Fill="OrangeRed" />
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
                                         <Grid DockPanel.Dock="Right">
                                             <fa:FontAwesome Icon="FolderOpen" Style="{StaticResource SmallIconTemplate}" />
                                             <Ellipse
@@ -296,6 +301,23 @@
                                                 Panel.ZIndex="-1"
                                                 Fill="CadetBlue" />
                                         </Grid>
+                                        <Button
+                                            Margin="0,0,5,0"
+                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.ShowImagesCommand, UpdateSourceTrigger=Explicit}"
+                                            CommandParameter="{Binding Id}">
+                                            <Button.Template>
+                                                <ControlTemplate>
+                                                    <Grid DockPanel.Dock="Right">
+                                                        <fa:FontAwesome Icon="FileImageOutline" Style="{StaticResource SmallIconTemplate}" />
+                                                        <Ellipse
+                                                            Width="26"
+                                                            Height="26"
+                                                            Panel.ZIndex="-1"
+                                                            Fill="CornflowerBlue" />
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
                                     </DockPanel>
                                     <Button
                                         Content="Reimport"
@@ -314,16 +336,16 @@
                     </Grid>
                     <Grid DockPanel.Dock="Top">
                         <DockPanel Style="{StaticResource DockPanelTemplate}">
-                            <Label
-                                Content="{Binding Name}"
-                                DockPanel.Dock="Left"
-                                Style="{StaticResource HeadlineTemplate}" />
+                            <Label Content="{Binding Name}" Style="{StaticResource HeadlineTemplate}" />
                         </DockPanel>
                     </Grid>
                 </DockPanel>
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
+    <Window.DataContext>
+        <viewModels:MainViewModel />
+    </Window.DataContext>
 
     <Border
         Padding="8"
@@ -384,7 +406,7 @@
                     VerticalContentAlignment="Center"
                     Background="#FF3D4A59"
                     BorderBrush="{x:Null}"
-                    Click="ChangeImportPopupVisibility"
+                    Command="{Binding InvokeImportCommand}"
                     Content="Import new"
                     Foreground="#FFFF8383">
                     <Button.Resources>
@@ -406,7 +428,7 @@
                         Icon="Cog"
                         Spin="True"
                         SpinDuration="10"
-                        Visibility="Hidden" />
+                        Visibility="{Binding Path=LoaderVisibility}" />
                     <Grid Width="45" DockPanel.Dock="Right">
                         <Ellipse
                             x:Name="CloseBtn"
@@ -443,7 +465,7 @@
                     Margin="694,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Visibility="Hidden">
+                    Visibility="{Binding Path=ErrorMessageVisibility}">
                     <fa:FontAwesome
                         x:Name="WarningIcon"
                         Margin="6,5,0,0"
@@ -459,7 +481,8 @@
                         Background="{x:Null}"
                         BorderBrush="{x:Null}"
                         Foreground="#FFDE4D4D"
-                        IsReadOnly="True" />
+                        IsReadOnly="True"
+                        Text="{Binding Path=ErrorMessage}" />
                 </Grid>
             </Grid>
             <DockPanel
@@ -496,22 +519,29 @@
                                     Background="White"
                                     BorderBrush="{x:Null}"
                                     Foreground="{x:Null}"
-                                    SelectedDatesChanged="SortDirectoriesAfterSelectedDate"
+                                    SelectedDate="{Binding Path=SelectedSortingDate}"
                                     SelectionMode="SingleDate" />
                             </Viewbox>
                             <Grid Height="80" DockPanel.Dock="Left">
                                 <Grid VerticalAlignment="Top">
-                                    <fa:FontAwesome
-                                        x:Name="ImportDateIcon"
-                                        Icon="MinusCircle"
-                                        MouseDown="CancelSortAfterDate"
-                                        Style="{StaticResource SortIconTemplate}" />
-                                    <Ellipse
-                                        x:Name="ImportDateBackground"
-                                        Width="55"
-                                        Height="55"
-                                        Panel.ZIndex="-1"
-                                        Fill="CornflowerBlue" />
+                                    <Button Command="{Binding ResetSortingCommand}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid>
+                                                    <fa:FontAwesome
+                                                        x:Name="ImportDateIcon"
+                                                        Icon="MinusCircle"
+                                                        Style="{StaticResource SortIconTemplate}" />
+                                                    <Ellipse
+                                                        x:Name="ImportDateBackground"
+                                                        Width="55"
+                                                        Height="55"
+                                                        Panel.ZIndex="-1"
+                                                        Fill="CornflowerBlue" />
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
                                 </Grid>
                                 <Grid VerticalAlignment="Bottom">
                                     <Label
@@ -536,9 +566,10 @@
                             x:Name="DirectoryViewer1"
                             Background="#FF2D3742"
                             BorderBrush="{x:Null}"
+                            Cursor="Hand"
                             IsSynchronizedWithCurrentItem="False"
-                            ItemsSource="{Binding}"
-                            MouseDoubleClick="DirectoryViewer1_OnMouseDoubleClick"
+                            ItemsSource="{Binding Path=SortedDirectories}"
+                            SelectedIndex="{Binding Path=SelectedDirectory}"
                             Style="{StaticResource DirectoryListTemplate}" />
                     </ScrollViewer>
                 </Grid>
@@ -567,7 +598,7 @@
                             Background="{x:Null}"
                             BorderBrush="{x:Null}"
                             Foreground="#FFED6558"
-                            ItemsSource="{Binding}" />
+                            ItemsSource="{Binding SelectedImages}" />
                     </ScrollViewer>
                 </Grid>
                 <Grid
@@ -589,20 +620,21 @@
                                 FontSize="35"
                                 FontWeight="Bold"
                                 Foreground="White"
-                                IsReadOnly="True"
-                                Text="No files selected!&#xA;" />
-                            <Grid VerticalAlignment="Center">
-                                <fa:FontAwesome
-                                    Cursor="Hand"
-                                    Icon="Pencil"
-                                    MouseDown="SetDirectoryName"
-                                    Style="{StaticResource SmallIconTemplate}" />
-                                <Ellipse
-                                    Width="26"
-                                    Height="26"
-                                    Panel.ZIndex="-1"
-                                    Fill="CornflowerBlue" />
-                            </Grid>
+                                Text="{Binding Path=DirectoryName}" />
+                            <Button Command="{Binding UpdateDirectoryNameCommand}">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <Grid VerticalAlignment="Center">
+                                            <fa:FontAwesome Icon="Pencil" Style="{StaticResource SmallIconTemplate}" />
+                                            <Ellipse
+                                                Width="26"
+                                                Height="26"
+                                                Panel.ZIndex="-1"
+                                                Fill="CornflowerBlue" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
                         </Grid>
                         <Label
                             x:Name="DirectoryPath"
@@ -621,7 +653,7 @@
                 Name="ImportPopup"
                 Width="Auto"
                 Height="250"
-                IsOpen="False"
+                IsOpen="{Binding Path=ImportPopupVisibility}"
                 Placement="Center"
                 PlacementTarget="{Binding ElementName=Pane}">
                 <Grid Background="#34404D">
@@ -653,9 +685,8 @@
                             HorizontalAlignment="Left"
                             FontSize="14px"
                             FontWeight="Bold"
-                            Foreground="#FFFF8383">
-                            Nothing selected
-                        </TextBlock>
+                            Foreground="#FFFF8383"
+                            Text="{Binding Path=ImportOriginPath}" />
                     </DockPanel>
                     <DockPanel Grid.Row="1" Margin="15">
                         <Button
@@ -667,7 +698,7 @@
                             VerticalContentAlignment="Center"
                             Background="#FF3D4A59"
                             BorderBrush="{x:Null}"
-                            Click="InvokeTargetChooser"
+                            Command="{Binding Path=InvokeFileChooserCommand}"
                             Content="Choose"
                             Foreground="#FFFF8383">
                             <Button.Resources>
@@ -685,7 +716,6 @@
                             VerticalContentAlignment="Center"
                             Background="#FF3D4A59"
                             BorderBrush="{x:Null}"
-                            Click="ChangeImportPopupVisibility"
                             Content="Cancel"
                             Foreground="#FFFF8383">
                             <Button.Resources>
@@ -703,10 +733,10 @@
                             VerticalContentAlignment="Center"
                             Background="#FFFF8383"
                             BorderBrush="{x:Null}"
-                            Click="ConfirmImportSettings"
+                            Command="{Binding Path=BeginImportCommand}"
                             Content="Confirm"
                             Foreground="#FF3D4A59"
-                            IsEnabled="False">
+                            IsEnabled="{Binding Path=ImportConfirmationButtonIsEnabled}">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="5" />
@@ -778,7 +808,7 @@
             <Popup
                 Name="ImportProgressPopup"
                 Width="Auto"
-                IsOpen="False"
+                IsOpen="{Binding Path=ImportConfirmationPopupVisibility}"
                 Placement="Center"
                 PlacementTarget="{Binding ElementName=Pane}">
                 <Grid Background="#34404D">
@@ -812,9 +842,8 @@
                                     HorizontalAlignment="Left"
                                     FontSize="18"
                                     FontWeight="Bold"
-                                    Foreground="#FFFF8383">
-                                    processing...
-                                </TextBlock>
+                                    Foreground="#FFFF8383"
+                                    Text="{Binding Path=FoundImportImagesCount}" />
                             </Grid>
                             <Grid DockPanel.Dock="Bottom">
                                 <TextBlock
@@ -826,16 +855,12 @@
                                     VerticalAlignment="Center"
                                     FontSize="56"
                                     FontWeight="Bold"
-                                    Foreground="#FFFF8383">
-                                    10
-                                </TextBlock>
+                                    Foreground="#FFFF8383"
+                                    Text="{Binding Path=CurrentImportCountDownTimeSpan}" />
                             </Grid>
                         </DockPanel>
                         <Grid DockPanel.Dock="Bottom">
-                            <Button
-                                Click="ButtonBase_OnClick"
-                                Content="Cancel"
-                                Style="{StaticResource BigButtonTemplate}">
+                            <Button Content="Cancel" Style="{StaticResource BigButtonTemplate}">
                                 <Button.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="5" />

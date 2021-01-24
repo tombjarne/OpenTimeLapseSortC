@@ -21,7 +21,6 @@ namespace OpenTimelapseSort.DataServices
         public async Task<SImport> GetImportAsync()
         {
             await using var context = new ImportContext();
-
             var import = await context.Imports
                 .SingleAsync(i => i.Timestamp == DateTime.Today);
 
@@ -31,9 +30,9 @@ namespace OpenTimelapseSort.DataServices
         public async Task DeleteImportAsync(string importId)
         {
             await using var database = new ImportContext();
-
             var import = await database.Imports
                 .SingleAsync(i => i.Id == importId);
+
             database.Imports.Remove(import);
             await database.SaveChangesAsync();
         }
@@ -41,19 +40,23 @@ namespace OpenTimelapseSort.DataServices
         public async Task DeleteDirectoryAsync(string directoryId)
         {
             await using var database = new ImportContext();
-
             var directory = await database.ImageDirectories
                 .SingleAsync(d => d.Id == directoryId);
+
+            foreach(var image in directory.ImageList)
+                await DeleteImageAsync(image.Id);
+
             database.ImageDirectories.Remove(directory);
+
             await database.SaveChangesAsync();
         }
 
         public async Task DeleteImageAsync(string imageId)
         {
             await using var database = new ImportContext();
-
             var image = await database.Images
                 .SingleAsync(i => i.Id == imageId);
+
             database.Images.Remove(image);
             await database.SaveChangesAsync();
         }
@@ -101,12 +104,14 @@ namespace OpenTimelapseSort.DataServices
 
         public async Task SeedImportDatabase()
         {
-            await using var database = new PreferencesContext();
+            //await using var database = new PreferencesContext();
 
             // TODO: create demo Import and demo directory
 
-            await database.SaveChangesAsync();
+            //await database.SaveChangesAsync();
         }
+
+        // TODO: fix weird error when trying to remove directory
 
         public async Task UpdateImportAsync(SImport import)
         {
@@ -144,6 +149,7 @@ namespace OpenTimelapseSort.DataServices
             }
 
             entity.Name = directory.Name;
+            entity.Target = directory.Target;
 
             await database.SaveChangesAsync();
         }
@@ -151,22 +157,28 @@ namespace OpenTimelapseSort.DataServices
         public async Task<List<SDirectory>> GetDirectoriesAsync()
         {
 
-            await using var context = new ImportContext();
-
-            var directories = await context.ImageDirectories
-                .ToListAsync();
-
-            foreach (var directory in directories)
+            try
             {
-                directory.ImageList = await context.Images
-                    .Where(i => i.DirectoryId == directory.Id)
+                await using var context = new ImportContext();
+                var directories = await context.ImageDirectories
                     .ToListAsync();
 
-                directory.ParentImport = await context.Imports
-                    .SingleAsync(i => i.Id == directory.ImportId);
-            }
+                foreach (var directory in directories)
+                {
+                    directory.ImageList = await context.Images
+                        .Where(i => i.DirectoryId == directory.Id)
+                        .ToListAsync();
 
-            return directories;
+                    directory.ParentImport = await context.Imports
+                        .SingleAsync(i => i.Id == directory.ImportId);
+                }
+                return directories;
+            }
+            catch
+            {
+                await SeedImportDatabase();
+                return await GetDirectoriesAsync();
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace OpenTimelapseSort.DataServices
     {
         public byte[] ImageToByteArray(SImage image)
         {
-            return System.IO.File.ReadAllBytes(image.Target);
+            return System.IO.File.ReadAllBytes(image.Origin);
         }
 
         public void SetImageMetaValues(SImage image)

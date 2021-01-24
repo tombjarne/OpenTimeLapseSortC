@@ -37,10 +37,8 @@ namespace OpenTimelapseSort.DataServices
         {
             _dirList = new List<SImage>();
             _randomDirList = new List<SImage>();
-
-            //dirList.Clear();
-            //randomDirList.Clear();
-
+            _imageDirectories.Clear();
+            
             return !_preferences.UseAutoDetectInterval ? SortImagesAuto(imageList) : SortImages(imageList);
         }
 
@@ -180,12 +178,12 @@ namespace OpenTimelapseSort.DataServices
 
         private void CreateRandomDirAsync()
         {
-            var name = Path.GetFileName(_randomDirList[0].Target);
+            var name = Path.GetFileName(_randomDirList[0].Origin);
             var sanitizedName = name.Length > 15 ? name.Substring(0, 13) + "_R" : name + "_R";
 
             var directory = new SDirectory
             (
-                _randomDirList[0].Target,
+                _randomDirList[0].Origin,
                 sanitizedName
             )
             {
@@ -199,12 +197,12 @@ namespace OpenTimelapseSort.DataServices
         private void CreateDirAsync()
         {
             // TODO: fix names!
-            var name = Path.GetFileName(_dirList[0].Target);
+            var name = Path.GetFileName(_dirList[0].Origin);
             var sanitizedName = name.Length > 15 ? name.Substring(0, 15) : name;
 
             var directory = new SDirectory
             (
-                _dirList[0].Target,
+                _dirList[0].Origin,
                 sanitizedName
             )
             {
@@ -242,7 +240,7 @@ namespace OpenTimelapseSort.DataServices
                     Name = directory.Name,
                     ImportDate = DateTime.Today.ToShortDateString(),
                     Length = 0,
-                    Target = directory.Target,
+                    Target = directory.Origin,
                     Directories = new List<SDirectory>()
                 };
 

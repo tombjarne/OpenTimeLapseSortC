@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using Microsoft.VisualBasic;
 
 namespace OpenTimelapseSort.Models
 {
@@ -10,14 +12,15 @@ namespace OpenTimelapseSort.Models
         public string ImportId { get; set; }
         public List<SImage> ImageList { get; set; }
         public DateTime Timestamp { get; set; }
+        public string Origin { get; set; }
         public string Target { get; set; }
         public string Name { get; set; }
         public SImport ParentImport { get; set; }
 
-        public SDirectory(string target, string name)
+        public SDirectory(string origin, string name)
         {
             Timestamp = DateTime.Today;
-            Target = target;
+            Origin = origin;
             Name = name;
             ImageList = new List<SImage>();
         }
@@ -26,13 +29,37 @@ namespace OpenTimelapseSort.Models
         {
             try
             {
-                File.Delete(Path.GetFullPath(Target));
+                var currentPosition = Target + @"\" + Name;
+
+                if (ImageList.Count > 0)
+                {
+                    DirectoryInfo directory = new DirectoryInfo(currentPosition);
+
+                    foreach (FileInfo file in directory.GetFiles())
+                    {
+                        file.Delete();
+                    }
+
+                    foreach (DirectoryInfo dir in directory.GetDirectories())
+                    {
+                        dir.Delete(true);
+                    }
+                }
+
+                Directory.Delete(Path.GetFullPath(Target + @"\" + Name));
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                Debug.WriteLine(e.InnerException);
                 return false;
             }
+        }
+
+        public void ChangeDirectoryName(string newName)
+        {
+            var sanitizedName = (Target + @"\" + newName).Trim();
+            FileSystem.Rename(Target + @"\" + Name, sanitizedName);
         }
     }
 }

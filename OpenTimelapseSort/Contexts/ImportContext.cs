@@ -43,7 +43,7 @@ namespace OpenTimelapseSort.Contexts
 
             modelBuilder.Entity<SDirectory>(entity =>
             {
-                entity.Property(e => e.Target)
+                entity.Property(e => e.Origin)
                     .IsRequired();
 
                 entity.Property(e => e.Name)
@@ -63,7 +63,7 @@ namespace OpenTimelapseSort.Contexts
                 entity.Property(e => e.Id)
                     .IsRequired();
 
-                entity.Property(e => e.Target)
+                entity.Property(e => e.Origin)
                     .IsRequired();
 
                 entity.Property(e => e.Name)
