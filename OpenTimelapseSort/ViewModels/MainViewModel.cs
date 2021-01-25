@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -311,7 +312,7 @@ namespace OpenTimelapseSort.ViewModels
         {
             var startupTask = Task.Run(async () =>
             {
-                HandleError("Fetching Database Entries...");
+                HandleError("Fetching database entries...");
 
                 var fetchedDirectories = await _dbService.GetDirectoriesAsync();
                 _directories = fetchedDirectories;
@@ -536,10 +537,13 @@ namespace OpenTimelapseSort.ViewModels
 
         public async void SetDirectoryName(object obj)
         {
-            SelectedDirectory.ChangeDirectoryName(DirectoryName);
-            SelectedDirectory.Name = DirectoryName;
+            if (!SelectedDirectory.ChangeDirectoryName(DirectoryName))
+            {
+                HandleError("Please provide a proper name.");
+            }
 
             await _dbService.UpdateDirectoryAsync(SelectedDirectory);
+            DirectoryName = SelectedDirectory.Name;
             RefreshDirectoryListView(); // is this valid MVVM? Did not work without explicit call
         }
 

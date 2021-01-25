@@ -2,12 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using Microsoft.VisualBasic;
 
 namespace OpenTimelapseSort.Models
 {
     public class SDirectory
     {
+        public SDirectory(string origin, string name)
+        {
+            Timestamp = DateTime.Today;
+            Origin = origin;
+            Name = name;
+            ImageList = new List<SImage>();
+        }
+
         public string Id { get; set; }
         public string ImportId { get; set; }
         public List<SImage> ImageList { get; set; }
@@ -16,14 +25,6 @@ namespace OpenTimelapseSort.Models
         public string Target { get; set; }
         public string Name { get; set; }
         public SImport ParentImport { get; set; }
-
-        public SDirectory(string origin, string name)
-        {
-            Timestamp = DateTime.Today;
-            Origin = origin;
-            Name = name;
-            ImageList = new List<SImage>();
-        }
 
         public bool Delete()
         {
@@ -35,15 +36,9 @@ namespace OpenTimelapseSort.Models
                 {
                     var directory = new DirectoryInfo(currentPosition);
 
-                    foreach (var file in directory.GetFiles())
-                    {
-                        file.Delete();
-                    }
+                    foreach (var file in directory.GetFiles()) file.Delete();
 
-                    foreach (var dir in directory.GetDirectories())
-                    {
-                        dir.Delete(true);
-                    }
+                    foreach (var dir in directory.GetDirectories()) dir.Delete(true);
                 }
 
                 Directory.Delete(Path.GetFullPath(Target + @"\" + Name));
@@ -51,15 +46,36 @@ namespace OpenTimelapseSort.Models
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.InnerException);
                 return false;
             }
         }
 
-        public void ChangeDirectoryName(string newName)
+        public bool ChangeDirectoryName(string newName)
         {
+            var changeWasClean = true;
+
+            newName = Regex.Replace(newName, @"[^0-9a-zA-Z!$* \-_]+", "");
             var sanitizedName = (Target + @"\" + newName).Trim();
-            FileSystem.Rename(Target + @"\" + Name, sanitizedName);
+
+            if (newName == "")
+            {
+                sanitizedName += "D";
+                changeWasClean = false;
+            }
+
+            if (File.Exists(sanitizedName))
+            {
+                sanitizedName += Id;
+                changeWasClean = false;
+            }
+
+            if (changeWasClean)
+            {
+                FileSystem.Rename(Target + @"\" + Name, sanitizedName);
+                Name = newName;
+            }
+
+            return changeWasClean;
         }
     }
 }

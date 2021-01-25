@@ -179,7 +179,7 @@ namespace OpenTimelapseSort.DataServices
         private void CreateRandomDirAsync()
         {
             var name = Path.GetFileName(_randomDirList[0].Origin) ?? "Default";
-            var sanitizedName = name.Length > 15 ? name.Substring(0, 13) + "_R" : name + "_R";
+            var sanitizedName = name.Length > 15 ? name.Substring(0, 13) + "R" : name + "R";
 
             var directory = new SDirectory
             (
