@@ -149,31 +149,6 @@
             <Setter Property="Cursor" Value="Hand" />
         </Style>
 
-        <Style x:Key="ButtonTemplate" TargetType="Button">
-            <Setter Property="Width" Value="95" />
-            <Setter Property="Height" Value="40" />
-            <Setter Property="Padding" Value="10,0,10,0" />
-            <Setter Property="Margin" Value="0,0,0,8" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Background" Value="#FF3D4A59" />
-            <Setter Property="BorderBrush" Value="{x:Null}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="CornflowerBlue" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <Style x:Key="BigButtonTemplate" TargetType="Button">
             <Setter Property="Padding" Value="20,0,20,0" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -233,17 +208,6 @@
         <DataTemplate DataType="{x:Type models:SImage}">
             <StackPanel Style="{StaticResource PanelTemplate}">
                 <DockPanel>
-                    <Expander DockPanel.Dock="Right">
-                        <Grid>
-                            <Button Content="Delete" Style="{StaticResource ButtonTemplate}">
-                                <Button.Resources>
-                                    <Style TargetType="Border">
-                                        <Setter Property="CornerRadius" Value="5" />
-                                    </Style>
-                                </Button.Resources>
-                            </Button>
-                        </Grid>
-                    </Expander>
                     <Grid DockPanel.Dock="Left">
                         <DockPanel Style="{StaticResource DockPanelTemplate}">
                             <Label
@@ -564,7 +528,6 @@
                             x:Name="DirectoryViewer1"
                             Background="#FF2D3742"
                             BorderBrush="{x:Null}"
-                            Cursor="Hand"
                             IsSynchronizedWithCurrentItem="False"
                             ItemsSource="{Binding Path=SortedDirectories}"
                             SelectedIndex="{Binding Path=SelectedDirectory}"

@@ -23,18 +23,5 @@ namespace OpenTimelapseSort.Models
             ParentInstance = parentInstance;
             FileTime = File.GetLastWriteTime(origin).ToFileTime();
         }
-
-        public bool Delete()
-        {
-            try
-            {
-                File.Delete(Path.GetFullPath(Origin));
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
     }
 }

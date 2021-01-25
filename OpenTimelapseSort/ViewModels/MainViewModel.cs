@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -137,8 +136,6 @@ namespace OpenTimelapseSort.ViewModels
                 OnPropertyChanged("SelectedDirectory");
             }
         }
-
-        public SImage SelectedImage { get; set; }
 
         public ObservableCollection<SDirectory> SortedDirectories
         {
@@ -552,24 +549,6 @@ namespace OpenTimelapseSort.ViewModels
             CollectionViewSource.GetDefaultView(SortedDirectories).Refresh();
         }
 
-        public async Task DeleteImage(object sender, RoutedEventArgs e)
-        {
-            var image = SelectedImage;
-
-            if (image.Delete())
-            {
-                var directory = image.ParentDirectory;
-                directory.ImageList.Remove(image);
-
-                if (directory.ImageList.Count == 0)
-                    await DeleteImageDirectory(directory);
-
-                HandleError("Image was deleted successfully.");
-            }
-
-            HandleError("Image could not be deleted.");
-        }
-
         public async void DeleteImageDirectoryHandler(object obj)
         {
             var directory = GetDirectoryFromId(obj.ToString());
@@ -612,13 +591,14 @@ namespace OpenTimelapseSort.ViewModels
             foreach (var import in _imports)
                 if (import.Timestamp == targetDate)
                     foreach (var directory in import.Directories)
-                        tempList.Insert(0, directory);
+                        tempList.Add(directory);
 
             PushToDirectories(tempList);
         }
 
         public void CancelSorting(object obj)
         {
+            SortedDirectories.Clear();
             PushToDirectories(_directories);
         }
     }

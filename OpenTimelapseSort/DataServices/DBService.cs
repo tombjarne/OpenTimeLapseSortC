@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OpenTimelapseSort.Contexts;
-using OpenTimelapseSort.Migrations;
 using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.DataServices
@@ -101,7 +100,7 @@ namespace OpenTimelapseSort.DataServices
             SeedDatabase();
         }
 
-        private void SeedDatabase()
+        private static void SeedDatabase()
         {
             using var database = new ImportContext();
             var demoImport = new SImport();

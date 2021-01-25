@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.VisualBasic;
@@ -44,7 +43,7 @@ namespace OpenTimelapseSort.Models
                 Directory.Delete(Path.GetFullPath(Target + @"\" + Name));
                 return true;
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
