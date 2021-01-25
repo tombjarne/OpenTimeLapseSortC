@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.DataServices;
@@ -58,6 +59,8 @@ namespace OpenTimelapseSort.ViewModels
         {
             using var database = new PreferencesContext();
             _dbPreferencesService.DeletePreferences(SelectedPreferences);
+            SelectedPreferences = _dbPreferencesService.FetchPreferences();
+            Debug.WriteLine(SelectedPreferences);
         }
     }
 }

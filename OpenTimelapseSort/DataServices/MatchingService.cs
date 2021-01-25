@@ -19,6 +19,7 @@ namespace OpenTimelapseSort.DataServices
         private readonly Preferences _preferences;
         private readonly int _deviationGenerosity;
         private readonly int _runs;
+        private int _sequence;
 
         private List<SImage> _dirList;
         private List<SImage> _randomDirList;
@@ -38,7 +39,8 @@ namespace OpenTimelapseSort.DataServices
             _dirList = new List<SImage>();
             _randomDirList = new List<SImage>();
             _imageDirectories.Clear();
-            
+            _sequence = 0;
+
             return !_preferences.UseAutoDetectInterval ? SortImagesAuto(imageList) : SortImages(imageList);
         }
 
@@ -176,10 +178,18 @@ namespace OpenTimelapseSort.DataServices
             return _imageDirectories;
         }
 
+        // TODO: consolidate following methods into one generic one
+
         private void CreateRandomDirAsync()
         {
-            var name = Path.GetFileName(_randomDirList[0].Origin) ?? "Default";
-            var sanitizedName = name.Length > 15 ? name.Substring(0, 13) + "R" : name + "R";
+            Debug.WriteLine(Path.GetDirectoryName(_randomDirList[0].Origin));
+            var name = Path.GetFileName(Path.GetDirectoryName(_randomDirList[0].Origin)) ?? "Default";
+            var uniqueIdentifier = Guid.NewGuid().ToString();
+            var sanitizedName = name.Length > 15 
+                ? name.Substring(0, 9) + _sequence + "R" 
+                : name +_sequence + "R";
+
+            sanitizedName += uniqueIdentifier.Substring(0, 4);
 
             var directory = new SDirectory
             (
@@ -187,18 +197,23 @@ namespace OpenTimelapseSort.DataServices
                 sanitizedName
             )
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = uniqueIdentifier,
                 ImageList = _randomDirList
             };
 
             _ = SaveMatch(directory);
+            _sequence++;
         }
 
         private void CreateDirAsync()
         {
-            // TODO: fix names!
-            var name = Path.GetFileName(_dirList[0].Origin);
-            var sanitizedName = name.Length > 15 ? name.Substring(0, 15) : name;
+            var name = Path.GetFileName(Path.GetDirectoryName(_randomDirList[0].Origin)) ?? "Default";
+            var uniqueIdentifier = Guid.NewGuid().ToString();
+            var sanitizedName = name.Length > 15
+                ? name.Substring(0, 10) + _sequence
+                : name + _sequence;
+
+            sanitizedName += uniqueIdentifier.Substring(0, 4);
 
             var directory = new SDirectory
             (
@@ -206,11 +221,12 @@ namespace OpenTimelapseSort.DataServices
                 sanitizedName
             )
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = uniqueIdentifier,
                 ImageList = _dirList
             };
 
             _ = SaveMatch(directory);
+            _sequence++;
         }
 
         private async Task SaveMatch(SDirectory directory)

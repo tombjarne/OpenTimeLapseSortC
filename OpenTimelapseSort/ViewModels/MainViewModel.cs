@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Microsoft.VisualBasic;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using OpenTimelapseSort.DataServices;
 using OpenTimelapseSort.Models;
@@ -42,6 +43,7 @@ namespace OpenTimelapseSort.ViewModels
         private SDirectory _selectedDirectory;
 
         private readonly DbService _dbService = new DbService();
+        private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
         private readonly MatchingService _matching = new MatchingService();
 
         private List<SDirectory> _directories = new List<SDirectory>();
@@ -445,7 +447,6 @@ namespace OpenTimelapseSort.ViewModels
 
                 await _dbService.UpdateDirectoryAsync(directory);
             }
-
             LoaderVisibility = Visibility.Hidden;
         }
 

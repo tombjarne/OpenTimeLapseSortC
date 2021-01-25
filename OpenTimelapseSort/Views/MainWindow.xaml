@@ -17,7 +17,6 @@
     ResizeMode="CanResizeWithGrip"
     WindowStyle="None"
     mc:Ignorable="d">
-
     <Window.Resources>
 
         <!--  Scrollbar Thumbs  -->
