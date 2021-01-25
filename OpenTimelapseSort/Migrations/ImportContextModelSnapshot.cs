@@ -8,7 +8,7 @@ using OpenTimelapseSort.Contexts;
 namespace OpenTimelapseSort.Migrations
 {
     [DbContext(typeof(ImportContext))]
-    partial class ImportContextModelSnapshot : ModelSnapshot
+    internal partial class ImportContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -95,14 +95,11 @@ namespace OpenTimelapseSort.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Length")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Target")
+                    b.Property<string>("Origin")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.Models;
 
@@ -19,12 +20,26 @@ namespace OpenTimelapseSort.DataServices
             database.SaveChanges();
         }
 
-        public void SeedPreferencesDatabase()
+        public async void CreateAndMigrate()
+        {
+            await using var database = new PreferencesContext();
+            await database.Database.MigrateAsync();
+            SeedDatabase();
+        }
+
+        public void SeedDatabase()
         {
             using var database = new PreferencesContext();
-            
+
             var preferences = new Preferences(true, true, 50, 10, 20);
             database.Add(preferences);
+            database.SaveChanges();
+        }
+
+        public void DeletePreferences(Preferences preferences)
+        {
+            using var database = new PreferencesContext();
+            database.Preferences.Remove(preferences);
             database.SaveChanges();
         }
 
@@ -39,7 +54,7 @@ namespace OpenTimelapseSort.DataServices
                 return preferences;
             } catch
             {
-                SeedPreferencesDatabase();
+                CreateAndMigrate();
                 return FetchPreferences();
             }
         }

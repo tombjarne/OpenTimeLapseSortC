@@ -33,14 +33,14 @@ namespace OpenTimelapseSort.Models
 
                 if (ImageList.Count > 0)
                 {
-                    DirectoryInfo directory = new DirectoryInfo(currentPosition);
+                    var directory = new DirectoryInfo(currentPosition);
 
-                    foreach (FileInfo file in directory.GetFiles())
+                    foreach (var file in directory.GetFiles())
                     {
                         file.Delete();
                     }
 
-                    foreach (DirectoryInfo dir in directory.GetDirectories())
+                    foreach (var dir in directory.GetDirectories())
                     {
                         dir.Delete(true);
                     }

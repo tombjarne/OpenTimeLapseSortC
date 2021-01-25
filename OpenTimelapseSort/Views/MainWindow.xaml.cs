@@ -1,13 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using OpenTimelapseSort.ViewModels;
 
 namespace OpenTimelapseSort.Views
 {
     public partial class MainWindow
     {
-        private MainViewModel _mainViewModel = new MainViewModel();
         public MainWindow()
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -16,7 +14,7 @@ namespace OpenTimelapseSort.Views
             InitializeComponent();
         }
 
-        private void InvokeStartupScreen()
+        private static void InvokeStartupScreen()
         {
             var startupScreen = new StartupScreen();
             startupScreen.Show();
@@ -50,8 +48,6 @@ namespace OpenTimelapseSort.Views
         {
             DragMove();
         }
-
-        // TODO: simplify!
 
         private void ImageViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {

@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.fontawesome.io/icons/"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:OpenTimelapseSort.Models"
     xmlns:viewModels="clr-namespace:OpenTimelapseSort.ViewModels"
@@ -277,7 +276,7 @@
                                     Content="{Binding ImageList.Count}"
                                     DockPanel.Dock="Right"
                                     Style="{StaticResource SubHeadlineTemplate}" />
-                                <DockPanel Margin="50,0,0,0">
+                                <DockPanel Margin="35,0,0,0">
                                     <DockPanel DockPanel.Dock="Left">
                                         <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.DeleteDirectoryCommand, UpdateSourceTrigger=Explicit}" CommandParameter="{Binding Id}">
                                             <Button.Template>
@@ -293,14 +292,23 @@
                                                 </ControlTemplate>
                                             </Button.Template>
                                         </Button>
-                                        <Grid DockPanel.Dock="Right">
-                                            <fa:FontAwesome Icon="FolderOpen" Style="{StaticResource SmallIconTemplate}" />
-                                            <Ellipse
-                                                Width="26"
-                                                Height="26"
-                                                Panel.ZIndex="-1"
-                                                Fill="CadetBlue" />
-                                        </Grid>
+                                        <Button
+                                            Margin="0,0,5,0"
+                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.ShowDirectoryLocationCommand, UpdateSourceTrigger=Explicit}"
+                                            CommandParameter="{Binding Name}">
+                                            <Button.Template>
+                                                <ControlTemplate>
+                                                    <Grid DockPanel.Dock="Right">
+                                                        <fa:FontAwesome Icon="FolderOpen" Style="{StaticResource SmallIconTemplate}" />
+                                                        <Ellipse
+                                                            Width="26"
+                                                            Height="26"
+                                                            Panel.ZIndex="-1"
+                                                            Fill="CadetBlue" />
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
                                         <Button
                                             Margin="0,0,5,0"
                                             Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.ShowImagesCommand, UpdateSourceTrigger=Explicit}"
@@ -319,17 +327,7 @@
                                             </Button.Template>
                                         </Button>
                                     </DockPanel>
-                                    <Button
-                                        Content="Reimport"
-                                        DockPanel.Dock="Right"
-                                        Foreground="White"
-                                        Style="{StaticResource ButtonTemplate}">
-                                        <Button.Resources>
-                                            <Style TargetType="Border">
-                                                <Setter Property="CornerRadius" Value="5" />
-                                            </Style>
-                                        </Button.Resources>
-                                    </Button>
+                                    <StackPanel Width="95" />
                                 </DockPanel>
                             </Grid>
                         </DockPanel>
@@ -638,9 +636,11 @@
                         </Grid>
                         <Label
                             x:Name="DirectoryPath"
+                            Width="Auto"
                             HorizontalAlignment="Left"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Top"
+                            Content="{Binding Path=DirectoryPath}"
                             DockPanel.Dock="Bottom"
                             FontSize="14px"
                             FontWeight="Bold"
@@ -716,6 +716,7 @@
                             VerticalContentAlignment="Center"
                             Background="#FF3D4A59"
                             BorderBrush="{x:Null}"
+                            Command="{Binding Path=CloseImportConfirmationPopupCommand}"
                             Content="Cancel"
                             Foreground="#FFFF8383">
                             <Button.Resources>

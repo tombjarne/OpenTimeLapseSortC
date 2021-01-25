@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:OpenTimelapseSort.ViewModels"
     Title="MainWindow"
     Width="402"
     Height="522"
@@ -13,6 +14,9 @@
     FontFamily="Montserrat"
     WindowStyle="None"
     mc:Ignorable="d">
+    <Window.DataContext>
+        <viewModels:PreferencesViewModel />
+    </Window.DataContext>
     <Grid
         Width="774"
         Height="Auto"
@@ -53,7 +57,6 @@
                 Fill="#FF34404D"
                 MouseDown="MoveWindow" />
             <Label
-                x:Name="Headline1"
                 Grid.Column="0"
                 Margin="17,60,0,-60"
                 Padding="20,0,20,0"
@@ -105,7 +108,8 @@
             VerticalAlignment="Top"
             Content="Copy"
             FontSize="14"
-            Foreground="White" />
+            Foreground="White"
+            IsChecked="{Binding Path=SelectedPreferences.UseCopy}" />
         <Slider
             x:Name="IntervalSlider"
             Width="245"
@@ -117,7 +121,7 @@
             Maximum="400"
             Minimum="0"
             TickFrequency="0.5"
-            ValueChanged="UpdateSliderIntervalValue" />
+            Value="{Binding Path=SelectedPreferences.SequenceInterval}" />
         <Slider
             x:Name="IntervalCountSlider"
             Width="245"
@@ -128,7 +132,7 @@
             Maximum="2000"
             Minimum="0"
             TickFrequency="1"
-            ValueChanged="UpdateSliderCountValue" />
+            Value="{Binding Path=SelectedPreferences.SequenceImageCount}" />
         <Label
             x:Name="Interval"
             Margin="306,233,0,273"
@@ -136,7 +140,7 @@
             HorizontalAlignment="Left"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
-            Content="0&#xA;"
+            Content="{Binding Path=SelectedPreferences.SequenceInterval}"
             FontSize="14px"
             FontWeight="Bold"
             Foreground="#FFFF8383" />
@@ -147,7 +151,7 @@
             HorizontalAlignment="Left"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
-            Content="0&#xA;"
+            Content="{Binding Path=SelectedPreferences.SequenceImageCount}"
             FontSize="14px"
             FontWeight="Bold"
             Foreground="#FFFF8383" />
@@ -159,7 +163,7 @@
             VerticalAlignment="Top"
             Background="#FF657482"
             BorderBrush="{x:Null}"
-            Click="SavePreferences"
+            Command="{Binding Path=SavePreferencesCommand}"
             Content="Save Changes"
             Foreground="#FFFF8383" />
         <Button
@@ -170,6 +174,7 @@
             VerticalAlignment="Top"
             Background="#FFFF8383"
             BorderBrush="{x:Null}"
+            Command="{Binding Path=DeletePreferencesCommand}"
             Content="Delete Preferences"
             Foreground="White" />
         <CheckBox
@@ -180,7 +185,8 @@
             VerticalAlignment="Top"
             Content="Use Manual Settings"
             FontSize="14"
-            Foreground="White" />
+            Foreground="White"
+            IsChecked="{Binding Path=SelectedPreferences.UseAutoDetectInterval}" />
         <Slider
             x:Name="GenerositySlider"
             Width="245"
@@ -193,7 +199,7 @@
             Minimum="0"
             SmallChange="1"
             TickFrequency="1"
-            ValueChanged="UpdateGenerosityValue" />
+            Value="{Binding Path=SelectedPreferences.SequenceIntervalGenerosity}" />
         <Label
             x:Name="Generosity"
             Margin="306,312,0,192"
@@ -201,7 +207,7 @@
             HorizontalAlignment="Left"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
-            Content="0%&#xA;"
+            Content="{Binding Path=SelectedPreferences.SequenceIntervalGenerosity}"
             FontSize="14px"
             FontWeight="Bold"
             Foreground="#FFFF8383" />

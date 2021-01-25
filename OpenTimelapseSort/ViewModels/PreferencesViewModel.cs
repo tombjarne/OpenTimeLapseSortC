@@ -1,7 +1,10 @@
-﻿using OpenTimelapseSort.Contexts;
+﻿using System;
+using System.ComponentModel;
+using System.Windows.Input;
+using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.DataServices;
 using OpenTimelapseSort.Models;
-using System;
+using OpenTimelapseSort.Mvvm;
 
 namespace OpenTimelapseSort.ViewModels
 {
@@ -9,63 +12,53 @@ namespace OpenTimelapseSort.ViewModels
     {
         private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
 
+        private readonly ActionCommand _savePreferencesCommand;
+        private readonly ActionCommand _deletePreferencesCommand;
+
+        private Preferences _preferences;
+
         public PreferencesViewModel()
         {
-            InitialisePreferencesDb();
+            _savePreferencesCommand = new ActionCommand(SavePreferences);
+            _deletePreferencesCommand = new ActionCommand(DeletePreferences);
+            StartupActions();
         }
 
-        private static async void EnsureDatabaseIsCreatedAsync()
+        private void StartupActions()
         {
-            await using var database = new PreferencesContext();
-            await database.Database.EnsureCreatedAsync();
+            SelectedPreferences = _dbPreferencesService.FetchPreferences();
         }
 
-        //TODO: refactor and optimize!
+        public ICommand SavePreferencesCommand => _savePreferencesCommand;
+        public ICommand DeletePreferencesCommand => _deletePreferencesCommand;
 
-        public void SavePreferences(bool useAutoDetectInterval,
-            bool copyIsEnabled, double imageInterval, int generosity, int imageCount)
+        public Preferences SelectedPreferences
         {
-
-            using var database = new PreferencesContext();
-
-            try
+            get => _preferences;
+            set
             {
-                EnsureDatabaseIsCreatedAsync();
-
-                var preferences = new Preferences(
-                    useAutoDetectInterval,
-                    copyIsEnabled,
-                    imageInterval,
-                    generosity,
-                    imageCount
-                );
-
-                _dbPreferencesService.SavePreferencesToDataBase(preferences);
+                _preferences = value;
+                OnPropertyChanged("SelectedPreferences");
             }
-            catch (Exception)
-            {
-                // handle exception
-            }
-
         }
 
-        private static void InitialisePreferencesDb()
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void SavePreferences(object obj)
         {
             using var database = new PreferencesContext();
-            try
-            {
-                EnsureDatabaseIsCreatedAsync();
-                //service.SeedPreferencesDatabase();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
+            _dbPreferencesService.SavePreferencesToDataBase(SelectedPreferences);
         }
 
-        public Preferences FetchFromDatabase()
+        public void DeletePreferences(object obj)
         {
-            return _dbPreferencesService.FetchPreferences();
+            using var database = new PreferencesContext();
+            _dbPreferencesService.DeletePreferences(SelectedPreferences);
         }
     }
 }

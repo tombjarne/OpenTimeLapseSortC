@@ -25,7 +25,7 @@ namespace OpenTimelapseSort.Contexts
                 entity.Property(e => e.Id)
                     .IsRequired();
 
-                entity.Property(e => e.Target)
+                entity.Property(e => e.Origin)
                     .IsRequired();
 
                 entity.Property(e => e.Name)
