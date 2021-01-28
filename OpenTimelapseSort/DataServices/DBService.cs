@@ -10,11 +10,7 @@ namespace OpenTimelapseSort.DataServices
 {
     internal class DbService
     {
-        /**
-         * ReturnCurrentImport
-         * 
-         * Returns the latest Import instance including its directories
-         */
+       
         public async Task<SImport> GetImportAsync()
         {
             await using var context = new ImportContext();
@@ -22,40 +18,6 @@ namespace OpenTimelapseSort.DataServices
                 .SingleAsync(i => i.Timestamp == DateTime.Today);
 
             return import;
-        }
-
-        public async Task DeleteImportAsync(string importId)
-        {
-            await using var database = new ImportContext();
-            var import = await database.Imports
-                .SingleAsync(i => i.Id == importId);
-
-            database.Imports.Remove(import);
-            await database.SaveChangesAsync();
-        }
-
-        public async Task DeleteDirectoryAsync(string directoryId)
-        {
-            await using var database = new ImportContext();
-            var directory = await database.ImageDirectories
-                .SingleAsync(d => d.Id == directoryId);
-
-            foreach (var image in directory.ImageList)
-                await DeleteImageAsync(image.Id);
-
-            database.ImageDirectories.Remove(directory);
-
-            await database.SaveChangesAsync();
-        }
-
-        public async Task DeleteImageAsync(string imageId)
-        {
-            await using var database = new ImportContext();
-            var image = await database.Images
-                .SingleAsync(i => i.Id == imageId);
-
-            database.Images.Remove(image);
-            await database.SaveChangesAsync();
         }
 
         public async Task<bool> ImportExistsAsync()
@@ -82,13 +44,9 @@ namespace OpenTimelapseSort.DataServices
             catch
             {
                 if (await database.Database.EnsureCreatedAsync())
-                {
                     await SaveImportAsync(import);
-                }
                 else
-                {
                     CreateAndMigrate();
-                }
             }
         }
 
@@ -132,35 +90,32 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        public async Task UpdateImportAfterRemovalAsync(SImport import, SDirectory directory)
+        public async Task UpdateImportAfterRemovalAsync(string directoryId)
         {
-            await using var database = new ImportContext();
-            var entity = await database.Imports
+            await using var context = new ImportContext();
+
+            var directory = await context.ImageDirectories
+                .SingleAsync(d => d.Id == directoryId);
+
+            var import = await context.Imports
                 .SingleAsync(i => i.Id == directory.ImportId);
 
-            var directoryEntity = await database.ImageDirectories
-                .SingleAsync(d => d.Id == directory.Id);
-
-            var images = await database.Images
-                .Where(i => i.DirectoryId == directoryEntity.Id)
+            var images = await context.Images
+                .Where(i => i.ParentDirectory.Id == directory.Id)
                 .ToListAsync();
 
             foreach (var image in images)
             {
-                directoryEntity.ImageList.Remove(image);
-                await DeleteImageAsync(image.Id);
+                directory.ImageList.Remove(image);
+                context.Images.Remove(image);
             }
 
-            entity.Directories.Remove(directoryEntity);
+            import.Directories.Remove(directory);
+            context.ImageDirectories.Remove(directory);
 
-            await DeleteDirectoryAsync(directoryEntity.Id);
-            if (entity.Directories.Count == 0) {
-                await DeleteImportAsync(entity.Id);
-            }
-            else
-            {
-                await database.SaveChangesAsync();
-            }
+            if (import.Directories.Count == 0) context.Imports.Remove(import);
+
+            await context.SaveChangesAsync();
         }
 
         public async Task UpdateDirectoryAsync(SDirectory directory)

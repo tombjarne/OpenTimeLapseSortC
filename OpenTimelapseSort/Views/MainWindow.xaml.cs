@@ -51,14 +51,14 @@ namespace OpenTimelapseSort.Views
 
         private void ImageViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
-            var scv = (ScrollViewer)sender;
+            var scv = (ScrollViewer) sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }
 
         private void DirectoryViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
-            var scv = (ScrollViewer)sender;
+            var scv = (ScrollViewer) sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }

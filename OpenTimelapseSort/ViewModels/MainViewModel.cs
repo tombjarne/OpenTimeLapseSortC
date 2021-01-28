@@ -8,10 +8,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Microsoft.VisualBasic;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using OpenTimelapseSort.DataServices;
 using OpenTimelapseSort.Models;
@@ -24,57 +22,46 @@ namespace OpenTimelapseSort.ViewModels
         private static readonly string MainDirectoryPath =
             Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\OTS_IMG";
 
-        private string _errorMessage;
-        private string _directoryName;
-        private string _importTargetPath;
-        private string _importOriginPath;
-        private string _directoryPath;
-        private string _foundImportImagesCount;
-        private Visibility _errorMessageIsVisible;
-        private bool _importPopupIsOpen;
-        private bool _importConfirmationButtonIsEnabled;
-        private bool _importConfirmationPopupIsVisible;
-        private bool _importBtnIsEnabled;
-        private Visibility _loaderIsShowing;
-        private DateTime? _selectedSortingDate;
-        private string _currentImportCountDownSeconds;
-        private DispatcherTimer _timer = new DispatcherTimer();
-        private readonly CommonOpenFileDialog _fileDialog;
-        private SDirectory _selectedDirectory;
-
-        private readonly DbService _dbService = new DbService();
-        private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
-        private readonly MatchingService _matching = new MatchingService();
-
-        private List<SDirectory> _directories = new List<SDirectory>();
-        private readonly List<SDirectory> _currentDirectories = new List<SDirectory>();
-        private readonly List<SImage> _images = new List<SImage>();
-
-        private ObservableCollection<SDirectory> _sortedDirectories = new ObservableCollection<SDirectory>();
-        private readonly ObservableCollection<SImport> _imports = new ObservableCollection<SImport>();
-        private ObservableCollection<SImage> _selectedImages = new ObservableCollection<SImage>();
-
-        private delegate void EndAction();
-
-        private readonly ActionCommand _invokeImportCmd;
-        private readonly ActionCommand _invokeFileChooserCommand;
         private readonly ActionCommand _beginImportCommand;
+        private readonly ActionCommand _closeImportConfirmationPopupCommand;
+        private readonly List<SDirectory> _currentDirectories = new List<SDirectory>();
+        private readonly DbService _dbService = new DbService();
+
+        private readonly ActionCommand _deleteDirectoryCommand;
+        private readonly DirectoryDetailService _directoryDetailService = new DirectoryDetailService();
+        private readonly CommonOpenFileDialog _fileDialog;
+        private readonly List<SImage> _images = new List<SImage>();
+        private readonly ObservableCollection<SImport> _imports = new ObservableCollection<SImport>();
+        private readonly ActionCommand _invokeFileChooserCommand;
+        private readonly ActionCommand _invokeImportCmd;
+
+        private readonly MatchingService _matching = new MatchingService();
         private readonly ActionCommand _resetSortingCommand;
+        private readonly ActionCommand _showDirectoryLocationCommand;
         private readonly ActionCommand _showImagesCommand;
         private readonly ActionCommand _updateDirectoryNameCommand;
-        private readonly ActionCommand _deleteDirectoryCommand;
-        private readonly ActionCommand _showDirectoryLocationCommand;
-        private readonly ActionCommand _closeImportConfirmationPopupCommand;
+        private string _currentImportCountDownSeconds;
 
-        public ICommand InvokeImportCommand => _invokeImportCmd;
-        public ICommand InvokeFileChooserCommand => _invokeFileChooserCommand;
-        public ICommand BeginImportCommand => _beginImportCommand;
-        public ICommand ResetSortingCommand => _resetSortingCommand;
-        public ICommand ShowImagesCommand => _showImagesCommand;
-        public ICommand UpdateDirectoryNameCommand => _updateDirectoryNameCommand;
-        public ICommand DeleteDirectoryCommand => _deleteDirectoryCommand;
-        public ICommand ShowDirectoryLocationCommand => _showDirectoryLocationCommand;
-        public ICommand CloseImportConfirmationPopupCommand => _closeImportConfirmationPopupCommand;
+        private List<SDirectory> _directories = new List<SDirectory>();
+        private string _directoryName;
+        private string _directoryPath;
+
+        private string _errorMessage;
+        private Visibility _errorMessageIsVisible;
+        private string _foundImportImagesCount;
+        private bool _importBtnIsEnabled;
+        private bool _importConfirmationButtonIsEnabled;
+        private bool _importConfirmationPopupIsVisible;
+        private string _importOriginPath;
+        private bool _importPopupIsOpen;
+        private string _importTargetPath;
+        private Visibility _loaderIsShowing;
+        private SDirectory _selectedDirectory;
+        private ObservableCollection<SImage> _selectedImages = new ObservableCollection<SImage>();
+        private DateTime? _selectedSortingDate;
+
+        private ObservableCollection<SDirectory> _sortedDirectories = new ObservableCollection<SDirectory>();
+        private DispatcherTimer _timer = new DispatcherTimer();
 
         public MainViewModel()
         {
@@ -99,35 +86,15 @@ namespace OpenTimelapseSort.ViewModels
             _ = StartupActionsAsync();
         }
 
-        public void CloseImportConfirmationPopup(object sender)
-        {
-            ImportConfirmationPopupVisibility = false;
-        }
-
-        public void ShowDirectoryLocation(object obj)
-        {
-            var location = MainDirectoryPath + @"\" + obj;
-            var argument = "/select, \"" + location + "\"";
-
-            if (Directory.Exists(location)) Process.Start("explorer.exe", argument);
-        }
-
-        public void ShowImages(object obj)
-        {
-            var directory = GetDirectoryFromId(obj.ToString());
-
-            SelectedImages.Clear();
-            SelectedDirectory = directory;
-            DirectoryName = directory.Name;
-            DirectoryPath = directory.Target;
-
-            foreach (var image in directory.ImageList) SelectedImages.Insert(0, image);
-        }
-
-        public SDirectory GetDirectoryFromId(string id)
-        {
-            return SortedDirectories.First(d => d.Id == id);
-        }
+        public ICommand InvokeImportCommand => _invokeImportCmd;
+        public ICommand InvokeFileChooserCommand => _invokeFileChooserCommand;
+        public ICommand BeginImportCommand => _beginImportCommand;
+        public ICommand ResetSortingCommand => _resetSortingCommand;
+        public ICommand ShowImagesCommand => _showImagesCommand;
+        public ICommand UpdateDirectoryNameCommand => _updateDirectoryNameCommand;
+        public ICommand DeleteDirectoryCommand => _deleteDirectoryCommand;
+        public ICommand ShowDirectoryLocationCommand => _showDirectoryLocationCommand;
+        public ICommand CloseImportConfirmationPopupCommand => _closeImportConfirmationPopupCommand;
 
         public SDirectory SelectedDirectory
         {
@@ -302,29 +269,91 @@ namespace OpenTimelapseSort.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        ///     CloseImportConfirmationPopup()
+        ///     Closes import confirmation popup by binding value to <see cref="ImportConfirmationPopupVisibility" />
+        /// </summary>
+        /// <param name="sender"></param>
+        public void CloseImportConfirmationPopup(object sender)
+        {
+            ImportConfirmationPopupVisibility = false;
+        }
+
+        /// <summary>
+        ///     ShowDirectoryLocation()
+        ///     Invokes file explorer for passed directory id in <see cref="obj" />
+        /// </summary>
+        /// <param name="obj"></param>
+        public void ShowDirectoryLocation(object obj)
+        {
+            var location = MainDirectoryPath + @"\" + obj;
+            var argument = "/select, \"" + location + "\"";
+
+            if (Directory.Exists(location)) Process.Start("explorer.exe", argument);
+        }
+
+        /// <summary>
+        ///     ShowImages()
+        ///     Sets observed property <see cref="SelectedImages" /> with images from selected directory
+        /// </summary>
+        /// <param name="obj"></param>
+        public void ShowImages(object obj)
+        {
+            var directory = GetDirectoryFromId(obj.ToString());
+
+            SelectedImages.Clear();
+            SelectedDirectory = directory;
+            DirectoryName = directory.Name;
+            DirectoryPath = directory.Target;
+
+            foreach (var image in directory.ImageList) SelectedImages.Insert(0, image);
+        }
+
+        /// <summary>
+        ///     GetDirectoryFromId()
+        ///     Returns directory instance from <see cref="SortedDirectories" /> that matches passed <see cref="id" />
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public SDirectory GetDirectoryFromId(string id)
+        {
+            return SortedDirectories.First(d => d.Id == id);
+        }
+
+        /// <summary>
+        ///     OnPropertyChanged()
+        ///     Invokes handling of new <see cref="PropertyChangedEventArgs" /> instance from passed <see cref="propertyName" />
+        /// </summary>
+        /// <param name="propertyName"></param>
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        ///     StartupActionsAsync
+        ///     Fetches directories from database
+        ///     Calls <see cref="PushToDirectories" /> to update local observed list
+        /// </summary>
+        /// <returns></returns>
         private async Task StartupActionsAsync()
         {
-            var startupTask = Task.Run(async () =>
-            {
-                HandleError("Fetching database entries...");
+            HandleError("Fetching database entries...");
 
-                var fetchedDirectories = await _dbService.GetDirectoriesAsync();
-                _directories = fetchedDirectories;
-                PushToDirectories(fetchedDirectories);
-            });
+            var fetchedDirectories = await _dbService.GetDirectoriesAsync();
+            _directories = fetchedDirectories;
+            PushToDirectories(fetchedDirectories);
 
-            await startupTask.ContinueWith(task =>
-            {
-                ErrorMessageVisibility = Visibility.Hidden;
-                LoaderVisibility = Visibility.Hidden;
-            });
+            ErrorMessageVisibility = Visibility.Hidden;
+            LoaderVisibility = Visibility.Hidden;
         }
 
+
+        /// <summary>
+        ///     PushToDirectories()
+        ///     Pushes a passed list to the observed Property <see cref="SortedDirectories" />
+        /// </summary>
+        /// <param name="directories"></param>
         private void PushToDirectories(List<SDirectory> directories)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -340,11 +369,26 @@ namespace OpenTimelapseSort.ViewModels
             });
         }
 
+        /// <summary>
+        ///     InvokeImportPopupAction()
+        ///     Sets <see cref="ImportPopupVisibility" /> to true
+        ///     Bound to <see cref="_invokeImportCmd" />
+        /// </summary>
+        /// <param name="obj"></param>
         public void InvokeImportPopupAction(object obj)
         {
             ImportPopupVisibility = true;
         }
 
+
+        /// <summary>
+        ///     InvokeTargetChooser()
+        ///     Invokes a generic file chooser window
+        ///     Sets other popup visibilities
+        ///     Calls <see cref="HandleError" /> in case of an invalid option
+        ///     Bound to <see cref="_invokeFileChooserCommand" />
+        /// </summary>
+        /// <param name="obj"></param>
         private void InvokeTargetChooser(object obj)
         {
             ImportPopupVisibility = false;
@@ -363,6 +407,12 @@ namespace OpenTimelapseSort.ViewModels
             }
         }
 
+        /// <summary>
+        ///     HandleError()
+        ///     Sets an error message from passed parameter
+        ///     Hides the error message after 10 seconds
+        /// </summary>
+        /// <param name="errorMessage"></param>
         private void HandleError(string errorMessage)
         {
             ErrorMessage = errorMessage;
@@ -375,17 +425,36 @@ namespace OpenTimelapseSort.ViewModels
             });
         }
 
+        /// <summary>
+        ///     HandleListingProgress()
+        ///     Sets the import timer interval and passes <see cref="InvokeImportAction" /> to execute after timer has stopped
+        /// </summary>
         private void HandleListingProgress()
         {
             ImportPopupVisibility = false;
             SetTimer(9, 1, true, InvokeImportAction);
         }
 
+        /// <summary>
+        ///     UpdateImportCountDownNumber()
+        ///     Sets remaining timespan before timer stops
+        /// </summary>
+        /// <param name="currentSecond"></param>
         private void UpdateImportCountDownNumber(TimeSpan currentSecond)
         {
             CurrentImportCountDownTimeSpan = currentSecond.ToString(@"\ s");
         }
 
+        /// <summary>
+        ///     SetTimer()
+        ///     Generic function to set a timer with passed interval
+        ///     Performs update action on <see cref="UpdateImportCountDownNumber" />
+        ///     Performs action as soon as the timer has ended
+        /// </summary>
+        /// <param name="timeSpanSeconds"></param>
+        /// <param name="updateInterval"></param>
+        /// <param name="isCountDown"></param>
+        /// <param name="endAction"></param>
         private void SetTimer(int timeSpanSeconds, int updateInterval, bool isCountDown, EndAction endAction)
         {
             var timeSpan = TimeSpan.FromSeconds(timeSpanSeconds);
@@ -406,27 +475,35 @@ namespace OpenTimelapseSort.ViewModels
             _timer.Start();
         }
 
+        /// <summary>
+        ///     InvokeImportAction()
+        ///     Starts the matching process
+        ///     Saves retrieved list into the local Property <see cref="_currentDirectories" />
+        /// </summary>
         private void InvokeImportAction()
         {
             ImportConfirmationPopupVisibility = false;
-            var sortingTask = Task.Run(() =>
+
+            _currentDirectories.Clear();
+            var currentList = _matching.MatchImages(_images); // make it async
+            foreach (var directory in currentList)
             {
-                _currentDirectories.Clear();
-                var currentList = _matching.MatchImages(_images); // make it async
-                foreach (var directory in currentList)
-                {
-                    _currentDirectories.Insert(0, directory);
-                    _directories.Insert(0, directory); // add newly imported images to those already fetched on startup
-                }
-            });
-            sortingTask.ContinueWith(task =>
-            {
-                ImportTargetPath = _directories[0].Origin;
-                CopyFiles();
-                PushToDirectories(_currentDirectories);
-            });
+                _currentDirectories.Insert(0, directory);
+                _directories.Insert(0, directory); // add newly imported images to those already fetched on startup
+            }
+
+            ImportTargetPath = _directories[0].Origin;
+            CopyFiles();
+            PushToDirectories(_currentDirectories);
         }
 
+        /// <summary>
+        ///     CopyFiles()
+        ///     Actually copies the matched directories to their destination
+        ///     Creates a new directory if <see cref="MainDirectoryPath" /> does not point to valid file location
+        ///     Sets <see cref="SDirectory.Target" /> attribute to the actual new location
+        ///     Calls <see cref="_dbService" /> to save the just copied files into the database
+        /// </summary>
         private async void CopyFiles()
         {
             if (!Directory.Exists(MainDirectoryPath))
@@ -447,9 +524,17 @@ namespace OpenTimelapseSort.ViewModels
 
                 await _dbService.UpdateDirectoryAsync(directory);
             }
+
             LoaderVisibility = Visibility.Hidden;
         }
 
+        /// <summary>
+        ///     ConfirmImportSettings()
+        ///     Is called on button click
+        ///     Calls <see cref="HandleError" /> if the selected location is not reachable
+        ///     Sets the visibility of import popups and shows the loader icon
+        /// </summary>
+        /// <param name="sender"></param>
         private void ConfirmImportSettings(object sender)
         {
             if (Directory.Exists(ImportOriginPath))
@@ -469,6 +554,12 @@ namespace OpenTimelapseSort.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Import()
+        ///     Collects all files of a specified directory from a maximum depth of 2
+        ///     Updates <see cref="FoundImportImagesCount" /> with number of images found
+        /// </summary>
+        /// <param name="name"></param>
         public void Import(string name)
         {
             _images.Clear();
@@ -505,6 +596,13 @@ namespace OpenTimelapseSort.ViewModels
             }
         }
 
+        /// <summary>
+        ///     CreateImage()
+        ///     Creates an instance of <see cref="SImage" /> with the passed attributes
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
         private static SImage CreateImage(string file, FileInfo info)
         {
             var image = new SImage
@@ -521,52 +619,74 @@ namespace OpenTimelapseSort.ViewModels
             return image;
         }
 
+        /// <summary>
+        ///     SelectionMatchesRequirements()
+        ///     Determines whether the local file chooser wants to import from an allowed location
+        ///     Forbids the import from any directory that contains "Windows" or "Default"
+        ///     The selected directory must match an actual existing file path
+        /// </summary>
+        /// <returns></returns>
         private bool SelectionMatchesRequirements()
         {
+            // TODO: fix button issue!
             return _fileDialog.FileName != "Default" &&
                    !_fileDialog.FileName.Contains("Windows") &&
                    Directory.Exists(_fileDialog.FileName);
         }
 
+        /// <summary>
+        ///     AddImportIfNotExists()
+        ///     Adds an import to <see cref="_imports" /> if it has not been added yet
+        /// </summary>
+        /// <param name="import"></param>
         private void AddImportIfNotExists(SImport import)
         {
             if (!_imports.Contains(import)) _imports.Insert(0, import);
         }
 
+        /// <summary>
+        ///     SetDirectoryName()
+        ///     Calls <see cref="_dbService" /> to update directory
+        ///     Updates observable property <see cref="DirectoryName" />
+        ///     Calls <see cref="HandleError" /> if the name could not be updated in <see cref="SelectedDirectory" /> instance
+        /// </summary>
+        /// <param name="obj"></param>
         public async void SetDirectoryName(object obj)
         {
-            if (!SelectedDirectory.ChangeDirectoryName(DirectoryName))
-            {
-                HandleError("Please provide a proper name.");
-            }
+            var indexToReplace = SortedDirectories.IndexOf(SelectedDirectory);
+            var directory = _directoryDetailService.ChangeDirectoryName(SelectedDirectory, DirectoryName, HandleError);
+            SelectedDirectory = directory;
 
             await _dbService.UpdateDirectoryAsync(SelectedDirectory);
             DirectoryName = SelectedDirectory.Name;
-            RefreshDirectoryListView(); // is this valid MVVM? Did not work without explicit call
+            SortedDirectories.RemoveAt(indexToReplace);
+            SortedDirectories.Insert(indexToReplace, SelectedDirectory);
         }
 
-        private void RefreshDirectoryListView()
-        {
-            CollectionViewSource.GetDefaultView(SortedDirectories).Refresh();
-        }
-
+        /// <summary>
+        ///     DeleteImageDirectoryHandler()
+        ///     Calls <see cref="DeleteImageDirectory" />
+        /// </summary>
+        /// <param name="obj"></param>
         public async void DeleteImageDirectoryHandler(object obj)
         {
             var directory = GetDirectoryFromId(obj.ToString());
             await DeleteImageDirectory(directory);
         }
 
+        /// <summary>
+        ///     DeleteImageDirectory()
+        ///     Handles deletion of passed <see cref="SDirectory" />
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <returns></returns>
         public async Task DeleteImageDirectory(SDirectory directory)
         {
-            if (directory.Delete())
+            if (_directoryDetailService.Delete(directory))
             {
-                var import = directory.ParentImport;
-                import.Directories.Remove(directory);
-
-                await _dbService.UpdateImportAfterRemovalAsync(import, directory);
+                await _dbService.UpdateImportAfterRemovalAsync(directory.Id);
 
                 EmptyCurrentSession(directory);
-
                 HandleError("Directory was deleted successfully.");
             }
             else
@@ -575,14 +695,28 @@ namespace OpenTimelapseSort.ViewModels
             }
         }
 
+        /// <summary>
+        ///     EmptyCurrentSession()
+        ///     Resets values after directory deletion
+        /// </summary>
+        /// <param name="directory"></param>
         private void EmptyCurrentSession(SDirectory directory)
         {
             SortedDirectories.Remove(directory);
-            DirectoryName = "";
+            _imports.Single(i => i.Id == directory.ImportId).Directories.Remove(directory);
+            _directories.Remove(directory);
+
             foreach (var image in directory.ImageList) SelectedImages.Remove(image);
-            RefreshDirectoryListView();
+
+            DirectoryName = "";
+            DirectoryPath = "";
         }
 
+        /// <summary>
+        ///     UpdateSorting()
+        ///     Iterates through imports and adds them to a temporary list
+        ///     The sorted directories will be pushed to <see cref="SortedDirectories" /> via <see cref="PushToDirectories" />
+        /// </summary>
         public void UpdateSorting()
         {
             var tempList = new List<SDirectory>();
@@ -597,10 +731,20 @@ namespace OpenTimelapseSort.ViewModels
             PushToDirectories(tempList);
         }
 
+        /// <summary>
+        ///     CancelSorting()
+        ///     Cancels the current sorting options and sets <see cref="SortedDirectories" /> via <see cref="PushToDirectories" />
+        /// </summary>
+        /// <param name="obj"></param>
         public void CancelSorting(object obj)
         {
-            SortedDirectories.Clear();
-            PushToDirectories(_directories);
+            if (_directories.Count > 0)
+            {
+                SortedDirectories.Clear();
+                PushToDirectories(_directories);
+            }
         }
+
+        private delegate void EndAction();
     }
 }

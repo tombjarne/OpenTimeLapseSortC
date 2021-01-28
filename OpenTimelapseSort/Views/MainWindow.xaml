@@ -527,7 +527,6 @@
                             x:Name="DirectoryViewer1"
                             Background="#FF2D3742"
                             BorderBrush="{x:Null}"
-                            IsSynchronizedWithCurrentItem="False"
                             ItemsSource="{Binding Path=SortedDirectories}"
                             SelectedIndex="{Binding Path=SelectedDirectory}"
                             Style="{StaticResource DirectoryListTemplate}" />

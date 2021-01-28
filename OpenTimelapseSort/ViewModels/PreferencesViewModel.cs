@@ -11,10 +11,8 @@ namespace OpenTimelapseSort.ViewModels
     internal class PreferencesViewModel
     {
         private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
-
-        private readonly ActionCommand _savePreferencesCommand;
         private readonly ActionCommand _deletePreferencesCommand;
-
+        private readonly ActionCommand _savePreferencesCommand;
         private Preferences _preferences;
 
         public PreferencesViewModel()
@@ -22,11 +20,6 @@ namespace OpenTimelapseSort.ViewModels
             _savePreferencesCommand = new ActionCommand(SavePreferences);
             _deletePreferencesCommand = new ActionCommand(DeletePreferences);
             StartupActions();
-        }
-
-        private void StartupActions()
-        {
-            SelectedPreferences = _dbPreferencesService.FetchPreferences();
         }
 
         public ICommand SavePreferencesCommand => _savePreferencesCommand;
@@ -47,6 +40,11 @@ namespace OpenTimelapseSort.ViewModels
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void StartupActions()
+        {
+            SelectedPreferences = _dbPreferencesService.FetchPreferences();
         }
 
         public void SavePreferences(object obj)

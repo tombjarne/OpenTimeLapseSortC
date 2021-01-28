@@ -41,7 +41,7 @@ namespace OpenTimelapseSort.Migrations
                         x => x.ImportId,
                         "Import",
                         "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,7 +67,7 @@ namespace OpenTimelapseSort.Migrations
                         x => x.DirectoryId,
                         "ImageDirectory",
                         "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
