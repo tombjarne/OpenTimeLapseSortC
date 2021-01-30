@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using OpenTimelapseSort.Contexts;
+using System;
 
 namespace OpenTimelapseSort.Migrations
 {

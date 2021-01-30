@@ -1,14 +1,15 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.VisualBasic;
+using OpenTimelapseSort.Models;
 using System.IO;
 using System.Text.RegularExpressions;
-using Microsoft.VisualBasic;
-using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.DataServices
 {
     internal class DirectoryDetailService
     {
         public delegate void ErrorMessage(string errorMessage);
+
+        //TODO: refactor
 
         public bool Delete(SDirectory directory)
         {

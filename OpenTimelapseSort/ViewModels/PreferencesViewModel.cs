@@ -1,10 +1,10 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using System.Windows.Input;
-using OpenTimelapseSort.Contexts;
+﻿using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.DataServices;
 using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Mvvm;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Input;
 
 namespace OpenTimelapseSort.ViewModels
 {

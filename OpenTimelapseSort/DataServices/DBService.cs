@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.Models;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OpenTimelapseSort.DataServices
 {
     internal class DbService
     {
-       
+
         public async Task<SImport> GetImportAsync()
         {
             await using var context = new ImportContext();
@@ -55,21 +56,6 @@ namespace OpenTimelapseSort.DataServices
         {
             await using var database = new ImportContext();
             await database.Database.MigrateAsync();
-            SeedDatabase();
-        }
-
-        private static void SeedDatabase()
-        {
-            using var database = new ImportContext();
-            var demoImport = new SImport();
-            var demoDirectory = new SDirectory("Default", "Demo Directory");
-            var demoImage = new SImage("Demo Image", "Default", demoDirectory.Name);
-
-            demoDirectory.ImageList.Add(demoImage);
-            demoImport.Directories.Add(demoDirectory);
-
-            database.Add(demoImport);
-            database.SaveChanges();
         }
 
         public async Task UpdateCurrentImportAsync(SImport import)
@@ -160,7 +146,7 @@ namespace OpenTimelapseSort.DataServices
             catch
             {
                 CreateAndMigrate();
-                return await GetDirectoriesAsync();
+                return new List<SDirectory>();
             }
         }
     }

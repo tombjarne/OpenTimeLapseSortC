@@ -1,22 +1,29 @@
-﻿using System;
+﻿using OpenTimelapseSort.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace OpenTimelapseSort.DataServices
 {
-    class ImportService
+    internal class ImportService
     {
-        /*
-        public void Import(string name)
-        {
-            _images.Clear();
+        public delegate void ErrorMessage(string errorMessage);
 
-            var files = Directory.EnumerateFileSystemEntries(name).ToList();
+        /// <summary>
+        /// Import()
+        /// Collects all files of a specified directory from a maximum depth of 2
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="setErrorMessage"></param>
+        public List<SImage> Import(string origin, ErrorMessage setErrorMessage)
+        {
+            var images = new List<SImage>();
+
+            var files = Directory.EnumerateFileSystemEntries(origin).ToList();
             var length = files.Count();
 
-            if (length > 0)
+            try
             {
                 for (var i = 0; i < length; i++)
                 {
@@ -31,19 +38,44 @@ namespace OpenTimelapseSort.DataServices
                         for (var p = 0; p < subDirLength; p++)
                         {
                             var subDirFile = subDirImages[p];
-                            _images.Add(CreateImage(subDirFile, subDirInfo));
+                            images.Add(CreateImage(subDirFile, subDirInfo));
                         }
                     }
                     else
                     {
                         var info = new FileInfo(file);
-                        _images.Add(CreateImage(file, info));
+                        images.Add(CreateImage(file, info));
                     }
                 }
-
-                FoundImportImagesCount = "Found " + _images.Count() + " images";
             }
+            catch
+            {
+                setErrorMessage("The directory did not contain any files.");
+            }
+            return images;
         }
-        */
+
+        /// <summary>
+        ///     CreateImage()
+        ///     Creates an instance of <see cref="SImage" /> with the passed attributes
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        private static SImage CreateImage(string file, FileInfo info)
+        {
+            var image = new SImage
+            (
+                Path.GetFileName(file),
+                info.FullName,
+                info.DirectoryName
+            )
+            {
+                Id = Guid.NewGuid().ToString(),
+                FileSize = info.Length / 1000
+            };
+
+            return image;
+        }
     }
 }

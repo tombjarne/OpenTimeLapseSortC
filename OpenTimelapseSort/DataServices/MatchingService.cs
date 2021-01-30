@@ -185,9 +185,9 @@ namespace OpenTimelapseSort.DataServices
             Debug.WriteLine(Path.GetDirectoryName(_randomDirList[0].Origin));
             var name = Path.GetFileName(Path.GetDirectoryName(_randomDirList[0].Origin)) ?? "Default";
             var uniqueIdentifier = Guid.NewGuid().ToString();
-            var sanitizedName = name.Length > 15 
-                ? name.Substring(0, 9) + _sequence + "R" 
-                : name +_sequence + "R";
+            var sanitizedName = name.Length > 15
+                ? name.Substring(0, 9) + _sequence + "R"
+                : name + _sequence + "R";
 
             sanitizedName += uniqueIdentifier.Substring(0, 4);
 

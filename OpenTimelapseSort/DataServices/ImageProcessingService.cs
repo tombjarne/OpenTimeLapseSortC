@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using OpenTimelapseSort.Models;
+﻿using OpenTimelapseSort.Models;
+using System.Drawing;
 
 namespace OpenTimelapseSort.DataServices
 {

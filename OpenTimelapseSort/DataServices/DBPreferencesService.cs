@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.Models;
+using System.Linq;
 
 namespace OpenTimelapseSort.DataServices
 {
@@ -52,7 +52,8 @@ namespace OpenTimelapseSort.DataServices
                 var preferences = database.Preferences
                     .Single(predicate => predicate.Id == 1);
                 return preferences;
-            } catch
+            }
+            catch
             {
                 CreateAndMigrate();
                 return FetchPreferences();
