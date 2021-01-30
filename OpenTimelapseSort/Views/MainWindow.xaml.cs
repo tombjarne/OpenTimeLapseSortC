@@ -93,6 +93,7 @@ namespace OpenTimelapseSort.Views
         private void InvokeTargetChooser(object sender, RoutedEventArgs e)
         {
             var importTargetPath = "";
+            // TODO: need to replace with newer filedialog! Fails when canceled before
             if (_fileTargetDialog.ShowDialog() == CommonFileDialogResult.Ok)
                 if (SelectionMatchesRequirements(_fileTargetDialog))
                     importTargetPath = _fileTargetDialog.FileName;

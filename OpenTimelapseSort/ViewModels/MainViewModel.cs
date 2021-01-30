@@ -363,7 +363,6 @@ namespace OpenTimelapseSort.ViewModels
                     AddImportIfNotExists(directory.ParentImport);
                 }
 
-                AddImportIfNotExists(directories[0].ParentImport);
                 LoaderVisibility = Visibility.Hidden;
             });
         }
@@ -421,8 +420,8 @@ namespace OpenTimelapseSort.ViewModels
                     var currentList = _matching.MatchImages(_images); // make it async
                     foreach (var directory in currentList)
                     {
-                        _currentDirectories.Insert(0, directory);
-                        _directories.Insert(0, directory);
+                        _currentDirectories.Add(directory);
+                        _directories.Add(directory);
                     }
 
                     await _fileCopyService.CopyFiles(_currentDirectories, _mainDirectoryPath);
@@ -450,7 +449,11 @@ namespace OpenTimelapseSort.ViewModels
         /// <param name="import"></param>
         private void AddImportIfNotExists(SImport import)
         {
-            if (!_imports.Contains(import)) _imports.Insert(0, import);
+            var match = _imports.Any(i => i.Id == import.Id);
+            if (!match)
+            {
+                _imports.Insert(0, import);
+            }
         }
 
         /// <summary>

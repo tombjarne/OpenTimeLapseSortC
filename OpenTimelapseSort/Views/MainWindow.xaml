@@ -609,7 +609,7 @@
         <Popup
             Name="ImportPopup"
             Width="Auto"
-            Height="350"
+            Height="Auto"
             IsOpen="{Binding Path=ImportPopupVisibility}"
             Placement="Center"
             PlacementTarget="{Binding ElementName=Pane}">
@@ -632,7 +632,7 @@
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Top"
                             Content="New Import"
-                            FontSize="35"
+                            FontSize="28"
                             FontWeight="Bold"
                             Foreground="White" />
                         <TextBlock
@@ -654,50 +654,58 @@
                                 VerticalContentAlignment="Top"
                                 Content="{Binding Path=FoundImportImagesCount}"
                                 DockPanel.Dock="Bottom"
-                                FontSize="35"
+                                FontSize="14"
                                 FontWeight="Bold"
-                                Foreground="White" />
+                                Foreground="#FFFF8383" />
                             <Grid>
-                                <Button
-                                    Width="95"
-                                    Padding="10,0,10,0"
-                                    HorizontalAlignment="Left"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    Background="#FF3D4A59"
-                                    BorderBrush="{x:Null}"
-                                    Click="InvokeTargetChooser"
-                                    Content="Set Target"
-                                    DockPanel.Dock="Top"
-                                    Foreground="#FFFF8383">
-                                    <Button.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="5" />
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
+                                <DockPanel Height="35" HorizontalAlignment="Center">
+                                    <Button
+                                        Width="95"
+                                        Padding="10,0,10,0"
+                                        HorizontalAlignment="Left"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Background="#FF3D4A59"
+                                        BorderBrush="{x:Null}"
+                                        Click="InvokeTargetChooser"
+                                        Content="Set Target"
+                                        DockPanel.Dock="Left"
+                                        Foreground="#FFFF8383">
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="5" />
+                                            </Style>
+                                        </Button.Resources>
+                                    </Button>
+                                    <Button
+                                        Width="95"
+                                        Padding="10,0,10,0"
+                                        HorizontalAlignment="Left"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Background="#FF3D4A59"
+                                        BorderBrush="{x:Null}"
+                                        Click="InvokeOriginChooser"
+                                        Content="Set Origin"
+                                        DockPanel.Dock="Right"
+                                        Foreground="#FFFF8383">
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="5" />
+                                            </Style>
+                                        </Button.Resources>
+                                    </Button>
+                                </DockPanel>
+
                             </Grid>
                         </DockPanel>
                     </Grid>
                 </DockPanel>
-                <DockPanel Grid.Row="1" Margin="15">
-                    <Button
-                        Width="95"
-                        Padding="10,0,10,0"
-                        HorizontalAlignment="Left"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Background="#FF3D4A59"
-                        BorderBrush="{x:Null}"
-                        Click="InvokeOriginChooser"
-                        Content="Set Origin"
-                        Foreground="#FFFF8383">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5" />
-                            </Style>
-                        </Button.Resources>
-                    </Button>
+                <DockPanel
+                    Grid.Row="1"
+                    Height="35"
+                    Margin="15"
+                    HorizontalAlignment="Center">
                     <Button
                         x:Name="ImportAbortBtn"
                         Width="95"
