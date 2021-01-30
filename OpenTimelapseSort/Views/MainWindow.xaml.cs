@@ -1,9 +1,9 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
-using OpenTimelapseSort.ViewModels;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using OpenTimelapseSort.ViewModels;
 
 namespace OpenTimelapseSort.Views
 {
@@ -74,14 +74,14 @@ namespace OpenTimelapseSort.Views
 
         private void ImageViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
-            var scv = (ScrollViewer)sender;
+            var scv = (ScrollViewer) sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }
 
         private void DirectoryViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
-            var scv = (ScrollViewer)sender;
+            var scv = (ScrollViewer) sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }
@@ -97,7 +97,7 @@ namespace OpenTimelapseSort.Views
                 if (SelectionMatchesRequirements(_fileTargetDialog))
                     importTargetPath = _fileTargetDialog.FileName;
 
-            ((MainViewModel)DataContext).SetImportTarget(importTargetPath);
+            ((MainViewModel) DataContext).SetImportTarget(importTargetPath);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace OpenTimelapseSort.Views
                 if (SelectionMatchesRequirements(_fileOriginDialog))
                     importOriginPath = _fileOriginDialog.FileName;
 
-            ((MainViewModel)DataContext).SetImportOrigin(importOriginPath);
+            ((MainViewModel) DataContext).SetImportOrigin(importOriginPath);
         }
 
         /// <summary>

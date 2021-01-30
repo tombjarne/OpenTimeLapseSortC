@@ -251,7 +251,7 @@ namespace OpenTimelapseSort.ViewModels
             {
                 _images = _importService.Import(location, HandleError);
                 FoundImportImagesCount = "Found " + _images.Count + " Images";
-                ImportOriginPath = Directory.GetParent(location).Name;
+                ImportOriginPath = Directory.GetParent(location).FullName;
                 ImportConfirmationButtonIsEnabled = true;
             }
             else
@@ -432,7 +432,6 @@ namespace OpenTimelapseSort.ViewModels
                     HandleError("Could not match and update images.");
                 }
 
-                ImportOriginPath = _directories[0].Origin;
                 LoaderVisibility = Visibility.Hidden;
 
                 PushToDirectories(_currentDirectories);
