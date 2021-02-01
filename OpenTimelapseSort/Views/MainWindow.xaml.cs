@@ -65,6 +65,11 @@ namespace OpenTimelapseSort.Views
             WindowState = WindowState.Minimized;
         }
 
+        private void MaximizeApplication(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+
         // handles drag of window
 
         private void MoveWindow(object sender, MouseButtonEventArgs e)
@@ -127,6 +132,11 @@ namespace OpenTimelapseSort.Views
             return fileDialog.FileName != "Default" &&
                    !fileDialog.FileName.Contains("Windows") &&
                    Directory.Exists(fileDialog.FileName);
+        }
+
+        private void DirectoryViewer1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

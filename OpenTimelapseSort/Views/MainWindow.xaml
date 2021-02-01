@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:OpenTimelapseSort.Models"
     xmlns:viewModels="clr-namespace:OpenTimelapseSort.ViewModels"
+    x:Name="window"
     Title="MainWindow"
     Width="1150"
     Height="750"
@@ -146,6 +147,7 @@
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Padding" Value="2" />
         </Style>
 
         <Style x:Key="BigButtonTemplate" TargetType="Button">
@@ -247,8 +249,8 @@
                                                     <Grid Margin="0,0,5,0" DockPanel.Dock="Left">
                                                         <fa:FontAwesome Icon="MinusCircle" Style="{StaticResource SmallIconTemplate}" />
                                                         <Ellipse
-                                                            Width="26"
-                                                            Height="26"
+                                                            Width="28"
+                                                            Height="28"
                                                             Panel.ZIndex="-1"
                                                             Fill="OrangeRed" />
                                                     </Grid>
@@ -264,8 +266,8 @@
                                                     <Grid DockPanel.Dock="Right">
                                                         <fa:FontAwesome Icon="FolderOpen" Style="{StaticResource SmallIconTemplate}" />
                                                         <Ellipse
-                                                            Width="26"
-                                                            Height="26"
+                                                            Width="28"
+                                                            Height="28"
                                                             Panel.ZIndex="-1"
                                                             Fill="CadetBlue" />
                                                     </Grid>
@@ -281,8 +283,8 @@
                                                     <Grid DockPanel.Dock="Right">
                                                         <fa:FontAwesome Icon="FileImageOutline" Style="{StaticResource SmallIconTemplate}" />
                                                         <Ellipse
-                                                            Width="26"
-                                                            Height="26"
+                                                            Width="28"
+                                                            Height="28"
                                                             Panel.ZIndex="-1"
                                                             Fill="CornflowerBlue" />
                                                     </Grid>
@@ -304,12 +306,10 @@
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
+
     <Window.DataContext>
         <viewModels:MainViewModel />
     </Window.DataContext>
-
-
-
     <Grid
         x:Name="Pane"
         Height="Auto"
@@ -317,13 +317,12 @@
         <Grid
             x:Name="MenuBar"
             Height="39"
-            Margin="0,0,0,0"
-            VerticalAlignment="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-            </Grid.ColumnDefinitions>
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Panel.ZIndex="100">
             <Label
                 x:Name="ApplicationName"
+                Grid.RowSpan="4"
                 Grid.Column="0"
                 Margin="0,2,0,-2"
                 Padding="20,0,20,0"
@@ -336,6 +335,7 @@
                 Foreground="#FFFF8383" />
             <Button
                 x:Name="PreferencesBtn"
+                Grid.RowSpan="4"
                 Width="95"
                 Margin="197,7,0,3"
                 Padding="10,0,10,0"
@@ -355,6 +355,7 @@
             </Button>
             <Button
                 x:Name="ImportBtn"
+                Grid.RowSpan="4"
                 Width="95"
                 Margin="296,7,0,3"
                 Padding="10,0,10,0"
@@ -372,12 +373,17 @@
                     </Style>
                 </Button.Resources>
             </Button>
-            <DockPanel Margin="1072,9,-76,10">
+            <DockPanel
+                Width="106"
+                Margin="0,7,5,6"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Panel.ZIndex="10000"
+                RenderTransformOrigin="1,0.5">
                 <fa:FontAwesome
                     x:Name="Loader"
-                    Width="20"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
+                    Width="21"
+                    Height="20"
                     Panel.ZIndex="10000"
                     DockPanel.Dock="Left"
                     FontSize="20"
@@ -386,43 +392,55 @@
                     Spin="True"
                     SpinDuration="10"
                     Visibility="{Binding Path=LoaderVisibility}" />
-                <Grid Width="45" DockPanel.Dock="Right">
+                <Grid
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right"
+                    MouseDown="CloseApplication">
+                    <fa:FontAwesome Icon="Close" Style="{StaticResource SmallIconTemplate}" />
                     <Ellipse
-                        x:Name="CloseBtn"
-                        Width="17"
-                        Height="17"
-                        Margin="27,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Fill="#FFFF5252"
-                        MouseDown="CloseApplication" />
+                        Width="26"
+                        Height="26"
+                        Panel.ZIndex="-1"
+                        Fill="#FFFF5252" />
+                </Grid>
+                <Grid
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right"
+                    MouseDown="MinimizeApplication">
+                    <fa:FontAwesome
+                        Margin="-4,2,0,0"
+                        VerticalAlignment="Top"
+                        FontSize="12"
+                        Icon="WindowMinimize"
+                        Style="{StaticResource SmallIconTemplate}" />
                     <Ellipse
-                        x:Name="MinimizeBtn"
-                        Width="17"
-                        Height="17"
-                        Margin="5,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Fill="#FFED6558"
-                        MouseDown="MinimizeApplication" />
+                        Width="26"
+                        Height="26"
+                        Margin="-2,0,2,0"
+                        Panel.ZIndex="-1"
+                        Fill="CornflowerBlue" />
+                </Grid>
+                <Grid DockPanel.Dock="Right" MouseDown="MaximizeApplication">
+                    <fa:FontAwesome
+                        FontSize="10"
+                        Icon="WindowMaximize"
+                        Style="{StaticResource SmallIconTemplate}" />
+                    <Ellipse
+                        Width="26"
+                        Height="26"
+                        Panel.ZIndex="-1"
+                        Fill="LightSeaGreen" />
                 </Grid>
             </DockPanel>
-            <Rectangle
-                Width="648"
-                Height="44"
-                Margin="394,0,0,-5"
-                HorizontalAlignment="Left"
-                Fill="#FF2D3742"
-                MouseDown="MoveWindow"
-                RenderTransformOrigin="1,0.5" />
             <Grid
                 x:Name="Warning"
                 Width="335"
-                Height="20"
-                Margin="694,0,0,0"
+                Height="26"
+                Margin="500,10,0,0"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Visibility="{Binding Path=ErrorMessageVisibility}">
+                VerticalAlignment="Top"
+                Visibility="{Binding Path=ErrorMessageVisibility}"
+                ZIndex="1000">
                 <fa:FontAwesome
                     x:Name="WarningIcon"
                     Margin="6,5,0,0"
@@ -432,15 +450,22 @@
                     Foreground="#FFDE4D4D"
                     Icon="Warning"
                     Style="{StaticResource SortIconTemplate}" />
-                <TextBox
+                <Label
                     x:Name="ErrorMessage"
-                    Margin="24,4,0,-4"
+                    Margin="24,0,0,0"
                     Background="{x:Null}"
                     BorderBrush="{x:Null}"
-                    Foreground="#FFDE4D4D"
-                    IsReadOnly="True"
-                    Text="{Binding Path=ErrorMessage}" />
+                    Content="{Binding Path=ErrorMessage}"
+                    Foreground="#FFDE4D4D" />
             </Grid>
+            <Rectangle
+                Width="739"
+                Height="40"
+                Margin="411,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Fill="#00000000"
+                MouseDown="MoveWindow" />
         </Grid>
         <DockPanel
             x:Name="LeftPanel"
@@ -525,6 +550,7 @@
                         BorderBrush="{x:Null}"
                         ItemsSource="{Binding Path=SortedDirectories}"
                         SelectedIndex="{Binding Path=SelectedDirectory}"
+                        SelectionChanged="DirectoryViewer1_SelectionChanged"
                         Style="{StaticResource DirectoryListTemplate}" />
                 </ScrollViewer>
             </Grid>
@@ -532,11 +558,13 @@
         <DockPanel
             x:Name="RightPanel"
             Margin="401,44,0,0"
+            HorizontalAlignment="Stretch"
             Background="#FF313C47">
             <Grid
                 Height="600"
+                VerticalAlignment="Top"
                 DockPanel.Dock="Bottom"
-                RenderTransformOrigin="1,1">
+                RenderTransformOrigin="0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
@@ -544,12 +572,15 @@
                     x:Name="ImageViewer"
                     Width="723"
                     Margin="0,10,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
                     CanContentScroll="True"
                     PreviewMouseWheel="ImageViewer_OnPreviewMouseDown"
                     Style="{StaticResource ScrollViewerStyle}">
                     <ListView
                         x:Name="ImageViewer1"
-                        Width="Auto"
+                        Width="713"
+                        VerticalAlignment="Top"
                         Background="{x:Null}"
                         BorderBrush="{x:Null}"
                         Foreground="#FFED6558"
@@ -560,23 +591,27 @@
                 Height="75"
                 VerticalAlignment="Top"
                 DockPanel.Dock="Top">
-                <DockPanel>
-                    <Grid DockPanel.Dock="Top">
+                <DockPanel VerticalAlignment="Top">
+                    <DockPanel DockPanel.Dock="Top">
                         <TextBox
                             x:Name="DirectoryName"
                             Width="345"
                             Height="42"
-                            Margin="0,0,387,0"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Left"
                             Background="Transparent"
                             BorderBrush="{x:Null}"
-                            DockPanel.Dock="Top"
+                            DockPanel.Dock="Left"
                             FontSize="35"
                             FontWeight="Bold"
                             Foreground="White"
                             Text="{Binding Path=DirectoryName}" />
-                        <Button Command="{Binding UpdateDirectoryNameCommand}">
+                        <Button
+                            HorizontalAlignment="Left"
+                            Command="{Binding UpdateDirectoryNameCommand}"
+                            DockPanel.Dock="Right">
                             <Button.Template>
                                 <ControlTemplate>
                                     <Grid VerticalAlignment="Center">
@@ -590,7 +625,7 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                    </Grid>
+                    </DockPanel>
                     <Label
                         x:Name="DirectoryPath"
                         Width="Auto"
