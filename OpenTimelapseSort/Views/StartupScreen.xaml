@@ -52,6 +52,7 @@
             <Grid DockPanel.Dock="Bottom">
                 <DockPanel Width="202" HorizontalAlignment="Center">
                     <Button
+                        Click="InvokeTutorialScreen"
                         Content="Tutorial"
                         DockPanel.Dock="Left"
                         Style="{StaticResource ButtonTemplate}">

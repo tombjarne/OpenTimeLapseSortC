@@ -66,3 +66,5 @@ C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcor
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\StartupScreen.baml
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\GeneratedInternalTypeHelper.g.cs
 C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\OpenTimelapseSort.csprojAssemblyReference.cache
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\Tutorial.g.cs
+C:\Users\bjarn\source\repos\OpenTimelapseSort\OpenTimelapseSort\obj\Debug\netcoreapp3.1\Views\Tutorial.baml
