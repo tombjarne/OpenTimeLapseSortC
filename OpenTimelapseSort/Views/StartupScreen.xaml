@@ -40,6 +40,7 @@
     </Window.Resources>
 
     <Grid Height="Auto">
+        <Image Opacity="0.2" Source="../Resources/img/opentimelapsesort-startup-freeze.PNG" />
         <MediaElement
             x:Name="BackgroundVideo"
             IsMuted="True"
