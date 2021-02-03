@@ -379,6 +379,7 @@
                     FontSize="20"
                     Foreground="CornflowerBlue"
                     Icon="Cog"
+                    IsEnabled="True"
                     Spin="True"
                     SpinDuration="10"
                     Visibility="{Binding Path=LoaderVisibility}" />

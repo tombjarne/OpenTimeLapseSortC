@@ -178,8 +178,6 @@ namespace OpenTimelapseSort.DataServices
             return _imageDirectories;
         }
 
-        // TODO: consolidate following methods into one generic one
-
         private void CreateRandomDirAsync()
         {
             Debug.WriteLine(Path.GetDirectoryName(_randomDirList[0].Origin));

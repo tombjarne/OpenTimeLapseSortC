@@ -355,16 +355,13 @@ namespace OpenTimelapseSort.ViewModels
         /// <param name="directories"></param>
         private void PushToDirectories(List<SDirectory> directories)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            foreach (var directory in directories)
             {
-                foreach (var directory in directories)
-                {
-                    SortedDirectories.Insert(0, directory);
-                    AddImportIfNotExists(directory.ParentImport);
-                }
+                SortedDirectories.Insert(0, directory);
+                AddImportIfNotExists(directory.ParentImport);
+            }
 
-                LoaderVisibility = Visibility.Hidden;
-            });
+            LoaderVisibility = Visibility.Hidden;
         }
 
         /// <summary>
