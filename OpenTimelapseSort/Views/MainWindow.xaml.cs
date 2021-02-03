@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,10 +16,10 @@ namespace OpenTimelapseSort.Views
 
         public MainWindow()
         {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
             InvokeStartupScreen();
             InitializeComponent();
+
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             _fileTargetDialog = new CommonOpenFileDialog
             {
@@ -40,7 +41,7 @@ namespace OpenTimelapseSort.Views
         private static void InvokeStartupScreen()
         {
             var startupScreen = new StartupScreen();
-            startupScreen.Show();
+                startupScreen.Show();
         }
 
         // handles invocation of preferences window

@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace OpenTimelapseSort.Views
 {
@@ -9,12 +13,16 @@ namespace OpenTimelapseSort.Views
     {
         public StartupScreen()
         {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            Topmost = true;
             InitializeComponent();
+            StartupActions();
         }
 
-
+        private void StartupActions()
+        {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            Topmost = true;
+            //BackgroundVideo.Play();
+        }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {

@@ -8,6 +8,7 @@
     Width="744"
     Height="430"
     AllowsTransparency="True"
+    Background="#FF2D3742"
     FontFamily="Montserrat"
     WindowStyle="None"
     mc:Ignorable="d">
@@ -17,6 +18,7 @@
             <Setter Property="Width" Value="95" />
             <Setter Property="Height" Value="40" />
             <Setter Property="Padding" Value="10,0,10,0" />
+            <Setter Property="Margin" Value="10,0,10,0" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Background" Value="White" />
@@ -24,38 +26,55 @@
             <Setter Property="BorderBrush" Value="{x:Null}" />
         </Style>
 
+        <Style x:Key="ButtonTemplateAlternative" TargetType="Button">
+            <Setter Property="Width" Value="95" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Padding" Value="10,0,10,0" />
+            <Setter Property="Margin" Value="10,0,10,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="CornflowerBlue" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+        </Style>
     </Window.Resources>
-    <Window.Background>
-        <ImageBrush ImageSource="/Views/opentimelapsesort-startup-image.jpg" />
-    </Window.Background>
 
-    <Grid Height="Auto" Margin="0,35,0,0">
-        <DockPanel>
-            <Grid DockPanel.Dock="Top">
-                <Label
-                    Margin="0,135,0,0"
-                    Padding="20,0,20,0"
+    <Grid Height="Auto">
+        <MediaElement
+            x:Name="BackgroundVideo"
+            IsMuted="True"
+            LoadedBehavior="Play"
+            Opacity="0.2"
+            Source="Resources/vid/opentimelapsesort-startup.mp4" />
+        <Grid DockPanel.Dock="Top">
+            <Label
+                Margin="0,135,0,0"
+                Padding="20,0,20,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Top"
+                Content="OpenTimelapseSort"
+                DockPanel.Dock="Top"
+                FontSize="48"
+                FontWeight="UltraBlack"
+                Foreground="White">
+                <Label.Background>
+                    <ImageBrush />
+                </Label.Background>
+            </Label>
+        </Grid>
+        <Grid DockPanel.Dock="Bottom">
+            <DockPanel Height="260">
+                <DockPanel
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    HorizontalContentAlignment="Left"
-                    VerticalContentAlignment="Top"
-                    Content="OpenTimelapseSort"
-                    DockPanel.Dock="Top"
-                    FontSize="48"
-                    FontWeight="UltraBlack"
-                    Foreground="White">
-                    <Label.Background>
-                        <ImageBrush />
-                    </Label.Background>
-                </Label>
-            </Grid>
-            <Grid DockPanel.Dock="Bottom">
-                <DockPanel Width="202" HorizontalAlignment="Center">
+                    VerticalAlignment="Bottom"
+                    DockPanel.Dock="Top">
                     <Button
                         Click="InvokeTutorialScreen"
                         Content="Tutorial"
                         DockPanel.Dock="Left"
-                        Style="{StaticResource ButtonTemplate}">
+                        Style="{StaticResource ButtonTemplateAlternative}">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5" />
@@ -74,7 +93,7 @@
                         </Button.Resources>
                     </Button>
                 </DockPanel>
-            </Grid>
-        </DockPanel>
+            </DockPanel>
+        </Grid>
     </Grid>
 </Window>

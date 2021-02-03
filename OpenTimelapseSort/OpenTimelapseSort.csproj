@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Views\opentimelapsesort-startup-image.jpg" />
+    <None Remove="Resources\img\opentimelapsesort-startup-image.jpg" />
+    <None Remove="Resources\vid\opentimelapsesort-startup.mp4" />
+    <None Remove="Resources\vid\opentimelapsesort-startup.wmv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +27,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Views\opentimelapsesort-startup-image.jpg" />
+    <Content Include="Resources\img\opentimelapsesort-startup-image.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vid\opentimelapsesort-startup.mp4">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vid\opentimelapsesort-startup.wmv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
