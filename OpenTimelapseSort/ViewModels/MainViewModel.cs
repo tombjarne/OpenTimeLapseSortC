@@ -491,16 +491,22 @@ namespace OpenTimelapseSort.ViewModels
         /// <returns></returns>
         public async Task DeleteImageDirectory(SDirectory directory)
         {
-            if (_directoryDetailService.Delete(directory))
+            try
             {
-                await _dbService.UpdateImportAfterRemovalAsync(directory.Id);
+                if (_directoryDetailService.Delete(directory))
+                {
+                    await _dbService.UpdateImportAfterRemovalAsync(directory.Id);
 
-                EmptyCurrentSession(directory);
-                HandleError("Directory was deleted successfully.");
-            }
-            else
+                    EmptyCurrentSession(directory);
+                    HandleError("Directory was deleted successfully.");
+                }
+                else
+                {
+                    HandleError("Directory could not be deleted.");
+                }
+            } catch
             {
-                HandleError("Directory could not be deleted.");
+                HandleError("Something went wrong. Please check your target.");
             }
         }
 

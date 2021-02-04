@@ -99,10 +99,21 @@ namespace OpenTimelapseSort.Views
         private void InvokeTargetChooser(object sender, RoutedEventArgs e)
         {
             var importTargetPath = "";
+            ImportPopup.IsOpen = false;
+
             // TODO: need to replace with newer filedialog! Fails when canceled before
             if (_fileTargetDialog.ShowDialog() == CommonFileDialogResult.Ok)
-                if (SelectionMatchesRequirements(_fileTargetDialog))
+            {
+                if(SelectionMatchesRequirements(_fileTargetDialog))
+                {
                     importTargetPath = _fileTargetDialog.FileName;
+                    ImportPopup.IsOpen = true;
+                }
+            }
+            else
+            {
+                ImportPopup.IsOpen = true;
+            }
 
             ((MainViewModel) DataContext).SetImportTarget(importTargetPath);
         }
@@ -114,9 +125,21 @@ namespace OpenTimelapseSort.Views
         private void InvokeOriginChooser(object sender, RoutedEventArgs e)
         {
             var importOriginPath = "";
+            ImportPopup.IsOpen = false;
+
             if (_fileOriginDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
                 if (SelectionMatchesRequirements(_fileOriginDialog))
+                {
                     importOriginPath = _fileOriginDialog.FileName;
+                    ImportPopup.IsOpen = true;
+                }
+            }
+            else
+            {
+                ImportPopup.IsOpen = true;
+            }
+
 
             ((MainViewModel) DataContext).SetImportOrigin(importOriginPath);
         }

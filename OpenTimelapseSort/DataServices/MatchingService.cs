@@ -78,14 +78,13 @@ namespace OpenTimelapseSort.DataServices
 
         private List<SDirectory> SortImagesAuto(List<SImage> imageList)
         {
-            for (var i = 0; i < imageList.Count - 1; i++)
+            for (var i = 0; i < imageList.Count; i++)
             {
-                Debug.WriteLine("Image " + i);
-
-                if (WithinSameShot(imageList[i], imageList[i + 1]) &&
-                    BelongToEachOther(imageList[i], imageList[i + 1]))
+                var lastItem = i < imageList.Count - 1 ? imageList[i + 1] : imageList[i];
+                if (WithinSameShot(imageList[i], lastItem) &&
+                    BelongToEachOther(imageList[i], lastItem))
                 {
-                    _dirList.Add(imageList[i]);
+                    _dirList.Add(imageList[i - 1]);
                 }
                 else
                 {
@@ -97,7 +96,7 @@ namespace OpenTimelapseSort.DataServices
                     }
                     else
                     {
-                        _randomDirList.Add(imageList[i]);
+                        _randomDirList.Add(imageList[i - 1]);
                     }
                 }
                 Debug.WriteLine(_imageDirectories);
@@ -147,14 +146,15 @@ namespace OpenTimelapseSort.DataServices
         public List<SDirectory> SortImages(List<SImage> imageList)
         {
             Debug.WriteLine("SortImages ");
-            for (var i = 1; i < imageList.Count - 1; i++)
+            for (var i = 1; i < imageList.Count; i++)
             {
+                
                 var preD = imageList[i].FileTime - imageList[i - 1].FileTime;
-                var curD = imageList[i + 1].FileTime - imageList[i].FileTime;
+                var curD = i < imageList.Count - 1 ? imageList[i + 1].FileTime - imageList[i].FileTime : preD;
 
                 if (WithinSameSequence(curD, preD))
                 {
-                    _dirList.Add(imageList[i]);
+                    _dirList.Add(imageList[i - 1]);
                 }
                 else
                 {
@@ -166,7 +166,7 @@ namespace OpenTimelapseSort.DataServices
                     }
                     else
                     {
-                        _randomDirList.Add(imageList[i]);
+                        _randomDirList.Add(imageList[i - 1]);
                     }
                 }
                 Debug.WriteLine(_imageDirectories);
