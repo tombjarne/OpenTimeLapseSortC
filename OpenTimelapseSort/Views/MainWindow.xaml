@@ -541,7 +541,6 @@
                         BorderBrush="{x:Null}"
                         ItemsSource="{Binding Path=SortedDirectories}"
                         SelectedIndex="{Binding Path=SelectedDirectory}"
-                        SelectionChanged="DirectoryViewer1_SelectionChanged"
                         Style="{StaticResource DirectoryListTemplate}" />
                 </ScrollViewer>
             </Grid>
@@ -686,6 +685,7 @@
                             <Grid>
                                 <DockPanel Height="35" HorizontalAlignment="Center">
                                     <Button
+                                        x:Name="TargetChooser"
                                         Width="95"
                                         Padding="10,0,10,0"
                                         HorizontalAlignment="Left"
@@ -704,6 +704,7 @@
                                         </Button.Resources>
                                     </Button>
                                     <Button
+                                        x:Name="OriginChooser"
                                         Width="95"
                                         Padding="10,0,10,0"
                                         HorizontalAlignment="Left"

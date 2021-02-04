@@ -78,7 +78,7 @@ namespace OpenTimelapseSort.DataServices
 
         private List<SDirectory> SortImagesAuto(List<SImage> imageList)
         {
-            for (var i = 0; i < imageList.Count; i++)
+            for (var i = 1; i < imageList.Count; i++)
             {
                 var lastItem = i < imageList.Count - 1 ? imageList[i + 1] : imageList[i];
                 if (WithinSameShot(imageList[i], lastItem) &&

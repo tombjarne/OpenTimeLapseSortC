@@ -423,9 +423,10 @@ namespace OpenTimelapseSort.ViewModels
 
                     await _fileCopyService.CopyFiles(_currentDirectories, _mainDirectoryPath);
                 }
-                catch
+                catch (Exception e)
                 {
                     HandleError("Could not match and update images.");
+                    Debug.WriteLine(e.InnerException);
                 }
 
                 LoaderVisibility = Visibility.Hidden;

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -41,7 +40,7 @@ namespace OpenTimelapseSort.Views
         private static void InvokeStartupScreen()
         {
             var startupScreen = new StartupScreen();
-                startupScreen.Show();
+            startupScreen.Show();
         }
 
         // handles invocation of preferences window
@@ -92,6 +91,8 @@ namespace OpenTimelapseSort.Views
             e.Handled = true;
         }
 
+        // TODO: simplify!
+
         /// <summary>
         ///     InvokeTargetChooser()
         /// </summary>
@@ -104,17 +105,15 @@ namespace OpenTimelapseSort.Views
             // TODO: need to replace with newer filedialog! Fails when canceled before
             if (_fileTargetDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                if(SelectionMatchesRequirements(_fileTargetDialog))
+                if (SelectionMatchesRequirements(_fileTargetDialog))
                 {
                     importTargetPath = _fileTargetDialog.FileName;
                     ImportPopup.IsOpen = true;
                 }
             }
             else
-            {
                 ImportPopup.IsOpen = true;
-            }
-
+            
             ((MainViewModel) DataContext).SetImportTarget(importTargetPath);
         }
 
@@ -136,10 +135,7 @@ namespace OpenTimelapseSort.Views
                 }
             }
             else
-            {
                 ImportPopup.IsOpen = true;
-            }
-
 
             ((MainViewModel) DataContext).SetImportOrigin(importOriginPath);
         }
@@ -156,11 +152,6 @@ namespace OpenTimelapseSort.Views
             return fileDialog.FileName != "Default" &&
                    !fileDialog.FileName.Contains("Windows") &&
                    Directory.Exists(fileDialog.FileName);
-        }
-
-        private void DirectoryViewer1_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }
