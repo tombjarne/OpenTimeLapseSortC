@@ -409,19 +409,17 @@ namespace OpenTimelapseSort.ViewModels
 
                     try
                     {
+                        var importExists = _imports.Any();
                         var currentList = _ = _matching.MatchImages(_images);
                         foreach (var directory in currentList)
                         {
                             _currentDirectories.Add(directory);
                             _directories.Add(directory);
-                            try
+
+                            if (importExists)
                             {
                                 var import = _imports.Single(i => i.Id == directory.ImportId);
                                 import.Directories.Add(directory);
-                            }
-                            catch
-                            {
-                                continue;
                             }
                         }
 

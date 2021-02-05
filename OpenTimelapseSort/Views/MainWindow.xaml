@@ -18,6 +18,7 @@
     WindowStyle="None"
     mc:Ignorable="d">
 
+    <!--  Styles & Templates  -->
     <Window.Resources>
         <!--  Scrollbar Thumbs  -->
         <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
@@ -32,7 +33,7 @@
                                 VerticalAlignment="Stretch"
                                 Fill="Transparent" />
                             <Border
-                                x:Name="Rectangle1"
+                                x:Name="ScrollBar1"
                                 Width="Auto"
                                 Height="Auto"
                                 HorizontalAlignment="Stretch"
@@ -42,8 +43,8 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="Tag" Value="Horizontal">
-                                <Setter TargetName="Rectangle1" Property="Width" Value="Auto" />
-                                <Setter TargetName="Rectangle1" Property="Height" Value="7" />
+                                <Setter TargetName="ScrollBar1" Property="Width" Value="Auto" />
+                                <Setter TargetName="ScrollBar1" Property="Height" Value="7" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -94,26 +95,7 @@
                             </Track>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
-                                <Setter TargetName="Thumb" Property="Background" Value="{DynamicResource ButtonSelectBrush}" />
-                            </Trigger>
-                            <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
-                                <Setter TargetName="Thumb" Property="Background" Value="{DynamicResource DarkBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed" />
-                            </Trigger>
                             <Trigger Property="Orientation" Value="Horizontal">
-                                <Setter TargetName="GridRoot" Property="LayoutTransform">
-                                    <Setter.Value>
-                                        <RotateTransform Angle="-90" />
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter TargetName="PART_Track" Property="LayoutTransform">
-                                    <Setter.Value>
-                                        <RotateTransform Angle="-90" />
-                                    </Setter.Value>
-                                </Setter>
                                 <Setter Property="Width" Value="Auto" />
                                 <Setter Property="Height" Value="8" />
                                 <Setter TargetName="Thumb" Property="Tag" Value="Horizontal" />
@@ -137,6 +119,14 @@
 
         <Style x:Key="DirectoryListWidth" TargetType="Grid">
             <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}, Path=ActualWidth}" />
+        </Style>
+
+        <Style x:Key="RightPanelTemplate" TargetType="DockPanel">
+            <Setter Property="Height" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=ActualHeight}" />
+            <Setter Property="Margin" Value="400,42,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Background" Value="#FF313C47" />
         </Style>
 
         <Style x:Key="SmallIconTemplate" TargetType="fa:FontAwesome">
@@ -177,6 +167,7 @@
 
         <Style x:Key="PanelTemplate" TargetType="{x:Type StackPanel}">
             <Setter Property="Background" Value="#FF34404D" />
+            <Setter Property="Margin" Value="0,0,-25,0" />
             <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth}" />
         </Style>
 
@@ -530,11 +521,11 @@
                 <ScrollViewer
                     x:Name="DirectoryViewer"
                     Margin="0,28,0,0"
-                    CanContentScroll="True"
                     PreviewMouseWheel="DirectoryViewer_OnPreviewMouseDown"
                     Style="{StaticResource ScrollViewerStyle}">
                     <ListView
                         x:Name="DirectoryViewer1"
+                        Width="390"
                         Background="#FF2D3742"
                         BorderBrush="{x:Null}"
                         ItemsSource="{Binding Path=SortedDirectories}"
@@ -544,87 +535,76 @@
         </DockPanel>
         <DockPanel
             x:Name="RightPanel"
-            Margin="401,44,0,0"
-            HorizontalAlignment="Stretch"
-            Background="#FF313C47">
+            VerticalAlignment="Stretch"
+            Style="{StaticResource RightPanelTemplate}">
             <Grid
-                Height="600"
+                Height="75"
                 VerticalAlignment="Top"
-                DockPanel.Dock="Bottom"
-                RenderTransformOrigin="0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" />
-                </Grid.ColumnDefinitions>
-                <Grid
-                    Height="75"
-                    VerticalAlignment="Top"
-                    DockPanel.Dock="Top">
-                    <DockPanel VerticalAlignment="Top">
-                        <DockPanel DockPanel.Dock="Top">
-                            <TextBox
-                                x:Name="DirectoryName"
-                                Width="345"
-                                Height="42"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                HorizontalContentAlignment="Left"
-                                Background="Transparent"
-                                BorderBrush="{x:Null}"
-                                DockPanel.Dock="Left"
-                                FontSize="35"
-                                FontWeight="Bold"
-                                Foreground="White"
-                                Text="{Binding Path=DirectoryName}" />
-                            <Button
-                                HorizontalAlignment="Left"
-                                Command="{Binding UpdateDirectoryNameCommand}"
-                                DockPanel.Dock="Right">
-                                <Button.Template>
-                                    <ControlTemplate>
-                                        <Grid VerticalAlignment="Center">
-                                            <fa:FontAwesome Icon="Pencil" Style="{StaticResource SmallIconTemplate}" />
-                                            <Ellipse
-                                                Width="26"
-                                                Height="26"
-                                                Panel.ZIndex="-1"
-                                                Fill="CornflowerBlue" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-                        </DockPanel>
-                        <Label
-                            x:Name="DirectoryPath"
-                            Width="Auto"
+                DockPanel.Dock="Top">
+                <DockPanel VerticalAlignment="Top">
+                    <DockPanel VerticalAlignment="Stretch" DockPanel.Dock="Top">
+                        <TextBox
+                            x:Name="DirectoryName"
+                            Width="345"
+                            Height="42"
                             HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
                             HorizontalContentAlignment="Left"
-                            VerticalContentAlignment="Top"
-                            Content="{Binding Path=DirectoryPath}"
-                            DockPanel.Dock="Bottom"
-                            FontSize="14px"
+                            Background="Transparent"
+                            BorderBrush="{x:Null}"
+                            DockPanel.Dock="Left"
+                            FontSize="35"
                             FontWeight="Bold"
-                            Foreground="#FFFF8383" />
+                            Foreground="White"
+                            Text="{Binding Path=DirectoryName}" />
+                        <Button
+                            HorizontalAlignment="Left"
+                            Command="{Binding UpdateDirectoryNameCommand}"
+                            DockPanel.Dock="Right">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Grid VerticalAlignment="Center">
+                                        <fa:FontAwesome Icon="Pencil" Style="{StaticResource SmallIconTemplate}" />
+                                        <Ellipse
+                                            Width="26"
+                                            Height="26"
+                                            Panel.ZIndex="-1"
+                                            Fill="CornflowerBlue" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                     </DockPanel>
-                </Grid>
-                <ScrollViewer
-                    x:Name="ImageViewer"
-                    Width="723"
-                    Margin="0,10,0,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Stretch"
-                    CanContentScroll="True"
-                    PreviewMouseWheel="ImageViewer_OnPreviewMouseDown"
-                    Style="{StaticResource ScrollViewerStyle}">
-                    <ListView
-                        x:Name="ImageViewer1"
-                        Width="713"
-                        VerticalAlignment="Top"
-                        Background="{x:Null}"
-                        BorderBrush="{x:Null}"
-                        Foreground="#FFED6558"
-                        ItemsSource="{Binding SelectedImages}" />
-                </ScrollViewer>
+                    <Label
+                        x:Name="DirectoryPath"
+                        Width="Auto"
+                        HorizontalAlignment="Left"
+                        HorizontalContentAlignment="Left"
+                        VerticalContentAlignment="Top"
+                        Content="{Binding Path=DirectoryPath}"
+                        DockPanel.Dock="Bottom"
+                        FontSize="14px"
+                        FontWeight="Bold"
+                        Foreground="#FFFF8383" />
+                </DockPanel>
             </Grid>
+            <ScrollViewer
+                x:Name="ImageViewer"
+                Width="Auto"
+                Margin="0,80,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                CanContentScroll="True"
+                PreviewMouseWheel="ImageViewer_OnPreviewMouseDown"
+                Style="{StaticResource ScrollViewerStyle}">
+                <ListView
+                    x:Name="ImageViewer1"
+                    VerticalAlignment="Stretch"
+                    Background="{x:Null}"
+                    BorderBrush="{x:Null}"
+                    Foreground="#FFED6558"
+                    ItemsSource="{Binding SelectedImages}" />
+            </ScrollViewer>
         </DockPanel>
         <!--  Popup Screen Elements  -->
         <Popup
