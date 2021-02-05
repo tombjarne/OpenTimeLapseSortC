@@ -20,6 +20,7 @@ namespace OpenTimelapseSort.Contexts
             modelBuilder.Entity<SDirectory>().ToTable("ImageDirectory");
             modelBuilder.Entity<SImage>().ToTable("Image");
 
+        
             modelBuilder.Entity<SImport>(entity =>
             {
                 entity.Property(e => e.Id)
@@ -73,7 +74,6 @@ namespace OpenTimelapseSort.Contexts
                     .WithMany(directory => directory.ImageList)
                     .HasForeignKey(image => image.DirectoryId)
                     .HasConstraintName("FK_Directory_Identifier");
-
             });
         }
     }

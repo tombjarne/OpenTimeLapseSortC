@@ -8,7 +8,7 @@ using OpenTimelapseSort.Contexts;
 namespace OpenTimelapseSort.Migrations.Preferences
 {
     [DbContext(typeof(PreferencesContext))]
-    [Migration("20210125110854_InitialMigration")]
+    [Migration("20210205171248_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,9 +33,6 @@ namespace OpenTimelapseSort.Migrations.Preferences
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("UseAutoDetectInterval")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("UseCopy")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

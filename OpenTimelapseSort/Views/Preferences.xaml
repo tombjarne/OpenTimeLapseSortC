@@ -101,15 +101,6 @@
                 FontWeight="Bold"
                 Foreground="#FFFF8383" />
         </Grid>
-        <CheckBox
-            x:Name="Copy"
-            Margin="56,116,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Copy"
-            FontSize="14"
-            Foreground="White"
-            IsChecked="{Binding Path=SelectedPreferences.UseCopy}" />
         <Slider
             x:Name="IntervalSlider"
             Width="245"

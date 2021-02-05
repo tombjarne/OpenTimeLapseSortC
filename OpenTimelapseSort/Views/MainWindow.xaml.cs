@@ -9,7 +9,6 @@ namespace OpenTimelapseSort.Views
 {
     public partial class MainWindow
     {
-        // TODO: fix
         private readonly CommonOpenFileDialog _fileOriginDialog;
         private readonly CommonOpenFileDialog _fileTargetDialog;
 

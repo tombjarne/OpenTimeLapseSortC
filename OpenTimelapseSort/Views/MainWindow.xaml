@@ -64,11 +64,7 @@
                             x:Name="GridRoot"
                             Width="8"
                             Background="{TemplateBinding Background}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="0.00001*" />
-                            </Grid.RowDefinitions>
                             <Track
-                                x:Name="PART_Track"
                                 Grid.Row="0"
                                 Focusable="false"
                                 IsDirectionReversed="true">
@@ -106,6 +102,15 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <Style x:Key="ImportButtonTemplate" TargetType="Button">
+            <Setter Property="Width" Value="95" />
+            <Setter Property="Padding" Value="10,0,10,0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
         </Style>
 
         <Style x:Key="SortIconTemplate" TargetType="fa:FontAwesome">
@@ -591,7 +596,6 @@
             <ScrollViewer
                 x:Name="ImageViewer"
                 Width="Auto"
-                Margin="0,80,0,0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 CanContentScroll="True"
@@ -699,7 +703,6 @@
                                         </Button.Resources>
                                     </Button>
                                 </DockPanel>
-
                             </Grid>
                         </DockPanel>
                     </Grid>
@@ -711,16 +714,11 @@
                     HorizontalAlignment="Center">
                     <Button
                         x:Name="ImportAbortBtn"
-                        Width="95"
-                        Padding="10,0,10,0"
-                        HorizontalAlignment="Left"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
                         Background="#FF3D4A59"
-                        BorderBrush="{x:Null}"
                         Command="{Binding Path=CloseImportConfirmationPopupCommand}"
                         Content="Cancel"
-                        Foreground="#FFFF8383">
+                        Foreground="#FFFF8383"
+                        Style="{StaticResource ImportButtonTemplate}">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5" />
@@ -729,17 +727,12 @@
                     </Button>
                     <Button
                         x:Name="ImportConfirmBtn"
-                        Width="95"
-                        Padding="10,0,10,0"
-                        HorizontalAlignment="Left"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
                         Background="#FFFF8383"
-                        BorderBrush="{x:Null}"
                         Command="{Binding Path=BeginImportCommand}"
                         Content="Confirm"
                         Foreground="#FF3D4A59"
-                        IsEnabled="{Binding Path=ImportConfirmationButtonIsEnabled}">
+                        IsEnabled="{Binding Path=ImportConfirmationButtonIsEnabled}"
+                        Style="{StaticResource ImportButtonTemplate}">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5" />

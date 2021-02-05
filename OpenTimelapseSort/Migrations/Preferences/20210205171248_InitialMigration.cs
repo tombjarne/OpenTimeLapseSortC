@@ -10,9 +10,8 @@ namespace OpenTimelapseSort.Migrations.Preferences
                 "Preferences",
                 table => new
                 {
-                    Id = table.Column<int>("INTEGER", nullable: false)
+                    Id = table.Column<int>( "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UseCopy = table.Column<bool>("INTEGER", nullable: false),
                     UseAutoDetectInterval = table.Column<bool>("INTEGER", nullable: false),
                     SequenceInterval = table.Column<double>("REAL", nullable: false),
                     SequenceIntervalGenerosity = table.Column<int>("INTEGER", nullable: false),

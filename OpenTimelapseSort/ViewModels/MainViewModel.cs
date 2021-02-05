@@ -1,7 +1,4 @@
-﻿using OpenTimelapseSort.DataServices;
-using OpenTimelapseSort.Models;
-using OpenTimelapseSort.Mvvm;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,6 +9,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Data.Sqlite;
+using OpenTimelapseSort.DataServices;
+using OpenTimelapseSort.Models;
+using OpenTimelapseSort.Mvvm;
 
 namespace OpenTimelapseSort.ViewModels
 {
@@ -322,12 +323,12 @@ namespace OpenTimelapseSort.ViewModels
         ///     Calls <see cref="PushToDirectories" /> to update local observed list
         /// </summary>
         /// <returns></returns>
-        private void StartupActionsAsync()
+        private async void StartupActionsAsync()
         {
             LoaderVisibility = Visibility.Visible;
             HandleError("Fetching database entries...");
 
-            var fetchedDirectories =  _dbService.GetDirectoriesAsync();
+            var fetchedDirectories = await _dbService.GetDirectoriesAsync();
             if (fetchedDirectories.Count != 0)
             {
                 _directories = fetchedDirectories;
@@ -345,9 +346,9 @@ namespace OpenTimelapseSort.ViewModels
         /// <param name="directories"></param>
         private async void PushToDirectories(List<SDirectory> directories)
         {
-            await Application.Current.Dispatcher.InvokeAsync( () =>
+            await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                foreach(var directory in directories)
+                foreach (var directory in directories)
                 {
                     SortedDirectories.Insert(0, directory);
                     AddImportIfNotExists(directory.ParentImport);
@@ -395,7 +396,7 @@ namespace OpenTimelapseSort.ViewModels
         /// <param name="sender"></param>
         private void StartImportAction(object sender)
         {
-            var importTask = Task.Run( async () =>
+            var importTask = Task.Run(async () =>
             {
                 if (Directory.Exists(ImportOriginPath))
                 {
@@ -416,29 +417,33 @@ namespace OpenTimelapseSort.ViewModels
                             _currentDirectories.Add(directory);
                             _directories.Add(directory);
 
-                            if (importExists)
+                            if (!importExists)
                             {
                                 var import = _imports.Single(i => i.Id == directory.ImportId);
                                 import.Directories.Add(directory);
                             }
                         }
 
-                        await _fileCopyService.CopyFiles(_currentDirectories, _mainDirectoryPath);
+                        await _fileCopyService.CopyFiles(_currentDirectories,
+                            _mainDirectoryPath, HandleError);
                     }
-                    catch (Exception e)
+                    catch (FileNotFoundException)
                     {
-                        HandleError("Could not match and update images.");
-                        Debug.WriteLine(e.InnerException);
+                        HandleError("Location unreachable, did you delete something?");
+                    }
+                    catch (OutOfMemoryException)
+                    {
+                        HandleError("Memory exhausted!");
                     }
 
                     LoaderVisibility = Visibility.Hidden;
                 }
                 else
                 {
-                    HandleError("Location unreachable, did you delete something?");
+                    HandleError("The target location is unreachable.");
                 }
             });
-            importTask.ContinueWith( task =>
+            importTask.ContinueWith(task =>
             {
                 PushToDirectories(_currentDirectories);
                 EmptyImportSession();
@@ -453,10 +458,7 @@ namespace OpenTimelapseSort.ViewModels
         private void AddImportIfNotExists(SImport import)
         {
             var match = _imports.Any(i => i.Id == import.Id);
-            if (!match)
-            {
-                _imports.Insert(0, import);
-            }
+            if (!match) _imports.Insert(0, import);
         }
 
         /// <summary>
@@ -510,9 +512,14 @@ namespace OpenTimelapseSort.ViewModels
                 {
                     HandleError("Directory could not be deleted.");
                 }
-            } catch
+            }
+            catch (OutOfMemoryException)
             {
-                HandleError("Something went wrong. Please check your target.");
+                HandleError("Memory exhausted!");
+            }
+            catch (SqliteException)
+            {
+                HandleError("Could not delete entry from database");
             }
         }
 
@@ -534,7 +541,6 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// 
         /// </summary>
         private void EmptyImportSession()
         {
@@ -560,7 +566,7 @@ namespace OpenTimelapseSort.ViewModels
                 if (import.Timestamp == targetDate)
                     foreach (var directory in import.Directories)
                         tempList.Add(directory);
-       
+
             PushToDirectories(tempList);
         }
 
