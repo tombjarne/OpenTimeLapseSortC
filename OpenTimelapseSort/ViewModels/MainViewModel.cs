@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace OpenTimelapseSort.ViewModels
 {
@@ -69,7 +70,7 @@ namespace OpenTimelapseSort.ViewModels
             _showDirectoryLocationCommand = new ActionCommand(ShowDirectoryLocation);
             _closeImportConfirmationPopupCommand = new ActionCommand(CloseImportConfirmationPopup);
 
-            _ = StartupActionsAsync();
+            StartupActionsAsync();
         }
 
         public ICommand InvokeImportCommand => _invokeImportCmd;
@@ -80,16 +81,6 @@ namespace OpenTimelapseSort.ViewModels
         public ICommand DeleteDirectoryCommand => _deleteDirectoryCommand;
         public ICommand ShowDirectoryLocationCommand => _showDirectoryLocationCommand;
         public ICommand CloseImportConfirmationPopupCommand => _closeImportConfirmationPopupCommand;
-
-        public SDirectory SelectedDirectory
-        {
-            get => _selectedDirectory;
-            set
-            {
-                _selectedDirectory = value;
-                OnPropertyChanged("SelectedDirectory");
-            }
-        }
 
         public ObservableCollection<SDirectory> SortedDirectories
         {
@@ -298,7 +289,7 @@ namespace OpenTimelapseSort.ViewModels
             var directory = GetDirectoryFromId(obj.ToString());
 
             SelectedImages.Clear();
-            SelectedDirectory = directory;
+            _selectedDirectory = directory;
             DirectoryName = directory.Name;
             DirectoryPath = directory.Target;
 
@@ -332,12 +323,12 @@ namespace OpenTimelapseSort.ViewModels
         ///     Calls <see cref="PushToDirectories" /> to update local observed list
         /// </summary>
         /// <returns></returns>
-        private async Task StartupActionsAsync()
+        private void StartupActionsAsync()
         {
-            HandleError("Fetching database entries...");
             LoaderVisibility = Visibility.Visible;
+            HandleError("Fetching database entries...");
 
-            var fetchedDirectories = await _dbService.GetDirectoriesAsync();
+            var fetchedDirectories =  _dbService.GetDirectoriesAsync();
             if (fetchedDirectories.Count != 0)
             {
                 _directories = fetchedDirectories;
@@ -353,15 +344,18 @@ namespace OpenTimelapseSort.ViewModels
         ///     Pushes a passed list to the observed Property <see cref="SortedDirectories" />
         /// </summary>
         /// <param name="directories"></param>
-        private void PushToDirectories(List<SDirectory> directories)
+        private async void PushToDirectories(List<SDirectory> directories)
         {
-            foreach (var directory in directories)
+            await Application.Current.Dispatcher.InvokeAsync( () =>
             {
-                SortedDirectories.Insert(0, directory);
-                AddImportIfNotExists(directory.ParentImport);
-            }
+                foreach(var directory in directories)
+                {
+                    SortedDirectories.Add(directory);
+                    AddImportIfNotExists(directory.ParentImport);
+                }
 
-            LoaderVisibility = Visibility.Hidden;
+                LoaderVisibility = Visibility.Hidden;
+            });
         }
 
         /// <summary>
@@ -400,44 +394,58 @@ namespace OpenTimelapseSort.ViewModels
         ///     Sets the visibility of import popups and shows the loader icon
         /// </summary>
         /// <param name="sender"></param>
-        private async void StartImportAction(object sender)
+        private void StartImportAction(object sender)
         {
-            if (Directory.Exists(ImportOriginPath))
+            var importTask = Task.Run( async () =>
             {
-                if (ImportTargetPath != _mainDirectoryPath)
-                    ImportTargetPath = _mainDirectoryPath;
-
-                ImportPopupVisibility = false;
-                LoaderVisibility = Visibility.Visible;
-
-                _currentDirectories.Clear();
-
-                try
+                if (Directory.Exists(ImportOriginPath))
                 {
-                    var currentList = _matching.MatchImages(_images); // make it async
-                    foreach (var directory in currentList)
+                    if (ImportTargetPath != _mainDirectoryPath)
+                        ImportTargetPath = _mainDirectoryPath;
+
+                    ImportPopupVisibility = false;
+                    LoaderVisibility = Visibility.Visible;
+
+                    _currentDirectories.Clear();
+
+                    try
                     {
-                        _currentDirectories.Add(directory);
-                        _directories.Add(directory);
+                        var currentList = _ = _matching.MatchImages(_images);
+                        foreach (var directory in currentList)
+                        {
+                            _currentDirectories.Add(directory);
+                            _directories.Add(directory);
+                            try
+                            {
+                                var import = _imports.Single(i => i.Id == directory.ImportId);
+                                import.Directories.Insert(0, directory);
+                            }
+                            catch
+                            {
+                                continue;
+                            }
+                        }
+
+                        await _fileCopyService.CopyFiles(_currentDirectories, _mainDirectoryPath);
+                    }
+                    catch (Exception e)
+                    {
+                        HandleError("Could not match and update images.");
+                        Debug.WriteLine(e.InnerException);
                     }
 
-                    await _fileCopyService.CopyFiles(_currentDirectories, _mainDirectoryPath);
+                    LoaderVisibility = Visibility.Hidden;
                 }
-                catch (Exception e)
+                else
                 {
-                    HandleError("Could not match and update images.");
-                    Debug.WriteLine(e.InnerException);
+                    HandleError("Location unreachable, did you delete something?");
                 }
-
-                LoaderVisibility = Visibility.Hidden;
-
+            });
+            importTask.ContinueWith( task =>
+            {
                 PushToDirectories(_currentDirectories);
                 EmptyImportSession();
-            }
-            else
-            {
-                HandleError("Location unreachable, did you delete something?");
-            }
+            });
         }
 
         /// <summary>
@@ -458,19 +466,20 @@ namespace OpenTimelapseSort.ViewModels
         ///     SetDirectoryName()
         ///     Calls <see cref="_dbService" /> to update directory
         ///     Updates observable property <see cref="DirectoryName" />
-        ///     Calls <see cref="HandleError" /> if the name could not be updated in <see cref="SelectedDirectory" /> instance
+        ///     Calls <see cref="HandleError" /> if the name could not be updated in <see cref="_selectedDirectory" /> instance
         /// </summary>
         /// <param name="obj"></param>
         public async void SetDirectoryName(object obj)
         {
-            var indexToReplace = SortedDirectories.IndexOf(SelectedDirectory);
-            var directory = _directoryDetailService.ChangeDirectoryName(SelectedDirectory, DirectoryName, HandleError);
-            SelectedDirectory = directory;
+            var indexToReplace = SortedDirectories.IndexOf(_selectedDirectory);
+            var directory = _directoryDetailService
+                .ChangeDirectoryName(_selectedDirectory, DirectoryName, HandleError);
 
-            await _dbService.UpdateDirectoryAsync(SelectedDirectory);
-            DirectoryName = SelectedDirectory.Name;
+            _selectedDirectory = directory;
+            await _dbService.UpdateDirectoryAsync(_selectedDirectory);
+            DirectoryName = _selectedDirectory.Name;
             SortedDirectories.RemoveAt(indexToReplace);
-            SortedDirectories.Insert(indexToReplace, SelectedDirectory);
+            SortedDirectories.Insert(indexToReplace, _selectedDirectory);
         }
 
         /// <summary>
@@ -494,10 +503,9 @@ namespace OpenTimelapseSort.ViewModels
         {
             try
             {
+                await _dbService.UpdateImportAfterRemovalAsync(directory.Id);
                 if (_directoryDetailService.Delete(directory))
                 {
-                    await _dbService.UpdateImportAfterRemovalAsync(directory.Id);
-
                     EmptyCurrentSession(directory);
                     HandleError("Directory was deleted successfully.");
                 }
@@ -555,7 +563,7 @@ namespace OpenTimelapseSort.ViewModels
                 if (import.Timestamp == targetDate)
                     foreach (var directory in import.Directories)
                         tempList.Add(directory);
-
+       
             PushToDirectories(tempList);
         }
 

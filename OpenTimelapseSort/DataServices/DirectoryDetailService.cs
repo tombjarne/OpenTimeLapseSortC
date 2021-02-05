@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualBasic;
+﻿using System;
+using System.Diagnostics;
+using Microsoft.VisualBasic;
 using OpenTimelapseSort.Models;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -8,8 +10,6 @@ namespace OpenTimelapseSort.DataServices
     internal class DirectoryDetailService
     {
         public delegate void ErrorMessage(string errorMessage);
-
-        //TODO: refactor
 
         public bool Delete(SDirectory directory)
         {
@@ -33,8 +33,9 @@ namespace OpenTimelapseSort.DataServices
                 Directory.Delete(Path.GetFullPath(target + @"\" + name));
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                Debug.WriteLine(e.InnerException);
                 return false;
             }
         }

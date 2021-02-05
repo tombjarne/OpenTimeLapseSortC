@@ -16,9 +16,9 @@ namespace OpenTimelapseSort.DataServices
         private readonly ImageProcessingService _imageProcessingService = new ImageProcessingService();
         private readonly List<SDirectory> _imageDirectories = new List<SDirectory>();
 
-        private readonly Preferences _preferences;
-        private readonly int _deviationGenerosity;
-        private readonly int _runs;
+        private Preferences _preferences;
+        private int _deviationGenerosity;
+        private int _runs;
         private int _sequence;
 
         private List<SImage> _dirList;
@@ -26,22 +26,23 @@ namespace OpenTimelapseSort.DataServices
 
         public MatchingService()
         {
-            _preferences = _dbPreferencesService.FetchPreferences();
-            _deviationGenerosity = _preferences.SequenceIntervalGenerosity / 100;
-            _runs = _preferences.SequenceImageCount;
-
             _dirList = new List<SImage>();
             _randomDirList = new List<SImage>();
         }
 
         public List<SDirectory> MatchImages(List<SImage> imageList)
         {
+            _preferences = _dbPreferencesService.FetchPreferences();
+            _deviationGenerosity = _preferences.SequenceIntervalGenerosity / 100;
+            _runs = _preferences.SequenceImageCount;
+
             _dirList = new List<SImage>();
             _randomDirList = new List<SImage>();
             _imageDirectories.Clear();
             _sequence = 0;
 
-            return !_preferences.UseAutoDetectInterval ? SortImagesAuto(imageList) : SortImages(imageList);
+            return !_preferences.UseAutoDetectInterval ? 
+                SortImagesAuto(imageList) : SortImages(imageList);
         }
 
         private bool WithinSameShot(SImage pImage, SImage cImage)
@@ -90,20 +91,17 @@ namespace OpenTimelapseSort.DataServices
                 {
                     if (_dirList.Count >= _runs)
                     {
-                        CreateDirAsync();
+                        _ = CreateDirAsync();
                         _dirList = new List<SImage>();
                         //dirList.Clear();
                     }
-                    else
-                    {
-                        _randomDirList.Add(imageList[i - 1]);
-                    }
+
+                    _randomDirList.Add(imageList[i - 1]);
                 }
-                Debug.WriteLine(_imageDirectories);
             }
 
             HandleLastElement(imageList);
-            CompleteDirectories();
+            _ = CompleteDirectories();
 
             return _imageDirectories;
         }
@@ -118,37 +116,34 @@ namespace OpenTimelapseSort.DataServices
                 _randomDirList.Add(imageList[lastIndex]);
         }
 
-        private void CompleteDirectories()
+        private async Task CompleteDirectories()
         {
             if (_dirList.Count < _runs && _dirList.Count > 0)
             {
                 _randomDirList.AddRange(_dirList);
-                CreateRandomDirAsync();
+                await CreateRandomDirAsync();
                 _randomDirList = new List<SImage>();
                 //randomDirList.Clear();
             }
             else if (_randomDirList.Count > 0)
             {
-                CreateRandomDirAsync();
+                await CreateRandomDirAsync();
                 _randomDirList = new List<SImage>();
                 //randomDirList.Clear();
             }
 
             if (_dirList.Count >= _runs)
             {
-                CreateDirAsync();
+                await CreateDirAsync();
                 _dirList = new List<SImage>();
                 //dirList.Clear();
             }
-            Debug.WriteLine(_imageDirectories);
         }
 
         public List<SDirectory> SortImages(List<SImage> imageList)
         {
-            Debug.WriteLine("SortImages ");
             for (var i = 1; i < imageList.Count; i++)
             {
-                
                 var preD = imageList[i].FileTime - imageList[i - 1].FileTime;
                 var curD = i < imageList.Count - 1 ? imageList[i + 1].FileTime - imageList[i].FileTime : preD;
 
@@ -160,27 +155,22 @@ namespace OpenTimelapseSort.DataServices
                 {
                     if (_dirList.Count >= _runs)
                     {
-                        CreateDirAsync();
+                        _ = CreateDirAsync();
                         _dirList = new List<SImage>();
                         //dirList.Clear();
                     }
-                    else
-                    {
-                        _randomDirList.Add(imageList[i - 1]);
-                    }
+                    _randomDirList.Add(imageList[i - 1]);
                 }
-                Debug.WriteLine(_imageDirectories);
             }
 
             HandleLastElement(imageList);
-            CompleteDirectories();
+            _ = CompleteDirectories();
 
             return _imageDirectories;
         }
 
-        private void CreateRandomDirAsync()
+        private async Task CreateRandomDirAsync()
         {
-            Debug.WriteLine(Path.GetDirectoryName(_randomDirList[0].Origin));
             var name = Path.GetFileName(Path.GetDirectoryName(_randomDirList[0].Origin)) ?? "Default";
             var uniqueIdentifier = Guid.NewGuid().ToString();
             var sanitizedName = name.Length > 15
@@ -199,11 +189,11 @@ namespace OpenTimelapseSort.DataServices
                 ImageList = _randomDirList
             };
 
-            _ = SaveMatch(directory);
+            await SaveMatch(directory);
             _sequence++;
         }
 
-        private void CreateDirAsync()
+        private async Task CreateDirAsync()
         {
             var name = Path.GetFileName(Path.GetDirectoryName(_randomDirList[0].Origin)) ?? "Default";
             var uniqueIdentifier = Guid.NewGuid().ToString();
@@ -223,7 +213,7 @@ namespace OpenTimelapseSort.DataServices
                 ImageList = _dirList
             };
 
-            _ = SaveMatch(directory);
+            await SaveMatch(directory);
             _sequence++;
         }
 
@@ -237,6 +227,7 @@ namespace OpenTimelapseSort.DataServices
                 import = await _dbService.GetImportAsync();
 
                 directory.ImportId = import.Id;
+                directory.ParentImport = import;
 
                 import.Directories = new List<SDirectory>
                 {
@@ -257,13 +248,13 @@ namespace OpenTimelapseSort.DataServices
                 };
 
                 directory.ImportId = import.Id;
+                directory.ParentImport = import;
 
                 import.Directories.Add(directory);
 
                 await _dbService.SaveImportAsync(import);
             }
             _imageDirectories.Insert(0, directory);
-            Debug.WriteLine(import.Directories.Last());
         }
     }
 }

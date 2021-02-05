@@ -39,7 +39,6 @@ namespace OpenTimelapseSort.DataServices
             }
 
             return currentDirectories;
-            //TODO: in mainviewmodel LoaderVisibility = Visibility.Hidden;
         }
     }
 }

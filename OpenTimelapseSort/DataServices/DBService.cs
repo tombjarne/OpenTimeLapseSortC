@@ -78,30 +78,47 @@ namespace OpenTimelapseSort.DataServices
 
         public async Task UpdateImportAfterRemovalAsync(string directoryId)
         {
-            await using var context = new ImportContext();
-
-            var directory = await context.ImageDirectories
-                .SingleAsync(d => d.Id == directoryId);
-
-            var import = await context.Imports
-                .SingleAsync(i => i.Id == directory.ImportId);
-
-            var images = await context.Images
-                .Where(i => i.ParentDirectory.Id == directory.Id)
-                .ToListAsync();
-
-            foreach (var image in images)
+            try
             {
-                directory.ImageList.Remove(image);
-                context.Images.Remove(image);
+                await using var context = new ImportContext();
+
+                var directory = await context.ImageDirectories
+                    .SingleAsync(d => d.Id == directoryId);
+
+                var import = await context.Imports
+                    .SingleAsync(i => i.Id == directory.ImportId);
+
+                var images = await context.Images
+                    .Where(i => i.ParentDirectory.Id == directory.Id)
+                    .ToListAsync();
+
+                foreach (var image in images)
+                {
+                    directory.ImageList.Remove(image);
+                    context.Images.Remove(image);
+                }
+
+                import.Directories.Remove(directory);
+                context.ImageDirectories.Remove(directory);
+                await context.SaveChangesAsync();
+
+                if (ImportIsEmpty(import.Id)) context.Imports.Remove(import);
+
+                await context.SaveChangesAsync();
+            } catch (Exception e)
+            {
+                Debug.WriteLine(e.InnerException);
             }
+        }
 
-            import.Directories.Remove(directory);
-            context.ImageDirectories.Remove(directory);
+        private bool ImportIsEmpty(string importId)
+        {
+            using var database = new ImportContext();
+            var directories = database.ImageDirectories
+                    .Where(d => d.ImportId == importId)
+                    .ToListAsync();
 
-            if (import.Directories.Count == 0) context.Imports.Remove(import);
-
-            await context.SaveChangesAsync();
+            return directories.Result.Count == 0;
         }
 
         public async Task UpdateDirectoryAsync(SDirectory directory)
@@ -123,22 +140,22 @@ namespace OpenTimelapseSort.DataServices
             await database.SaveChangesAsync();
         }
 
-        public async Task<List<SDirectory>> GetDirectoriesAsync()
+        public List<SDirectory> GetDirectoriesAsync()
         {
             try
             {
-                await using var context = new ImportContext();
-                var directories = await context.ImageDirectories
-                    .ToListAsync();
+                using var context = new ImportContext();
+                var directories = context.ImageDirectories
+                    .ToList();
 
                 foreach (var directory in directories)
                 {
-                    directory.ImageList = await context.Images
+                    directory.ImageList = context.Images
                         .Where(i => i.DirectoryId == directory.Id)
-                        .ToListAsync();
+                        .ToList();
 
-                    directory.ParentImport = await context.Imports
-                        .SingleAsync(i => i.Id == directory.ImportId);
+                    directory.ParentImport = context.Imports
+                        .Single(i => i.Id == directory.ImportId);
                 }
 
                 return directories;

@@ -379,7 +379,6 @@
                     FontSize="20"
                     Foreground="CornflowerBlue"
                     Icon="Cog"
-                    IsEnabled="True"
                     Spin="True"
                     SpinDuration="10"
                     Visibility="{Binding Path=LoaderVisibility}" />
@@ -540,7 +539,6 @@
                         Background="#FF2D3742"
                         BorderBrush="{x:Null}"
                         ItemsSource="{Binding Path=SortedDirectories}"
-                        SelectedIndex="{Binding Path=SelectedDirectory}"
                         Style="{StaticResource DirectoryListTemplate}" />
                 </ScrollViewer>
             </Grid>
@@ -558,6 +556,57 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
+                <Grid
+                    Height="75"
+                    VerticalAlignment="Top"
+                    DockPanel.Dock="Top">
+                    <DockPanel VerticalAlignment="Top">
+                        <DockPanel DockPanel.Dock="Top">
+                            <TextBox
+                                x:Name="DirectoryName"
+                                Width="345"
+                                Height="42"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                BorderBrush="{x:Null}"
+                                DockPanel.Dock="Left"
+                                FontSize="35"
+                                FontWeight="Bold"
+                                Foreground="White"
+                                Text="{Binding Path=DirectoryName}" />
+                            <Button
+                                HorizontalAlignment="Left"
+                                Command="{Binding UpdateDirectoryNameCommand}"
+                                DockPanel.Dock="Right">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <Grid VerticalAlignment="Center">
+                                            <fa:FontAwesome Icon="Pencil" Style="{StaticResource SmallIconTemplate}" />
+                                            <Ellipse
+                                                Width="26"
+                                                Height="26"
+                                                Panel.ZIndex="-1"
+                                                Fill="CornflowerBlue" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </DockPanel>
+                        <Label
+                            x:Name="DirectoryPath"
+                            Width="Auto"
+                            HorizontalAlignment="Left"
+                            HorizontalContentAlignment="Left"
+                            VerticalContentAlignment="Top"
+                            Content="{Binding Path=DirectoryPath}"
+                            DockPanel.Dock="Bottom"
+                            FontSize="14px"
+                            FontWeight="Bold"
+                            Foreground="#FFFF8383" />
+                    </DockPanel>
+                </Grid>
                 <ScrollViewer
                     x:Name="ImageViewer"
                     Width="723"
@@ -576,58 +625,6 @@
                         Foreground="#FFED6558"
                         ItemsSource="{Binding SelectedImages}" />
                 </ScrollViewer>
-            </Grid>
-            <Grid
-                Height="75"
-                VerticalAlignment="Top"
-                DockPanel.Dock="Top">
-                <DockPanel VerticalAlignment="Top">
-                    <DockPanel DockPanel.Dock="Top">
-                        <TextBox
-                            x:Name="DirectoryName"
-                            Width="345"
-                            Height="42"
-                            Margin="0,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Left"
-                            Background="Transparent"
-                            BorderBrush="{x:Null}"
-                            DockPanel.Dock="Left"
-                            FontSize="35"
-                            FontWeight="Bold"
-                            Foreground="White"
-                            Text="{Binding Path=DirectoryName}" />
-                        <Button
-                            HorizontalAlignment="Left"
-                            Command="{Binding UpdateDirectoryNameCommand}"
-                            DockPanel.Dock="Right">
-                            <Button.Template>
-                                <ControlTemplate>
-                                    <Grid VerticalAlignment="Center">
-                                        <fa:FontAwesome Icon="Pencil" Style="{StaticResource SmallIconTemplate}" />
-                                        <Ellipse
-                                            Width="26"
-                                            Height="26"
-                                            Panel.ZIndex="-1"
-                                            Fill="CornflowerBlue" />
-                                    </Grid>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-                    </DockPanel>
-                    <Label
-                        x:Name="DirectoryPath"
-                        Width="Auto"
-                        HorizontalAlignment="Left"
-                        HorizontalContentAlignment="Left"
-                        VerticalContentAlignment="Top"
-                        Content="{Binding Path=DirectoryPath}"
-                        DockPanel.Dock="Bottom"
-                        FontSize="14px"
-                        FontWeight="Bold"
-                        Foreground="#FFFF8383" />
-                </DockPanel>
             </Grid>
         </DockPanel>
         <!--  Popup Screen Elements  -->
