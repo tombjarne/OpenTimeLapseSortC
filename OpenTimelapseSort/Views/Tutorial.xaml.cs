@@ -1,9 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
+﻿using System.IO;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Xps.Packaging;
 
@@ -12,7 +8,7 @@ namespace OpenTimelapseSort.Views
     /// <summary>
     /// Interaktionslogik für Tutorial.xaml
     /// </summary>
-    public partial class Tutorial : Window
+    public partial class Tutorial
     {
         public Tutorial()
         {

@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:OpenTimelapseSort.Models"
     xmlns:viewModels="clr-namespace:OpenTimelapseSort.ViewModels"
-    x:Name="window"
     Title="MainWindow"
     MinWidth="1050"
     MinHeight="700"

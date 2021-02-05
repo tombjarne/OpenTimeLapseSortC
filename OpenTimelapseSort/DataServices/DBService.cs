@@ -111,7 +111,7 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-        private bool ImportIsEmpty(string importId)
+        private static bool ImportIsEmpty(string importId)
         {
             using var database = new ImportContext();
             var directories = database.ImageDirectories

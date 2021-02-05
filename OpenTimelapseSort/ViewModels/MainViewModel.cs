@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace OpenTimelapseSort.ViewModels
 {
@@ -273,7 +272,7 @@ namespace OpenTimelapseSort.ViewModels
             var location = directory.Target + @"\" + directory.Name;
             var argument = "/select, \"" + location + "\"";
 
-            if (Directory.Exists((string)location))
+            if (Directory.Exists(location))
                 Process.Start("explorer.exe", argument);
             else
                 HandleError("Could not open in explorer. Invalid path.");
@@ -350,7 +349,7 @@ namespace OpenTimelapseSort.ViewModels
             {
                 foreach(var directory in directories)
                 {
-                    SortedDirectories.Add(directory);
+                    SortedDirectories.Insert(0, directory);
                     AddImportIfNotExists(directory.ParentImport);
                 }
 
@@ -418,7 +417,7 @@ namespace OpenTimelapseSort.ViewModels
                             try
                             {
                                 var import = _imports.Single(i => i.Id == directory.ImportId);
-                                import.Directories.Insert(0, directory);
+                                import.Directories.Add(directory);
                             }
                             catch
                             {
