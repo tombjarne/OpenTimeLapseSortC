@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Data.Sqlite;
+using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.DataServices;
 using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Mvvm;
@@ -52,7 +53,7 @@ namespace OpenTimelapseSort.ViewModels
         private Visibility _loaderIsShowing;
 
         private string _mainDirectoryPath =
-            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\OTS_IMG";
+            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\OTS-IMG";
 
         private SDirectory _selectedDirectory;
         private ObservableCollection<SImage> _selectedImages = new ObservableCollection<SImage>();
@@ -451,12 +452,17 @@ namespace OpenTimelapseSort.ViewModels
         /// <param name="sender"></param>
         private void StartImportAction(object sender)
         {
+            // perform critical actions before starting the task
+            if (ImportTargetPath != _mainDirectoryPath)
+                ImportTargetPath = _mainDirectoryPath;
+
+            if (!Directory.Exists(ImportTargetPath))
+                Directory.CreateDirectory(ImportTargetPath);
+
             var importTask = Task.Run(async () =>
             {
                 if (Directory.Exists(ImportOriginPath))
                 {
-                    if (ImportTargetPath != _mainDirectoryPath)
-                        ImportTargetPath = _mainDirectoryPath;
 
                     ImportPopupVisibility = false;
                     LoaderVisibility = Visibility.Visible;
@@ -465,18 +471,15 @@ namespace OpenTimelapseSort.ViewModels
 
                     try
                     {
-                        var importExists = _imports.Any();
+                        // call to matching service
                         var currentList = _ = _matching.MatchImages(_images);
+                        var import = GetImportFromList(currentList);
+
                         foreach (var directory in currentList)
                         {
                             _currentDirectories.Add(directory);
                             _directories.Add(directory);
-
-                            if (!importExists)
-                            {
-                                var import = _imports.Single(i => i.Id == directory.ImportId);
-                                import.Directories.Add(directory);
-                            }
+                            import.Directories.Add(directory);
                         }
 
                         await _fileCopyService.CopyFiles(_currentDirectories,
@@ -503,6 +506,26 @@ namespace OpenTimelapseSort.ViewModels
                 PushToDirectories(_currentDirectories);
                 EmptyImportSession();
             });
+        }
+
+        /// <summary>
+        /// GetImportFromList()
+        /// returns the current import or creates a new one when the list is empty
+        /// </summary>
+        /// <param name="directories"></param>
+        /// <returns></returns>
+        private SImport GetImportFromList(List<SDirectory> directories)
+        {
+            try
+            {
+                return _imports.Single(i => i.Id == directories[0].ImportId);
+            }
+            catch (Exception)
+            {
+                var import = directories[0].ParentImport;
+                AddImportIfNotExists(import);
+                return import;
+            }
         }
 
         /// <summary>
@@ -558,15 +581,11 @@ namespace OpenTimelapseSort.ViewModels
             try
             {
                 await _dbService.UpdateImportAfterRemovalAsync(directory.Id);
-                if (_directoryDetailService.Delete(directory))
-                {
-                    EmptyCurrentSession(directory);
-                    HandleError("Directory was deleted successfully.");
-                }
-                else
-                {
-                    HandleError("Directory could not be deleted.");
-                }
+                var success = await _directoryDetailService.DeleteAsync(directory, HandleError);
+
+                if (success) HandleError("Directory was deleted successfully.");
+
+                EmptyCurrentSession(directory);
             }
             catch (OutOfMemoryException)
             {
@@ -574,7 +593,7 @@ namespace OpenTimelapseSort.ViewModels
             }
             catch (SqliteException)
             {
-                HandleError("Could not delete entry from database");
+                HandleError("Could not delete entry from database.");
             }
         }
 

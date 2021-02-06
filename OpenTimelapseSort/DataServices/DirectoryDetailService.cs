@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using OpenTimelapseSort.Models;
 
@@ -8,6 +9,8 @@ namespace OpenTimelapseSort.DataServices
 {
     internal class DirectoryDetailService
     {
+        private readonly DbService _dbService = new DbService();
+
         /// <summary>
         ///     ErrorMessage
         ///     holds provided error message and delegates to <see cref="ViewModels.MainViewModel.HandleError" />
@@ -22,7 +25,7 @@ namespace OpenTimelapseSort.DataServices
         /// </summary>
         /// <param name="directory"></param>
         /// <returns></returns>
-        public bool Delete(SDirectory directory)
+        public async Task<bool> DeleteAsync(SDirectory directory, ErrorMessage setErrorMessage)
         {
             var target = directory.Target;
             var imageList = directory.ImageList;
@@ -44,8 +47,15 @@ namespace OpenTimelapseSort.DataServices
                 Directory.Delete(Path.GetFullPath(target + @"\" + name));
                 return true;
             }
+            catch (DirectoryNotFoundException)
+            {
+                // delete directory from database to prevent inconsistency
+                setErrorMessage("References successfully deleted.");
+                return false;
+            }
             catch (Exception)
             {
+                setErrorMessage("Inconsistency detected. Unable to delete.");
                 return false;
             }
         }
@@ -64,6 +74,7 @@ namespace OpenTimelapseSort.DataServices
         {
             var changeWasClean = true;
 
+            // allow only 0-9, a-z, A-Z, -, _
             newName = Regex.Replace(newName, @"[^0-9a-zA-Z!$* \-_]+", "");
             var sanitizedPath = (dir.Target + @"\" + newName).Trim();
 
@@ -88,7 +99,7 @@ namespace OpenTimelapseSort.DataServices
                     dir.Name = newName;
                     setErrorMessage("Name was changed successfully");
                 }
-                catch
+                catch (Exception)
                 {
                     setErrorMessage("Could not rename. File already exists.");
                 }

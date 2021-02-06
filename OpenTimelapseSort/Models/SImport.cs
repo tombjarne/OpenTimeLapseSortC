@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace OpenTimelapseSort.Models
 {
     public class SImport
     {
+        [Key]
         public string Id { get; set; }
         public string Origin { get; set; }
         public string Name { get; set; }

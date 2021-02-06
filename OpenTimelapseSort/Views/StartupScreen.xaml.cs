@@ -17,7 +17,6 @@ namespace OpenTimelapseSort.Views
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Topmost = true;
-            //BackgroundVideo.Play();
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)

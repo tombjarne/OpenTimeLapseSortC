@@ -675,14 +675,6 @@
                             FontSize="28"
                             FontWeight="Bold"
                             Foreground="White" />
-                        <Label
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Top"
-                            Content="{Binding Path=FoundImportImagesCount}"
-                            DockPanel.Dock="Bottom"
-                            Style="{StaticResource HeadlineEssentials}" />
                         <TextBlock
                             x:Name="ImportTarget"
                             Padding="20,0,20,0"
@@ -694,7 +686,7 @@
                     </Grid>
                     <Grid DockPanel.Dock="Bottom">
                         <DockPanel>
-                            <Grid>
+                            <Grid DockPanel.Dock="Top">
                                 <DockPanel Height="35" HorizontalAlignment="Center">
                                     <Button
                                         x:Name="Target"
@@ -722,6 +714,10 @@
                                     </Button>
                                 </DockPanel>
                             </Grid>
+                            <Label
+                                Content="{Binding Path=FoundImportImagesCount}"
+                                DockPanel.Dock="Bottom"
+                                Style="{StaticResource HeadlineEssentials}" />
                         </DockPanel>
                     </Grid>
                 </DockPanel>

@@ -24,7 +24,6 @@ namespace OpenTimelapseSort.DataServices
             return import;
         }
 
-
         /// <summary>
         ///     ImportExistsAsync()
         ///     delegates request to see if a current import exists
@@ -38,7 +37,7 @@ namespace OpenTimelapseSort.DataServices
                 await GetImportAsync();
                 return true;
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
                 return false;
             }
@@ -56,15 +55,13 @@ namespace OpenTimelapseSort.DataServices
             await using var database = new ImportContext();
             try
             {
-                await database.AddAsync(import);
+                await database.Imports.AddAsync(import);
                 await database.SaveChangesAsync();
             }
-            catch
+            catch (Exception)
             {
                 if (await database.Database.EnsureCreatedAsync())
                     await SaveImportAsync(import);
-                else
-                    CreateAndMigrate();
             }
         }
 
@@ -72,7 +69,7 @@ namespace OpenTimelapseSort.DataServices
         ///     CreateAndMigrate()
         ///     runs the corresponding migrations to reset the database
         /// </summary>
-        private static async void CreateAndMigrate()
+        public async void CreateAndMigrate()
         {
             await using var database = new ImportContext();
             await database.Database.MigrateAsync();

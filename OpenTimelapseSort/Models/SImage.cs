@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 
 namespace OpenTimelapseSort.Models
 {
     public class SImage
     {
+        [Key]
         public string Id { get; set; }
         public string DirectoryId { get; set; }
         public string Name { get; set; }

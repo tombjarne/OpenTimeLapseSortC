@@ -8,14 +8,14 @@ namespace OpenTimelapseSort.DataServices
 {
     internal class FileCopyService
     {
+        private readonly DbService _dbService = new DbService();
+
         /// <summary>
         ///     ErrorMessage
         ///     holds provided error message and delegates to <see cref="ViewModels.MainViewModel.HandleError" />
         /// </summary>
         /// <param name="errorMessage"></param>
         public delegate void ErrorMessage(string errorMessage);
-
-        private readonly DbService _dbService = new DbService();
 
         /// <summary>
         ///     CopyFiles()

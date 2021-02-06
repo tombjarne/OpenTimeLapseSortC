@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace OpenTimelapseSort.Models
 {
@@ -12,6 +13,7 @@ namespace OpenTimelapseSort.Models
             Name = name;
             ImageList = new List<SImage>();
         }
+        [Key]
         public string Id { get; set; }
         public string ImportId { get; set; }
         public List<SImage> ImageList { get; set; }
