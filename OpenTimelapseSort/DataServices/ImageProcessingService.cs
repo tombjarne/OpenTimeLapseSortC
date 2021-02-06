@@ -5,11 +5,24 @@ namespace OpenTimelapseSort.DataServices
 {
     internal class ImageProcessingService
     {
+
+        /// <summary>
+        /// ImageToByteArray()
+        /// converts provided <see cref="image"/> into a byte array
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
         public byte[] ImageToByteArray(SImage image)
         {
             return System.IO.File.ReadAllBytes(image.Origin);
         }
 
+        /// <summary>
+        /// SetImageMetaValues()
+        /// collects luminance and color information from <see cref="image"/>
+        /// sets the gained values to the corresponding instance 
+        /// </summary>
+        /// <param name="image"></param>
         public void SetImageMetaValues(SImage image)
         {
             var iBytes = ImageToByteArray(image);

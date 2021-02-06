@@ -1,15 +1,21 @@
 ﻿using System;
-using OpenTimelapseSort.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.DataServices
 {
     internal class FileCopyService
     {
-        private readonly DbService _dbService = new DbService();
+        /// <summary>
+        ///     ErrorMessage
+        ///     holds provided error message and delegates to <see cref="ViewModels.MainViewModel.HandleError" />
+        /// </summary>
+        /// <param name="errorMessage"></param>
         public delegate void ErrorMessage(string errorMessage);
+
+        private readonly DbService _dbService = new DbService();
 
         /// <summary>
         ///     CopyFiles()
@@ -46,9 +52,7 @@ namespace OpenTimelapseSort.DataServices
             {
                 setErrorMessage("Cannot write to this folder.");
                 foreach (var directory in currentDirectories)
-                {
                     await _dbService.UpdateImportAfterRemovalAsync(directory.Id);
-                }
             }
 
             return currentDirectories;

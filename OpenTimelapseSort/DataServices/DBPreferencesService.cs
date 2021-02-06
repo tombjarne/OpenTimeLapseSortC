@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Linq;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.Models;
-using System.Linq;
-using Microsoft.Data.Sqlite;
 
 namespace OpenTimelapseSort.DataServices
 {
     internal class DbPreferencesService
     {
-        public void SavePreferencesToDataBase(Preferences preferences)
+        /// <summary>
+        ///     SavePreferences()
+        ///     saves a provided <see cref="preferences" /> to the database
+        ///     if saving fails it ensures the database is created or resets the database
+        /// </summary>
+        /// <param name="preferences"></param>
+        public void SavePreferences(Preferences preferences)
         {
             try
             {
@@ -26,10 +32,14 @@ namespace OpenTimelapseSort.DataServices
             catch (Exception)
             {
                 CreateAndMigrate();
-                SavePreferencesToDataBase(preferences);
+                SavePreferences(preferences);
             }
         }
 
+        /// <summary>
+        ///     CreateAndMigrate()
+        ///     runs the corresponding migrations to reset the database
+        /// </summary>
         private static async void CreateAndMigrate()
         {
             await using var database = new PreferencesContext();
@@ -37,6 +47,10 @@ namespace OpenTimelapseSort.DataServices
             SeedDatabase();
         }
 
+        /// <summary>
+        ///     SeedDatabase()
+        ///     sets default values as preferences after deletion or migration
+        /// </summary>
         private static void SeedDatabase()
         {
             using var database = new PreferencesContext();
@@ -46,6 +60,11 @@ namespace OpenTimelapseSort.DataServices
             database.SaveChanges();
         }
 
+        /// <summary>
+        ///     DeletePreferences()
+        ///     deletes passed <see cref="preferences" /> from the database
+        /// </summary>
+        /// <param name="preferences"></param>
         public void DeletePreferences(Preferences preferences)
         {
             using var database = new PreferencesContext();
@@ -53,6 +72,11 @@ namespace OpenTimelapseSort.DataServices
             database.SaveChanges();
         }
 
+        /// <summary>
+        ///     FetchPreferences()
+        ///     returns all preferences from the database
+        /// </summary>
+        /// <returns></returns>
         public Preferences FetchPreferences()
         {
             using var database = new PreferencesContext();

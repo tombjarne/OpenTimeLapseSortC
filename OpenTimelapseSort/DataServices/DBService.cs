@@ -1,16 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OpenTimelapseSort.Contexts;
-using OpenTimelapseSort.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using OpenTimelapseSort.Contexts;
+using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.DataServices
 {
     internal class DbService
     {
-
+        /// <summary>
+        ///     GetImportAsync()
+        ///     returns the current import from the database
+        /// </summary>
+        /// <returns></returns>
         public async Task<SImport> GetImportAsync()
         {
             await using var context = new ImportContext();
@@ -20,6 +24,13 @@ namespace OpenTimelapseSort.DataServices
             return import;
         }
 
+
+        /// <summary>
+        ///     ImportExistsAsync()
+        ///     delegates request to see if a current import exists
+        ///     calls <see cref="GetImportAsync" /> and returns true on success, otherwise false is returned
+        /// </summary>
+        /// <returns></returns>
         public async Task<bool> ImportExistsAsync()
         {
             try
@@ -33,6 +44,13 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
+        /// <summary>
+        ///     SaveImportAsync()
+        ///     saves a provided <see cref="import" /> to the database
+        ///     if saving fails it ensures the database is created or resets the database
+        /// </summary>
+        /// <param name="import"></param>
+        /// <returns></returns>
         public async Task SaveImportAsync(SImport import)
         {
             await using var database = new ImportContext();
@@ -50,13 +68,22 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
-
+        /// <summary>
+        ///     CreateAndMigrate()
+        ///     runs the corresponding migrations to reset the database
+        /// </summary>
         private static async void CreateAndMigrate()
         {
             await using var database = new ImportContext();
             await database.Database.MigrateAsync();
         }
 
+        /// <summary>
+        ///     UpdateCurrentImportAsync()
+        ///     updates the values for <see cref="import" /> in the database
+        /// </summary>
+        /// <param name="import"></param>
+        /// <returns></returns>
         public async Task UpdateCurrentImportAsync(SImport import)
         {
             await using var database = new ImportContext();
@@ -75,6 +102,12 @@ namespace OpenTimelapseSort.DataServices
             }
         }
 
+        /// <summary>
+        ///     UpdateImportAfterRemovalAsync()
+        ///     handles changes to the current import after a directory has been deleted
+        /// </summary>
+        /// <param name="directoryId"></param>
+        /// <returns></returns>
         public async Task UpdateImportAfterRemovalAsync(string directoryId)
         {
             await using var context = new ImportContext();
@@ -104,16 +137,28 @@ namespace OpenTimelapseSort.DataServices
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        ///     ImportIsEmpty()
+        ///     checks if the current import is empty or not and returns a corresponding result
+        /// </summary>
+        /// <param name="importId"></param>
+        /// <returns></returns>
         private static bool ImportIsEmpty(string importId)
         {
             using var database = new ImportContext();
             var directories = database.ImageDirectories
-                    .Where(d => d.ImportId == importId)
-                    .ToListAsync();
+                .Where(d => d.ImportId == importId)
+                .ToListAsync();
 
             return directories.Result.Count == 0;
         }
 
+        /// <summary>
+        ///     UpdateDirectoryAsync()
+        ///     updates a provided <see cref="directory" /> and saves it to the database
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <returns></returns>
         public async Task UpdateDirectoryAsync(SDirectory directory)
         {
             await using var database = new ImportContext();
@@ -133,6 +178,11 @@ namespace OpenTimelapseSort.DataServices
             await database.SaveChangesAsync();
         }
 
+        /// <summary>
+        ///     GetDirectoriesAsync()
+        ///     returns all existing directories from the database as a list
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<SDirectory>> GetDirectoriesAsync()
         {
             try

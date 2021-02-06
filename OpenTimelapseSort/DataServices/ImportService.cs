@@ -8,6 +8,11 @@ namespace OpenTimelapseSort.DataServices
 {
     internal class ImportService
     {
+        /// <summary>
+        ///     ErrorMessage
+        ///     holds provided error message and delegates to <see cref="ViewModels.MainViewModel.HandleError" />
+        /// </summary>
+        /// <param name="errorMessage"></param>
         public delegate void ErrorMessage(string errorMessage);
 
         /// <summary>

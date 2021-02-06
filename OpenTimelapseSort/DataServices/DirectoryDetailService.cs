@@ -1,16 +1,27 @@
 ﻿using System;
-using System.Diagnostics;
-using Microsoft.VisualBasic;
-using OpenTimelapseSort.Models;
 using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic;
+using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.DataServices
 {
     internal class DirectoryDetailService
     {
+        /// <summary>
+        ///     ErrorMessage
+        ///     holds provided error message and delegates to <see cref="ViewModels.MainViewModel.HandleError" />
+        /// </summary>
+        /// <param name="errorMessage"></param>
         public delegate void ErrorMessage(string errorMessage);
 
+        /// <summary>
+        ///     Delete()
+        ///     handles deletion of passed <see cref="directory" />
+        ///     returns true if successful, otherwise false
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <returns></returns>
         public bool Delete(SDirectory directory)
         {
             var target = directory.Target;
@@ -33,13 +44,22 @@ namespace OpenTimelapseSort.DataServices
                 Directory.Delete(Path.GetFullPath(target + @"\" + name));
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e.InnerException);
                 return false;
             }
         }
 
+        /// <summary>
+        ///     ChangeDirectoryName()
+        ///     handles name change of provided <see cref="dir" />
+        ///     sanitizes new name in <see cref="newName" />
+        ///     invokes error message via <see cref="setErrorMessage" /> on fail
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="newName"></param>
+        /// <param name="setErrorMessage"></param>
+        /// <returns></returns>
         public SDirectory ChangeDirectoryName(SDirectory dir, string newName, ErrorMessage setErrorMessage)
         {
             var changeWasClean = true;
@@ -62,7 +82,6 @@ namespace OpenTimelapseSort.DataServices
             }
 
             if (changeWasClean)
-            {
                 try
                 {
                     FileSystem.Rename(dir.Target + @"\" + dir.Name, sanitizedPath);
@@ -73,7 +92,6 @@ namespace OpenTimelapseSort.DataServices
                 {
                     setErrorMessage("Could not rename. File already exists.");
                 }
-            }
 
             return dir;
         }

@@ -19,39 +19,11 @@
     mc:Ignorable="d">
 
     <!--  Styles & Templates  -->
+
     <Window.Resources>
-        <!--  Scrollbar Thumbs  -->
-        <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Thumb}">
-                        <Grid x:Name="Grid">
-                            <Rectangle
-                                Width="Auto"
-                                Height="Auto"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Fill="Transparent" />
-                            <Border
-                                x:Name="ScrollBar1"
-                                Width="Auto"
-                                Height="Auto"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="5" />
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Tag" Value="Horizontal">
-                                <Setter TargetName="ScrollBar1" Property="Width" Value="Auto" />
-                                <Setter TargetName="ScrollBar1" Property="Height" Value="7" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <!--  ScrollBars  -->
+
+        <!--  ScrollBars Templates  -->
+
         <Style TargetType="{x:Type ScrollBar}">
             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
             <Setter Property="Foreground" Value="CornflowerBlue" />
@@ -104,6 +76,59 @@
             </Setter>
         </Style>
 
+        <!--  Scrollbar Thumb Templates  -->
+
+        <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid x:Name="Grid">
+                            <Rectangle
+                                Width="Auto"
+                                Height="Auto"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Fill="Transparent" />
+                            <Border
+                                x:Name="ScrollBar1"
+                                Width="Auto"
+                                Height="Auto"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="5" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Tag" Value="Horizontal">
+                                <Setter TargetName="ScrollBar1" Property="Width" Value="Auto" />
+                                <Setter TargetName="ScrollBar1" Property="Height" Value="7" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  Generic Templates  -->
+
+        <Style x:Key="DockPanelTemplate" TargetType="{x:Type DockPanel}">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+
+        <Style x:Key="DirectoryListWidth" TargetType="Grid">
+            <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}, Path=ActualWidth}" />
+        </Style>
+
+        <Style x:Key="RightPanelTemplate" TargetType="DockPanel">
+            <Setter Property="Height" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=ActualHeight}" />
+            <Setter Property="Margin" Value="400,42,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Background" Value="#FF313C47" />
+        </Style>
+
+        <!--  Button & Icons Templates  -->
+
         <Style x:Key="LoaderTemplate" TargetType="fa:FontAwesome">
             <Setter Property="Width" Value="21" />
             <Setter Property="Height" Value="20" />
@@ -125,6 +150,8 @@
             <Setter Property="Background" Value="#FF3D4A59" />
         </Style>
 
+        <!--  Icon & Ellipse Templates  -->
+
         <Style x:Key="SortIconTemplate" TargetType="fa:FontAwesome">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -132,18 +159,6 @@
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Cursor" Value="Hand" />
-        </Style>
-
-        <Style x:Key="DirectoryListWidth" TargetType="Grid">
-            <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}, Path=ActualWidth}" />
-        </Style>
-
-        <Style x:Key="RightPanelTemplate" TargetType="DockPanel">
-            <Setter Property="Height" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=ActualHeight}" />
-            <Setter Property="Margin" Value="400,42,0,0" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="Background" Value="#FF313C47" />
         </Style>
 
         <Style x:Key="SmallIconTemplate" TargetType="fa:FontAwesome">
@@ -156,6 +171,13 @@
             <Setter Property="Padding" Value="2" />
         </Style>
 
+        <Style x:Key="CommonIconTemplate" TargetType="Ellipse">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+        </Style>
+
+        <!--  ScrollViewer Templates  -->
+
         <Style x:Key="ScrollViewerStyle" TargetType="{x:Type ScrollViewer}">
             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
@@ -163,6 +185,25 @@
             <Setter Property="HorizontalContentAlignment" Value="Left" />
             <Setter Property="Width" Value="400" />
         </Style>
+
+        <Style x:Key="PanelTemplate" TargetType="{x:Type StackPanel}">
+            <Setter Property="Background" Value="#FF34404D" />
+            <Setter Property="Margin" Value="0,0,-25,0" />
+            <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth}" />
+        </Style>
+
+        <Style x:Key="DirectoryListTemplate" TargetType="{x:Type ListView}">
+            <Setter Property="Background" Value="#FF34404D" />
+            <Setter Property="BorderBrush" Value="#FF34404D" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="#FFED6558" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ScrollViewer}}, Path=ActualWidth}" />
+        </Style>
+
+        <!--  Label Templates  -->
 
         <Style x:Key="HeadlineTemplate" TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -182,26 +223,13 @@
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
 
-        <Style x:Key="PanelTemplate" TargetType="{x:Type StackPanel}">
-            <Setter Property="Background" Value="#FF34404D" />
-            <Setter Property="Margin" Value="0,0,-25,0" />
-            <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth}" />
+        <Style x:Key="HeadlineEssentials" TargetType="Label">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="14px" />
+            <Setter Property="Foreground" Value="#FFFF8383" />
         </Style>
 
-        <Style x:Key="DockPanelTemplate" TargetType="{x:Type DockPanel}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-        </Style>
-
-        <Style x:Key="DirectoryListTemplate" TargetType="{x:Type ListView}">
-            <Setter Property="Background" Value="#FF34404D" />
-            <Setter Property="BorderBrush" Value="#FF34404D" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Foreground" Value="#FFED6558" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="Height" Value="Auto" />
-            <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ScrollViewer}}, Path=ActualWidth}" />
-        </Style>
+        <!--  SImage Render Template  -->
 
         <DataTemplate DataType="{x:Type models:SImage}">
             <StackPanel Style="{StaticResource PanelTemplate}">
@@ -222,6 +250,7 @@
             </StackPanel>
         </DataTemplate>
 
+        <!--  SDirectory Render Template  -->
         <DataTemplate DataType="{x:Type models:SDirectory}">
             <StackPanel Style="{StaticResource PanelTemplate}">
                 <DockPanel x:Name="DirectoryDockPanel">
@@ -246,10 +275,9 @@
                                                     <Grid Margin="0,0,5,0" DockPanel.Dock="Left">
                                                         <fa:FontAwesome Icon="MinusCircle" Style="{StaticResource SmallIconTemplate}" />
                                                         <Ellipse
-                                                            Width="28"
-                                                            Height="28"
                                                             Panel.ZIndex="-1"
-                                                            Fill="OrangeRed" />
+                                                            Fill="OrangeRed"
+                                                            Style="{StaticResource CommonIconTemplate}" />
                                                     </Grid>
                                                 </ControlTemplate>
                                             </Button.Template>
@@ -263,10 +291,9 @@
                                                     <Grid DockPanel.Dock="Right">
                                                         <fa:FontAwesome Icon="FolderOpen" Style="{StaticResource SmallIconTemplate}" />
                                                         <Ellipse
-                                                            Width="28"
-                                                            Height="28"
                                                             Panel.ZIndex="-1"
-                                                            Fill="CadetBlue" />
+                                                            Fill="CadetBlue"
+                                                            Style="{StaticResource CommonIconTemplate}" />
                                                     </Grid>
                                                 </ControlTemplate>
                                             </Button.Template>
@@ -280,10 +307,9 @@
                                                     <Grid DockPanel.Dock="Right">
                                                         <fa:FontAwesome Icon="FileImageOutline" Style="{StaticResource SmallIconTemplate}" />
                                                         <Ellipse
-                                                            Width="28"
-                                                            Height="28"
                                                             Panel.ZIndex="-1"
-                                                            Fill="CornflowerBlue" />
+                                                            Fill="CornflowerBlue"
+                                                            Style="{StaticResource CommonIconTemplate}" />
                                                     </Grid>
                                                 </ControlTemplate>
                                             </Button.Template>
@@ -303,16 +329,21 @@
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
-    <!--
+
+    <!--  DataContext - Please uncomment it to be able to view XAML Designer  -->
+
     <Window.DataContext>
         <viewModels:MainViewModel />
-    </Window.DataContext>-->
+    </Window.DataContext>
+
+    <!--  MainWindow  -->
 
     <Grid
         x:Name="Pane"
         Width="Auto"
         Height="Auto"
         Background="#FF2D3742">
+        <!--  MenuBar  -->
         <Grid
             x:Name="MenuBar"
             Height="39"
@@ -325,14 +356,10 @@
                         x:Name="ApplicationName"
                         Margin="0,2,0,-2"
                         Padding="20,0,20,0"
-                        HorizontalAlignment="Left"
-                        HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         Content="OpenTimelapseSort"
                         DockPanel.Dock="Left"
-                        FontSize="14px"
-                        FontWeight="Bold"
-                        Foreground="#FFFF8383" />
+                        Style="{StaticResource HeadlineEssentials}" />
                     <Button
                         x:Name="PreferencesBtn"
                         Click="InvokePreferences"
@@ -384,8 +411,6 @@
                         <Label
                             x:Name="ErrorMessage"
                             Margin="24,0,0,0"
-                            Background="{x:Null}"
-                            BorderBrush="{x:Null}"
                             Content="{Binding Path=ErrorMessage}"
                             Foreground="#FFDE4D4D" />
                     </Grid>
@@ -446,6 +471,7 @@
                 </DockPanel>
             </DockPanel>
         </Grid>
+        <!--  Left Panel  -->
         <DockPanel
             x:Name="LeftPanel"
             Margin="0,44,0,0"
@@ -532,6 +558,7 @@
                 </ScrollViewer>
             </Grid>
         </DockPanel>
+        <!--  Right Panel  -->
         <DockPanel
             x:Name="RightPanel"
             VerticalAlignment="Stretch"
@@ -582,9 +609,7 @@
                         VerticalContentAlignment="Top"
                         Content="{Binding Path=DirectoryPath}"
                         DockPanel.Dock="Bottom"
-                        FontSize="14px"
-                        FontWeight="Bold"
-                        Foreground="#FFFF8383" />
+                        Style="{StaticResource HeadlineEssentials}" />
                 </DockPanel>
             </Grid>
             <ScrollViewer
@@ -604,7 +629,10 @@
                     ItemsSource="{Binding SelectedImages}" />
             </ScrollViewer>
         </DockPanel>
+
         <!--  Popup Screen Elements  -->
+
+        <!--  Import Popup  -->
         <Popup
             Name="ImportPopup"
             Width="Auto"
@@ -641,9 +669,7 @@
                             VerticalContentAlignment="Top"
                             Content="{Binding Path=FoundImportImagesCount}"
                             DockPanel.Dock="Bottom"
-                            FontSize="14"
-                            FontWeight="Bold"
-                            Foreground="#FFFF8383" />
+                            Style="{StaticResource HeadlineEssentials}" />
                         <TextBlock
                             x:Name="ImportTarget"
                             Padding="20,0,20,0"
