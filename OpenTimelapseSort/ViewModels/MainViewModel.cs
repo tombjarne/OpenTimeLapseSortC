@@ -541,6 +541,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
+        /// EmptyImportSession()
+        /// resets the most crucial values after an import has finished
         /// </summary>
         private void EmptyImportSession()
         {

@@ -104,6 +104,16 @@
             </Setter>
         </Style>
 
+        <Style x:Key="LoaderTemplate" TargetType="fa:FontAwesome">
+            <Setter Property="Width" Value="21" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Foreground" Value="CornflowerBlue" />
+            <Setter Property="Icon" Value="Cog" />
+            <Setter Property="Spin" Value="True" />
+            <Setter Property="SpinDuration" Value="10" />
+        </Style>
+
         <Style x:Key="ImportButtonTemplate" TargetType="Button">
             <Setter Property="Width" Value="95" />
             <Setter Property="Padding" Value="10,0,10,0" />
@@ -111,6 +121,8 @@
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="Foreground" Value="#FFFF8383" />
+            <Setter Property="Background" Value="#FF3D4A59" />
         </Style>
 
         <Style x:Key="SortIconTemplate" TargetType="fa:FontAwesome">
@@ -291,10 +303,10 @@
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
-
+    <!--
     <Window.DataContext>
         <viewModels:MainViewModel />
-    </Window.DataContext>
+    </Window.DataContext>-->
     <Grid
         x:Name="Pane"
         Height="Auto"
@@ -321,17 +333,11 @@
             <Button
                 x:Name="PreferencesBtn"
                 Grid.RowSpan="4"
-                Width="95"
                 Margin="197,7,0,3"
-                Padding="10,0,10,0"
-                HorizontalAlignment="Left"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Background="#FF3D4A59"
-                BorderBrush="{x:Null}"
                 Click="InvokePreferences"
                 Content="Preferences"
-                Foreground="White">
+                Foreground="White"
+                Style="{StaticResource ImportButtonTemplate}">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5" />
@@ -341,17 +347,10 @@
             <Button
                 x:Name="ImportBtn"
                 Grid.RowSpan="4"
-                Width="95"
                 Margin="296,7,0,3"
-                Padding="10,0,10,0"
-                HorizontalAlignment="Left"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Background="#FF3D4A59"
-                BorderBrush="{x:Null}"
                 Command="{Binding InvokeImportCommand}"
                 Content="Import new"
-                Foreground="#FFFF8383">
+                Style="{StaticResource ImportButtonTemplate}">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5" />
@@ -367,15 +366,9 @@
                 RenderTransformOrigin="1,0.5">
                 <fa:FontAwesome
                     x:Name="Loader"
-                    Width="21"
-                    Height="20"
                     Panel.ZIndex="10000"
                     DockPanel.Dock="Left"
-                    FontSize="20"
-                    Foreground="CornflowerBlue"
-                    Icon="Cog"
-                    Spin="True"
-                    SpinDuration="10"
+                    Style="{StaticResource LoaderTemplate}"
                     Visibility="{Binding Path=LoaderVisibility}" />
                 <Grid
                     VerticalAlignment="Center"
@@ -640,9 +633,18 @@
                             FontSize="28"
                             FontWeight="Bold"
                             Foreground="White" />
+                        <Label
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Top"
+                            Content="{Binding Path=FoundImportImagesCount}"
+                            DockPanel.Dock="Bottom"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="#FFFF8383" />
                         <TextBlock
                             x:Name="ImportTarget"
-                            Margin="0,2,0,-2"
                             Padding="20,0,20,0"
                             HorizontalAlignment="Left"
                             FontSize="14px"
@@ -652,31 +654,14 @@
                     </Grid>
                     <Grid DockPanel.Dock="Bottom">
                         <DockPanel>
-                            <Label
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Top"
-                                Content="{Binding Path=FoundImportImagesCount}"
-                                DockPanel.Dock="Bottom"
-                                FontSize="14"
-                                FontWeight="Bold"
-                                Foreground="#FFFF8383" />
                             <Grid>
                                 <DockPanel Height="35" HorizontalAlignment="Center">
                                     <Button
-                                        x:Name="TargetChooser"
-                                        Width="95"
-                                        Padding="10,0,10,0"
-                                        HorizontalAlignment="Left"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        Background="#FF3D4A59"
-                                        BorderBrush="{x:Null}"
-                                        Click="InvokeTargetChooser"
+                                        x:Name="Target"
+                                        Click="InvokeChooser"
                                         Content="Set Target"
                                         DockPanel.Dock="Left"
-                                        Foreground="#FFFF8383">
+                                        Style="{StaticResource ImportButtonTemplate}">
                                         <Button.Resources>
                                             <Style TargetType="Border">
                                                 <Setter Property="CornerRadius" Value="5" />
@@ -684,18 +669,11 @@
                                         </Button.Resources>
                                     </Button>
                                     <Button
-                                        x:Name="OriginChooser"
-                                        Width="95"
-                                        Padding="10,0,10,0"
-                                        HorizontalAlignment="Left"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        Background="#FF3D4A59"
-                                        BorderBrush="{x:Null}"
-                                        Click="InvokeOriginChooser"
+                                        x:Name="Origin"
+                                        Click="InvokeChooser"
                                         Content="Set Origin"
                                         DockPanel.Dock="Right"
-                                        Foreground="#FFFF8383">
+                                        Style="{StaticResource ImportButtonTemplate}">
                                         <Button.Resources>
                                             <Style TargetType="Border">
                                                 <Setter Property="CornerRadius" Value="5" />
@@ -714,10 +692,8 @@
                     HorizontalAlignment="Center">
                     <Button
                         x:Name="ImportAbortBtn"
-                        Background="#FF3D4A59"
                         Command="{Binding Path=CloseImportConfirmationPopupCommand}"
                         Content="Cancel"
-                        Foreground="#FFFF8383"
                         Style="{StaticResource ImportButtonTemplate}">
                         <Button.Resources>
                             <Style TargetType="Border">
@@ -727,10 +703,8 @@
                     </Button>
                     <Button
                         x:Name="ImportConfirmBtn"
-                        Background="#FFFF8383"
                         Command="{Binding Path=BeginImportCommand}"
                         Content="Confirm"
-                        Foreground="#FF3D4A59"
                         IsEnabled="{Binding Path=ImportConfirmationButtonIsEnabled}"
                         Style="{StaticResource ImportButtonTemplate}">
                         <Button.Resources>

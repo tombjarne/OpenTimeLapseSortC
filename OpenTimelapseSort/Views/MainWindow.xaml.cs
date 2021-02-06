@@ -36,46 +36,79 @@ namespace OpenTimelapseSort.Views
             };
         }
 
+        /// <summary>
+        ///     InvokeStartupScreen()
+        ///     creates a new instance of <see cref="StartupScreen" /> and opens it
+        /// </summary>
         private static void InvokeStartupScreen()
         {
             var startupScreen = new StartupScreen();
             startupScreen.Show();
         }
 
-        // handles invocation of preferences window
 
+        /// <summary>
+        ///     InvokePreferences()
+        ///     creates a new instance of <see cref="PreferencesView" /> and opens it on button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void InvokePreferences(object sender, RoutedEventArgs e)
         {
             var preferencesWindow = new PreferencesView();
             preferencesWindow.Show();
         }
 
-        // handles closing of application
-
+        /// <summary>
+        ///     CloseApplication()
+        ///     closes the application on button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CloseApplication(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
 
-        // handles minimization of window
-
+        /// <summary>
+        ///     MinimizeApplication()
+        ///     minimizes the application on button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MinimizeApplication(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
         }
 
+        /// <summary>
+        ///     MaximizeApplication
+        ///     maximizes the application on button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MaximizeApplication(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         }
 
-        // handles drag of window
-
+        /// <summary>
+        ///     MoveWindow()
+        ///     handles window movement on mouse drag on top navigation bar
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MoveWindow(object sender, MouseButtonEventArgs e)
         {
             DragMove();
         }
 
+        /// <summary>
+        ///     ImageViewer_OnPreviewMouseDown()
+        ///     handles scrolling of <see cref="ImageViewer" /> scroll view
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ImageViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
             var scv = (ScrollViewer) sender;
@@ -83,6 +116,12 @@ namespace OpenTimelapseSort.Views
             e.Handled = true;
         }
 
+        /// <summary>
+        ///     DirectoryViewer_OnPreviewMouseDown()
+        ///     handles scrolling of <see cref="DirectoryViewer" /> scroll viewer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DirectoryViewer_OnPreviewMouseDown(object sender, MouseWheelEventArgs e)
         {
             var scv = (ScrollViewer) sender;
@@ -90,53 +129,36 @@ namespace OpenTimelapseSort.Views
             e.Handled = true;
         }
 
-        // TODO: simplify!
-
         /// <summary>
-        ///     InvokeTargetChooser()
+        ///     InvokeChooser()
+        ///     invokes a file chooser to determine the import destination
         /// </summary>
         /// <param name="sender"></param>
-        private void InvokeTargetChooser(object sender, RoutedEventArgs e)
+        private void InvokeChooser(object sender, RoutedEventArgs e)
         {
-            var importTargetPath = "";
+            var type = (Button) sender;
+            var dialog = type.Name == "Target" ? _fileTargetDialog : _fileOriginDialog;
+            var path = "";
+
             ImportPopup.IsOpen = false;
 
-            // TODO: need to replace with newer filedialog! Fails when canceled before
-            if (_fileTargetDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                if (SelectionMatchesRequirements(_fileTargetDialog))
+                if (SelectionMatchesRequirements(dialog))
                 {
-                    importTargetPath = _fileTargetDialog.FileName;
+                    path = dialog.FileName;
                     ImportPopup.IsOpen = true;
                 }
             }
             else
-                ImportPopup.IsOpen = true;
-            
-            ((MainViewModel) DataContext).SetImportTarget(importTargetPath);
-        }
-
-        /// <summary>
-        ///     InvokeTargetChooser()
-        /// </summary>
-        /// <param name="sender"></param>
-        private void InvokeOriginChooser(object sender, RoutedEventArgs e)
-        {
-            var importOriginPath = "";
-            ImportPopup.IsOpen = false;
-
-            if (_fileOriginDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                if (SelectionMatchesRequirements(_fileOriginDialog))
-                {
-                    importOriginPath = _fileOriginDialog.FileName;
-                    ImportPopup.IsOpen = true;
-                }
-            }
-            else
                 ImportPopup.IsOpen = true;
+            }
 
-            ((MainViewModel) DataContext).SetImportOrigin(importOriginPath);
+            if (type.Name == "Target")
+                ((MainViewModel) DataContext).SetImportTarget(path);
+            else
+                ((MainViewModel) DataContext).SetImportOrigin(path);
         }
 
         /// <summary>
