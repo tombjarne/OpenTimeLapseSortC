@@ -60,6 +60,18 @@ namespace OpenTimelapseSort.Views
         }
 
         /// <summary>
+        ///     InvokeTutorial()
+        ///     creates a new instance of <see cref="PreferencesView" /> and opens it on button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InvokeTutorial(object sender, RoutedEventArgs e)
+        {
+            var tutorial = new Tutorial();
+            tutorial.Show();
+        }
+
+        /// <summary>
         ///     CloseApplication()
         ///     closes the application on button click
         /// </summary>

@@ -47,7 +47,7 @@
             <DockPanel
                 Width="86"
                 Margin="709,0,0,0"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Panel.ZIndex="10000"
                 RenderTransformOrigin="1,0.5">

@@ -1,10 +1,10 @@
-﻿using OpenTimelapseSort.Contexts;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Input;
+using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.DataServices;
 using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Mvvm;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Windows.Input;
 
 namespace OpenTimelapseSort.ViewModels
 {
@@ -26,8 +26,8 @@ namespace OpenTimelapseSort.ViewModels
         public ICommand DeletePreferencesCommand => _deletePreferencesCommand;
 
         /// <summary>
-        /// SelectedPreferences
-        /// binds current preferences to view and vice versa
+        ///     SelectedPreferences
+        ///     binds current preferences to view and vice versa
         /// </summary>
         public Preferences SelectedPreferences
         {
@@ -40,10 +40,9 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// PropertyChangedEventHandler
-        /// event that is triggered on property change
+        ///     PropertyChangedEventHandler
+        ///     event that is triggered on property change
         /// </summary>
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged(string propertyName)
@@ -52,9 +51,9 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// StartupActions()
-        /// fetches preferences from the database
-        /// calls <see cref="_dbPreferencesService"/> to do so
+        ///     StartupActions()
+        ///     fetches preferences from the database
+        ///     calls <see cref="_dbPreferencesService" /> to do so
         /// </summary>
         private void StartupActions()
         {
@@ -62,9 +61,9 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// SavePreferences()
-        /// handles the saving of preferences set in preferences view
-        /// calls <see cref="_dbPreferencesService"/> to do so
+        ///     SavePreferences()
+        ///     handles the saving of preferences set in preferences view
+        ///     calls <see cref="_dbPreferencesService" /> to do so
         /// </summary>
         /// <param name="obj"></param>
         public void SavePreferences(object obj)
@@ -74,9 +73,9 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// DeletePreferences()
-        /// handles the deletion of the current preferences
-        /// calls <see cref="_dbPreferencesService"/> to do so
+        ///     DeletePreferences()
+        ///     handles the deletion of the current preferences
+        ///     calls <see cref="_dbPreferencesService" /> to do so
         /// </summary>
         /// <param name="obj"></param>
         public void DeletePreferences(object obj)

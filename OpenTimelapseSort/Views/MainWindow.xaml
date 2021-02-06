@@ -385,6 +385,19 @@
                             </Style>
                         </Button.Resources>
                     </Button>
+                    <Button
+                        x:Name="TutorialBtn"
+                        Click="InvokeTutorial"
+                        Content="Tutorial"
+                        DockPanel.Dock="Left"
+                        Foreground="White"
+                        Style="{StaticResource ImportButtonTemplate}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
                 </DockPanel>
                 <DockPanel
                     Background="#FF2D3742"

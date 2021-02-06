@@ -20,39 +20,39 @@ namespace OpenTimelapseSort.ViewModels
     {
         private readonly ActionCommand _beginImportCommand;
         private readonly ActionCommand _closeImportConfirmationPopupCommand;
+
+        private readonly List<SDirectory> _currentDirectories = new List<SDirectory>();
+        private readonly DbService _dbService = new DbService();
         private readonly ActionCommand _deleteDirectoryCommand;
+        private readonly DirectoryDetailService _directoryDetailService = new DirectoryDetailService();
+        private readonly FileCopyService _fileCopyService = new FileCopyService();
+        private readonly ObservableCollection<SImport> _imports = new ObservableCollection<SImport>();
+        private readonly ImportService _importService = new ImportService();
         private readonly ActionCommand _invokeImportCmd;
+
+        private readonly MatchingService _matching = new MatchingService();
         private readonly ActionCommand _resetSortingCommand;
         private readonly ActionCommand _showDirectoryLocationCommand;
         private readonly ActionCommand _showImagesCommand;
         private readonly ActionCommand _updateDirectoryNameCommand;
 
-        private readonly List<SDirectory> _currentDirectories = new List<SDirectory>();
-        private readonly ObservableCollection<SImport> _imports = new ObservableCollection<SImport>();
-
-        private readonly MatchingService _matching = new MatchingService();
-        private readonly DbService _dbService = new DbService();
-        private readonly DirectoryDetailService _directoryDetailService = new DirectoryDetailService();
-        private readonly FileCopyService _fileCopyService = new FileCopyService();
-        private readonly ImportService _importService = new ImportService();
-
         private List<SDirectory> _directories = new List<SDirectory>();
-        private List<SImage> _images = new List<SImage>();
-
-        private string _mainDirectoryPath =
-            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\OTS_IMG";
         private string _directoryName;
         private string _directoryPath;
         private string _errorMessage;
-        private string _foundImportImagesCount;
-        private string _importOriginPath;
-        private string _importTargetPath;
 
         private Visibility _errorMessageIsVisible;
-        private Visibility _loaderIsShowing;
+        private string _foundImportImagesCount;
+        private List<SImage> _images = new List<SImage>();
 
         private bool _importConfirmationButtonIsEnabled;
+        private string _importOriginPath;
         private bool _importPopupIsOpen;
+        private string _importTargetPath;
+        private Visibility _loaderIsShowing;
+
+        private string _mainDirectoryPath =
+            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\OTS_IMG";
 
         private SDirectory _selectedDirectory;
         private ObservableCollection<SImage> _selectedImages = new ObservableCollection<SImage>();
@@ -84,8 +84,8 @@ namespace OpenTimelapseSort.ViewModels
         public ICommand CloseImportConfirmationPopupCommand => _closeImportConfirmationPopupCommand;
 
         /// <summary>
-        /// SortedDirectories
-        /// binds an observable collection of currently selected directories
+        ///     SortedDirectories
+        ///     binds an observable collection of currently selected directories
         /// </summary>
         public ObservableCollection<SDirectory> SortedDirectories
         {
@@ -98,8 +98,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// DirectoryPath
-        /// binds the name of a selected directory to the view and vice versa
+        ///     DirectoryPath
+        ///     binds the name of a selected directory to the view and vice versa
         /// </summary>
         public string DirectoryPath
         {
@@ -112,8 +112,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// SelectedImages
-        /// binds a list of images to the view based on the selected directory
+        ///     SelectedImages
+        ///     binds a list of images to the view based on the selected directory
         /// </summary>
         public ObservableCollection<SImage> SelectedImages
         {
@@ -126,8 +126,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// ErrorMessage
-        /// binds an error message to the view
+        ///     ErrorMessage
+        ///     binds an error message to the view
         /// </summary>
         public string ErrorMessage
         {
@@ -140,8 +140,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// ErrorMessageVisibility
-        /// binds the visibility of <see cref="ErrorMessage"/> to the view
+        ///     ErrorMessageVisibility
+        ///     binds the visibility of <see cref="ErrorMessage" /> to the view
         /// </summary>
         public Visibility ErrorMessageVisibility
         {
@@ -154,8 +154,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// LoaderVisibility
-        /// binds the visibility of the loader icon to the view
+        ///     LoaderVisibility
+        ///     binds the visibility of the loader icon to the view
         /// </summary>
         public Visibility LoaderVisibility
         {
@@ -168,8 +168,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// SelectedSortingDate
-        /// binds the selected sorting date to the view and vice versa
+        ///     SelectedSortingDate
+        ///     binds the selected sorting date to the view and vice versa
         /// </summary>
         public DateTime? SelectedSortingDate
         {
@@ -183,8 +183,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// DirectoryName
-        /// binds the name of a selected directory to the view and vice versa
+        ///     DirectoryName
+        ///     binds the name of a selected directory to the view and vice versa
         /// </summary>
         public string DirectoryName
         {
@@ -197,8 +197,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// ImportPopupVisibility
-        /// binds <see cref="_importPopupIsOpen"/> status to the view and vice versa
+        ///     ImportPopupVisibility
+        ///     binds <see cref="_importPopupIsOpen" /> status to the view and vice versa
         /// </summary>
         public bool ImportPopupVisibility
         {
@@ -211,8 +211,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// ImportTargetPath
-        /// binds the path to a selected directory to the view
+        ///     ImportTargetPath
+        ///     binds the path to a selected directory to the view
         /// </summary>
         public string ImportTargetPath
         {
@@ -225,8 +225,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// ImportConfirmationButtonIsEnabled
-        /// binds the button status to the view
+        ///     ImportConfirmationButtonIsEnabled
+        ///     binds the button status to the view
         /// </summary>
         public bool ImportConfirmationButtonIsEnabled
         {
@@ -239,8 +239,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// FoundImportImagesCount
-        /// binds the number of images found to the view
+        ///     FoundImportImagesCount
+        ///     binds the number of images found to the view
         /// </summary>
         public string FoundImportImagesCount
         {
@@ -253,8 +253,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// ImportOriginPath
-        /// binds the origin path from the directory selected in the origin file dialog
+        ///     ImportOriginPath
+        ///     binds the origin path from the directory selected in the origin file dialog
         /// </summary>
         public string ImportOriginPath
         {
@@ -596,8 +596,8 @@ namespace OpenTimelapseSort.ViewModels
         }
 
         /// <summary>
-        /// EmptyImportSession()
-        /// resets the most crucial values after an import has finished
+        ///     EmptyImportSession()
+        ///     resets the most crucial values after an import has finished
         /// </summary>
         private void EmptyImportSession()
         {
