@@ -307,8 +307,10 @@
     <Window.DataContext>
         <viewModels:MainViewModel />
     </Window.DataContext>-->
+
     <Grid
         x:Name="Pane"
+        Width="Auto"
         Height="Auto"
         Background="#FF2D3742">
         <Grid
@@ -317,133 +319,132 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             Panel.ZIndex="100">
-            <Label
-                x:Name="ApplicationName"
-                Grid.RowSpan="4"
-                Grid.Column="0"
-                Margin="0,2,0,-2"
-                Padding="20,0,20,0"
-                HorizontalAlignment="Left"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Content="OpenTimelapseSort"
-                FontSize="14px"
-                FontWeight="Bold"
-                Foreground="#FFFF8383" />
-            <Button
-                x:Name="PreferencesBtn"
-                Grid.RowSpan="4"
-                Margin="197,7,0,3"
-                Click="InvokePreferences"
-                Content="Preferences"
-                Foreground="White"
-                Style="{StaticResource ImportButtonTemplate}">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5" />
-                    </Style>
-                </Button.Resources>
-            </Button>
-            <Button
-                x:Name="ImportBtn"
-                Grid.RowSpan="4"
-                Margin="296,7,0,3"
-                Command="{Binding InvokeImportCommand}"
-                Content="Import new"
-                Style="{StaticResource ImportButtonTemplate}">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5" />
-                    </Style>
-                </Button.Resources>
-            </Button>
-            <DockPanel
-                Width="106"
-                Margin="0,7,5,6"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Panel.ZIndex="10000"
-                RenderTransformOrigin="1,0.5">
-                <fa:FontAwesome
-                    x:Name="Loader"
-                    Panel.ZIndex="10000"
-                    DockPanel.Dock="Left"
-                    Style="{StaticResource LoaderTemplate}"
-                    Visibility="{Binding Path=LoaderVisibility}" />
-                <Grid
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right"
-                    MouseDown="CloseApplication">
-                    <fa:FontAwesome Icon="Close" Style="{StaticResource SmallIconTemplate}" />
-                    <Ellipse
-                        Width="26"
+            <DockPanel Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=ActualWidth}">
+                <DockPanel DockPanel.Dock="Left">
+                    <Label
+                        x:Name="ApplicationName"
+                        Margin="0,2,0,-2"
+                        Padding="20,0,20,0"
+                        HorizontalAlignment="Left"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="OpenTimelapseSort"
+                        DockPanel.Dock="Left"
+                        FontSize="14px"
+                        FontWeight="Bold"
+                        Foreground="#FFFF8383" />
+                    <Button
+                        x:Name="PreferencesBtn"
+                        Click="InvokePreferences"
+                        Content="Preferences"
+                        DockPanel.Dock="Left"
+                        Foreground="White"
+                        Style="{StaticResource ImportButtonTemplate}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button
+                        x:Name="ImportBtn"
+                        Command="{Binding InvokeImportCommand}"
+                        Content="Import new"
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource ImportButtonTemplate}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </DockPanel>
+                <DockPanel
+                    Background="#FF2D3742"
+                    Cursor="Hand"
+                    PreviewMouseDown="MoveWindow">
+                    <Grid
+                        x:Name="Warning"
+                        Width="335"
                         Height="26"
-                        Panel.ZIndex="-1"
-                        Fill="#FFFF5252" />
-                </Grid>
-                <Grid
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right"
-                    MouseDown="MinimizeApplication">
-                    <fa:FontAwesome
-                        Margin="-4,2,0,0"
+                        Margin="35,10,0,0"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        FontSize="12"
-                        Icon="WindowMinimize"
-                        Style="{StaticResource SmallIconTemplate}" />
-                    <Ellipse
-                        Width="26"
-                        Height="26"
-                        Margin="-2,0,2,0"
-                        Panel.ZIndex="-1"
-                        Fill="CornflowerBlue" />
-                </Grid>
-                <Grid DockPanel.Dock="Right" MouseDown="MaximizeApplication">
+                        Visibility="{Binding Path=ErrorMessageVisibility}"
+                        ZIndex="1000">
+                        <fa:FontAwesome
+                            x:Name="WarningIcon"
+                            Margin="6,5,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            FontSize="16"
+                            Foreground="#FFDE4D4D"
+                            Icon="Warning"
+                            Style="{StaticResource SortIconTemplate}" />
+                        <Label
+                            x:Name="ErrorMessage"
+                            Margin="24,0,0,0"
+                            Background="{x:Null}"
+                            BorderBrush="{x:Null}"
+                            Content="{Binding Path=ErrorMessage}"
+                            Foreground="#FFDE4D4D" />
+                    </Grid>
+                </DockPanel>
+                <DockPanel
+                    Width="106"
+                    Margin="0,7,5,6"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Panel.ZIndex="10000"
+                    DockPanel.Dock="Right"
+                    RenderTransformOrigin="1,0.5">
                     <fa:FontAwesome
-                        FontSize="10"
-                        Icon="WindowMaximize"
-                        Style="{StaticResource SmallIconTemplate}" />
-                    <Ellipse
-                        Width="26"
-                        Height="26"
-                        Panel.ZIndex="-1"
-                        Fill="LightSeaGreen" />
-                </Grid>
+                        x:Name="Loader"
+                        Panel.ZIndex="10000"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource LoaderTemplate}"
+                        Visibility="{Binding Path=LoaderVisibility}" />
+                    <Grid
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Right"
+                        MouseDown="CloseApplication">
+                        <fa:FontAwesome Icon="Close" Style="{StaticResource SmallIconTemplate}" />
+                        <Ellipse
+                            Width="26"
+                            Height="26"
+                            Panel.ZIndex="-1"
+                            Fill="#FFFF5252" />
+                    </Grid>
+                    <Grid
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Right"
+                        MouseDown="MinimizeApplication">
+                        <fa:FontAwesome
+                            Margin="-4,2,0,0"
+                            VerticalAlignment="Top"
+                            FontSize="12"
+                            Icon="WindowMinimize"
+                            Style="{StaticResource SmallIconTemplate}" />
+                        <Ellipse
+                            Width="26"
+                            Height="26"
+                            Margin="-2,0,2,0"
+                            Panel.ZIndex="-1"
+                            Fill="CornflowerBlue" />
+                    </Grid>
+                    <Grid DockPanel.Dock="Right" MouseDown="MaximizeApplication">
+                        <fa:FontAwesome
+                            FontSize="10"
+                            Icon="WindowMaximize"
+                            Style="{StaticResource SmallIconTemplate}" />
+                        <Ellipse
+                            Width="26"
+                            Height="26"
+                            Panel.ZIndex="-1"
+                            Fill="LightSeaGreen" />
+                    </Grid>
+                </DockPanel>
             </DockPanel>
-            <Grid
-                x:Name="Warning"
-                Width="335"
-                Height="26"
-                Margin="500,10,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Visibility="{Binding Path=ErrorMessageVisibility}"
-                ZIndex="1000">
-                <fa:FontAwesome
-                    x:Name="WarningIcon"
-                    Margin="6,5,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    FontSize="16"
-                    Foreground="#FFDE4D4D"
-                    Icon="Warning"
-                    Style="{StaticResource SortIconTemplate}" />
-                <Label
-                    x:Name="ErrorMessage"
-                    Margin="24,0,0,0"
-                    Background="{x:Null}"
-                    BorderBrush="{x:Null}"
-                    Content="{Binding Path=ErrorMessage}"
-                    Foreground="#FFDE4D4D" />
-            </Grid>
-            <Rectangle
-                Width="739"
-                Height="40"
-                Margin="411,0,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Fill="#00000000"
-                MouseDown="MoveWindow" />
         </Grid>
         <DockPanel
             x:Name="LeftPanel"
