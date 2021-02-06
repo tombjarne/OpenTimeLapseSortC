@@ -25,6 +25,10 @@ namespace OpenTimelapseSort.ViewModels
         public ICommand SavePreferencesCommand => _savePreferencesCommand;
         public ICommand DeletePreferencesCommand => _deletePreferencesCommand;
 
+        /// <summary>
+        /// SelectedPreferences
+        /// binds current preferences to view and vice versa
+        /// </summary>
         public Preferences SelectedPreferences
         {
             get => _preferences;
@@ -35,6 +39,11 @@ namespace OpenTimelapseSort.ViewModels
             }
         }
 
+        /// <summary>
+        /// PropertyChangedEventHandler
+        /// event that is triggered on property change
+        /// </summary>
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged(string propertyName)
@@ -42,17 +51,34 @@ namespace OpenTimelapseSort.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// StartupActions()
+        /// fetches preferences from the database
+        /// calls <see cref="_dbPreferencesService"/> to do so
+        /// </summary>
         private void StartupActions()
         {
             SelectedPreferences = _dbPreferencesService.FetchPreferences();
         }
 
+        /// <summary>
+        /// SavePreferences()
+        /// handles the saving of preferences set in preferences view
+        /// calls <see cref="_dbPreferencesService"/> to do so
+        /// </summary>
+        /// <param name="obj"></param>
         public void SavePreferences(object obj)
         {
             using var database = new PreferencesContext();
-            _dbPreferencesService.SavePreferencesToDataBase(SelectedPreferences);
+            _dbPreferencesService.SavePreferences(SelectedPreferences);
         }
 
+        /// <summary>
+        /// DeletePreferences()
+        /// handles the deletion of the current preferences
+        /// calls <see cref="_dbPreferencesService"/> to do so
+        /// </summary>
+        /// <param name="obj"></param>
         public void DeletePreferences(object obj)
         {
             using var database = new PreferencesContext();
