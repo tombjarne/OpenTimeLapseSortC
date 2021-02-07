@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Data.Sqlite;
-using OpenTimelapseSort.Contexts;
 using OpenTimelapseSort.DataServices;
 using OpenTimelapseSort.Models;
 using OpenTimelapseSort.Mvvm;
