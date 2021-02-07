@@ -19,50 +19,66 @@ namespace OpenTimelapseSort.ViewModels
 {
     internal class MainViewModel : INotifyPropertyChanged
     {
+        /// <summary>
+        ///     ActionCommands
+        /// </summary>
         private readonly ActionCommand _beginImportCommand;
         private readonly ActionCommand _closeImportConfirmationPopupCommand;
-
-        private readonly List<SDirectory> _currentDirectories = new List<SDirectory>();
-        private readonly DbService _dbService = new DbService();
-        private readonly ActionCommand _deleteDirectoryCommand;
-        private readonly DirectoryDetailService _directoryDetailService = new DirectoryDetailService();
-        private readonly FileCopyService _fileCopyService = new FileCopyService();
-        private readonly ObservableCollection<SImport> _imports = new ObservableCollection<SImport>();
-        private readonly ImportService _importService = new ImportService();
         private readonly ActionCommand _invokeImportCmd;
-
-        private readonly MatchingService _matching = new MatchingService();
+        private readonly ActionCommand _deleteDirectoryCommand;
         private readonly ActionCommand _resetSortingCommand;
         private readonly ActionCommand _showDirectoryLocationCommand;
         private readonly ActionCommand _showImagesCommand;
         private readonly ActionCommand _updateDirectoryNameCommand;
 
+        /// <summary>
+        ///     Services
+        /// </summary>
+        private readonly List<SDirectory> _currentDirectories = new List<SDirectory>();
+        private readonly DbService _dbService = new DbService();
+        private readonly MatchingService _matching = new MatchingService();
+        private readonly DirectoryDetailService _directoryDetailService = new DirectoryDetailService();
+        private readonly FileCopyService _fileCopyService = new FileCopyService();
+        private readonly ImportService _importService = new ImportService();
+
+        /// <summary>
+        ///     ObservableCollections
+        /// </summary>
+        private readonly ObservableCollection<SImport> _imports;
+        private ObservableCollection<SImage> _selectedImages = new ObservableCollection<SImage>();
+        private ObservableCollection<SDirectory> _sortedDirectories = new ObservableCollection<SDirectory>();
+
+        /// <summary>
+        ///     Import details
+        /// </summary>
         private List<SDirectory> _directories = new List<SDirectory>();
+        private List<SImage> _images = new List<SImage>();
         private string _directoryName;
         private string _directoryPath;
         private string _errorMessage;
-
-        private Visibility _errorMessageIsVisible;
         private string _foundImportImagesCount;
-        private List<SImage> _images = new List<SImage>();
-
-        private bool _importConfirmationButtonIsEnabled;
-        private string _importOriginPath;
-        private bool _importPopupIsOpen;
         private string _importTargetPath;
-        private Visibility _loaderIsShowing;
-
+        private string _importOriginPath;
         private string _mainDirectoryPath =
             Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\OTS-IMG";
 
-        private SDirectory _selectedDirectory;
-        private ObservableCollection<SImage> _selectedImages = new ObservableCollection<SImage>();
-        private DateTime? _selectedSortingDate;
+        /// <summary>
+        ///     Visibility & IsOpen values
+        /// </summary>
+        private bool _importConfirmationButtonIsEnabled;
+        private bool _importPopupIsOpen;
+        private Visibility _errorMessageIsVisible;
+        private Visibility _loaderIsShowing;
 
-        private ObservableCollection<SDirectory> _sortedDirectories = new ObservableCollection<SDirectory>();
+        /// <summary>
+        ///     Sorting & Directory choices
+        /// </summary>
+        private SDirectory _selectedDirectory;
+        private DateTime? _selectedSortingDate;
 
         public MainViewModel()
         {
+            _imports = new ObservableCollection<SImport>();
             _invokeImportCmd = new ActionCommand(InvokeImportPopupAction);
             _beginImportCommand = new ActionCommand(StartImportAction);
             _resetSortingCommand = new ActionCommand(CancelSorting);
@@ -581,7 +597,7 @@ namespace OpenTimelapseSort.ViewModels
             try
             {
                 await _dbService.UpdateImportAfterRemovalAsync(directory.Id);
-                var success = await _directoryDetailService.DeleteAsync(directory, HandleError);
+                var success = _directoryDetailService.DeleteDirectory(directory, HandleError);
 
                 if (success) HandleError("Directory was deleted successfully.");
 
@@ -638,6 +654,7 @@ namespace OpenTimelapseSort.ViewModels
             var targetDate = SelectedSortingDate;
             SortedDirectories.Clear();
 
+            // iterate through all images in directories of _imports
             foreach (var import in _imports)
                 if (import.Timestamp == targetDate)
                     foreach (var directory in import.Directories)

@@ -89,6 +89,7 @@ namespace OpenTimelapseSort.DataServices
             }
             catch (SqliteException)
             {
+                // create and migrate if the database was removed / is empty
                 CreateAndMigrate();
                 return FetchPreferences();
             }

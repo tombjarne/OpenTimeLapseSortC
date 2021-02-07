@@ -10,9 +10,21 @@ namespace OpenTimelapseSort.ViewModels
 {
     internal class PreferencesViewModel
     {
+        /// <summary>
+        ///     service
+        /// </summary>
         private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
+
+        /// <summary>
+        ///     ActionCommands
+        /// </summary>
         private readonly ActionCommand _deletePreferencesCommand;
         private readonly ActionCommand _savePreferencesCommand;
+
+        /// <summary>
+        /// Preferences
+        ///     local preferences instance
+        /// </summary>
         private Preferences _preferences;
 
         public PreferencesViewModel()
@@ -83,7 +95,6 @@ namespace OpenTimelapseSort.ViewModels
             using var database = new PreferencesContext();
             _dbPreferencesService.DeletePreferences(SelectedPreferences);
             SelectedPreferences = _dbPreferencesService.FetchPreferences();
-            Debug.WriteLine(SelectedPreferences);
         }
     }
 }

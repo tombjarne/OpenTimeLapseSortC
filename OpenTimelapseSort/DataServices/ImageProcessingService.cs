@@ -7,8 +7,8 @@ namespace OpenTimelapseSort.DataServices
     {
 
         /// <summary>
-        /// ImageToByteArray()
-        /// converts provided <see cref="image"/> into a byte array
+        ///     ImageToByteArray()
+        ///     converts provided <see cref="image"/> into a byte array
         /// </summary>
         /// <param name="image"></param>
         /// <returns></returns>
@@ -18,9 +18,9 @@ namespace OpenTimelapseSort.DataServices
         }
 
         /// <summary>
-        /// SetImageMetaValues()
-        /// collects luminance and color information from <see cref="image"/>
-        /// sets the gained values to the corresponding instance 
+        ///     SetImageMetaValues()
+        ///     collects luminance and color information from <see cref="image"/>
+        ///     sets the gained values to the corresponding instance
         /// </summary>
         /// <param name="image"></param>
         public void SetImageMetaValues(SImage image)

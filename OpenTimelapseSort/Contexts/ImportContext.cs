@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OpenTimelapseSort.Models;
 
 namespace OpenTimelapseSort.Contexts
@@ -14,6 +11,7 @@ namespace OpenTimelapseSort.Contexts
 
         public ImportContext()
         {
+            // ensure the db is created when using it's context
             Database.EnsureCreated();
         }
 
@@ -21,76 +19,71 @@ namespace OpenTimelapseSort.Contexts
         {
             optionsBuilder.UseSqlite(@"Data Source=OpenTimelapseSort.db;");
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            try
+            
+            modelBuilder.Entity<SImport>().ToTable("Import");
+            modelBuilder.Entity<SDirectory>().ToTable("ImageDirectory");
+            modelBuilder.Entity<SImage>().ToTable("Image");
+
+            // SImport modelBuilder
+            modelBuilder.Entity<SImport>(entity =>
             {
-                modelBuilder.Entity<SImport>().ToTable("Import");
-                modelBuilder.Entity<SDirectory>().ToTable("ImageDirectory");
-                modelBuilder.Entity<SImage>().ToTable("Image");
+                entity.Property(e => e.Id)
+                    .IsRequired();
 
+                entity.Property(e => e.Origin)
+                    .IsRequired();
 
-                modelBuilder.Entity<SImport>(entity =>
-                {
-                    entity.Property(e => e.Id)
-                        .IsRequired();
+                entity.Property(e => e.Name)
+                    .IsRequired();
 
-                    entity.Property(e => e.Origin)
-                        .IsRequired();
+                entity.Property(e => e.Timestamp)
+                    .IsRequired();
 
-                    entity.Property(e => e.Name)
-                        .IsRequired();
+                entity.Property(e => e.ImportDate)
+                    .IsRequired();
 
-                    entity.Property(e => e.Timestamp)
-                        .IsRequired();
+                entity.HasMany(directory => directory.Directories)
+                    .WithOne(import => import.ParentImport);
+            });
 
-                    entity.Property(e => e.ImportDate)
-                        .IsRequired();
-
-                    entity.HasMany(directory => directory.Directories)
-                        .WithOne(import => import.ParentImport);
-                });
-
-                modelBuilder.Entity<SDirectory>(entity =>
-                {
-                    entity.Property(e => e.Origin)
-                        .IsRequired();
-
-                    entity.Property(e => e.Name)
-                        .IsRequired();
-
-                    entity.HasMany(directory => directory.ImageList)
-                        .WithOne(image => image.ParentDirectory);
-
-                    entity.HasOne(directory => directory.ParentImport)
-                        .WithMany(import => import.Directories)
-                        .HasForeignKey(directory => directory.ImportId)
-                        .HasConstraintName("FK_Import_Identifier");
-                });
-
-                modelBuilder.Entity<SImage>(entity =>
-                {
-                    entity.Property(e => e.Id)
-                        .IsRequired();
-
-                    entity.Property(e => e.Origin)
-                        .IsRequired();
-
-                    entity.Property(e => e.Name)
-                        .IsRequired();
-
-                    entity.HasOne(image => image.ParentDirectory)
-                        .WithMany(directory => directory.ImageList)
-                        .HasForeignKey(image => image.DirectoryId)
-                        .HasConstraintName("FK_Directory_Identifier");
-                });
-            }
-            catch (Exception e)
+            // SDirectory modelBuilder
+            modelBuilder.Entity<SDirectory>(entity =>
             {
-                Debug.WriteLine(e.InnerException);
-                throw;
-            }
+                entity.Property(e => e.Origin)
+                    .IsRequired();
+
+                entity.Property(e => e.Name)
+                    .IsRequired();
+
+                entity.HasMany(directory => directory.ImageList)
+                    .WithOne(image => image.ParentDirectory);
+
+                entity.HasOne(directory => directory.ParentImport)
+                    .WithMany(import => import.Directories)
+                    .HasForeignKey(directory => directory.ImportId)
+                    .HasConstraintName("FK_Import_Identifier");
+            });
+
+            // SImage Directory builder
+            modelBuilder.Entity<SImage>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .IsRequired();
+
+                entity.Property(e => e.Origin)
+                    .IsRequired();
+
+                entity.Property(e => e.Name)
+                    .IsRequired();
+
+                entity.HasOne(image => image.ParentDirectory)
+                    .WithMany(directory => directory.ImageList)
+                    .HasForeignKey(image => image.DirectoryId)
+                    .HasConstraintName("FK_Directory_Identifier");
+            });
         }
     }
 }

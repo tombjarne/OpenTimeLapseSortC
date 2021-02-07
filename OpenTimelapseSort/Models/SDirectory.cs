@@ -6,15 +6,8 @@ namespace OpenTimelapseSort.Models
 {
     public class SDirectory
     {
-        public SDirectory(string origin, string name)
-        {
-            Timestamp = DateTime.Today;
-            Origin = origin;
-            Name = name;
-            ImageList = new List<SImage>();
-        }
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } // unique Id
         public string ImportId { get; set; }
         public List<SImage> ImageList { get; set; }
         public DateTime Timestamp { get; set; }
@@ -22,5 +15,12 @@ namespace OpenTimelapseSort.Models
         public string Target { get; set; }
         public string Name { get; set; }
         public SImport ParentImport { get; set; }
+        public SDirectory(string origin, string name)
+        {
+            Timestamp = DateTime.Today;
+            Origin = origin;
+            Name = name;
+            ImageList = new List<SImage>();
+        }
     }
 }

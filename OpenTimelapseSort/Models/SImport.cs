@@ -7,7 +7,7 @@ namespace OpenTimelapseSort.Models
     public class SImport
     {
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } // unique Id
         public string Origin { get; set; }
         public string Name { get; set; }
         public virtual List<SDirectory> Directories { get; set; }

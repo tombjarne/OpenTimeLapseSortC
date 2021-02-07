@@ -6,7 +6,7 @@ namespace OpenTimelapseSort.Models
     public class SImage
     {
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } // unique Id
         public string DirectoryId { get; set; }
         public string Name { get; set; }
         public string Origin { get; set; }

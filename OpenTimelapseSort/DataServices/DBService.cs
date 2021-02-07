@@ -119,16 +119,17 @@ namespace OpenTimelapseSort.DataServices
                 .Where(i => i.ParentDirectory.Id == directory.Id)
                 .ToListAsync();
 
-            foreach (var image in images)
+            foreach (var image in images) // remove images from directory and context
             {
                 directory.ImageList.Remove(image);
                 context.Images.Remove(image);
             }
 
-            import.Directories.Remove(directory);
+            import.Directories.Remove(directory); // remove directory from import
             context.ImageDirectories.Remove(directory);
             await context.SaveChangesAsync();
 
+            // if the import is now empty, it shall be deleted
             if (ImportIsEmpty(import.Id)) context.Imports.Remove(import);
 
             await context.SaveChangesAsync();
@@ -188,7 +189,7 @@ namespace OpenTimelapseSort.DataServices
                 var directories = await context.ImageDirectories
                     .ToListAsync();
 
-                foreach (var directory in directories)
+                foreach (var directory in directories) // iterate through all directories found
                 {
                     directory.ImageList = await context.Images
                         .Where(i => i.DirectoryId == directory.Id)
@@ -202,6 +203,7 @@ namespace OpenTimelapseSort.DataServices
             }
             catch (Exception)
             {
+                // create and migrate if the database was removed / is empty
                 CreateAndMigrate();
                 return new List<SDirectory>();
             }

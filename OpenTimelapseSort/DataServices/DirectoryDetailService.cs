@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using OpenTimelapseSort.Models;
 
@@ -9,8 +8,6 @@ namespace OpenTimelapseSort.DataServices
 {
     internal class DirectoryDetailService
     {
-        private readonly DbService _dbService = new DbService();
-
         /// <summary>
         ///     ErrorMessage
         ///     holds provided error message and delegates to <see cref="ViewModels.MainViewModel.HandleError" />
@@ -25,7 +22,7 @@ namespace OpenTimelapseSort.DataServices
         /// </summary>
         /// <param name="directory"></param>
         /// <returns></returns>
-        public async Task<bool> DeleteAsync(SDirectory directory, ErrorMessage setErrorMessage)
+        public bool DeleteDirectory(SDirectory directory, ErrorMessage setErrorMessage)
         {
             var target = directory.Target;
             var imageList = directory.ImageList;
@@ -39,8 +36,9 @@ namespace OpenTimelapseSort.DataServices
                 {
                     var dirInfo = new DirectoryInfo(currentPosition);
 
+                    // delete all images from directory first
                     foreach (var file in dirInfo.GetFiles()) file.Delete();
-
+                    // delete the directories afterwards
                     foreach (var dir in dirInfo.GetDirectories()) dir.Delete(true);
                 }
 
@@ -92,7 +90,7 @@ namespace OpenTimelapseSort.DataServices
                 setErrorMessage("Please provide a proper name!");
             }
 
-            if (changeWasClean)
+            if (changeWasClean) // provided name corresponds to rules
                 try
                 {
                     FileSystem.Rename(dir.Target + @"\" + dir.Name, sanitizedPath);

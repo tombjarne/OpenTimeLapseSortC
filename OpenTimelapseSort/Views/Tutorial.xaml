@@ -11,9 +11,16 @@
     AllowsTransparency="True"
     Background="Transparent"
     BorderThickness="0"
+    ResizeMode="CanResizeWithGrip"
     WindowStyle="None"
     mc:Ignorable="d">
+
+    <!--  Styles & Templates  -->
+
     <Window.Resources>
+
+        <!--  Icon & Ellipse Templates  -->
+
         <Style x:Key="SmallIconTemplate" TargetType="fa:FontAwesome">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -24,6 +31,9 @@
             <Setter Property="Padding" Value="2" />
         </Style>
     </Window.Resources>
+
+    <!--  Tutorial  -->
+
     <Grid Height="Auto" Background="White">
         <Grid
             x:Name="MenuBar"
@@ -33,20 +43,14 @@
             Panel.ZIndex="100">
             <Label
                 x:Name="ApplicationName"
-                Grid.RowSpan="4"
-                Grid.Column="0"
-                Margin="0,2,0,-2"
                 Padding="20,0,20,0"
-                HorizontalAlignment="Left"
-                HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
                 Content="Tutorial"
                 FontSize="14px"
                 FontWeight="Bold"
                 Foreground="#FFFF8383" />
             <DockPanel
-                Width="86"
-                Margin="709,0,0,0"
+                Width="85"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Panel.ZIndex="10000"
@@ -54,7 +58,7 @@
                 <Grid
                     VerticalAlignment="Center"
                     DockPanel.Dock="Right"
-                    MouseDown="CloseApplication">
+                    MouseDown="CloseWindow">
                     <fa:FontAwesome Icon="Close" Style="{StaticResource SmallIconTemplate}" />
                     <Ellipse
                         Width="26"
@@ -97,12 +101,15 @@
             <Rectangle
                 Width="389"
                 Height="40"
-                Margin="411,0,0,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
+                Cursor="Hand"
                 Fill="#00000000"
                 MouseDown="MoveWindow" />
         </Grid>
+
+        <!--  DocumentViewer  -->
+
         <DocumentViewer
             x:Name="DocumentViewer"
             Margin="0,44,0,0"

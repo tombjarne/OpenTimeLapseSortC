@@ -23,6 +23,7 @@
     <Window.Resources>
 
         <!--  ScrollBars Templates  -->
+        <!--  FOREIGN CODE doc-id:1001  -->
 
         <Style TargetType="{x:Type ScrollBar}">
             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
@@ -77,6 +78,7 @@
         </Style>
 
         <!--  Scrollbar Thumb Templates  -->
+        <!--  FOREIGN CODE doc-id:1001  -->
 
         <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
             <Setter Property="Template">

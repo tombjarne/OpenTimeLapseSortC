@@ -8,19 +8,29 @@ namespace OpenTimelapseSort.DataServices
 {
     internal class MatchingService
     {
+        /// <summary>
+        /// services
+        /// </summary>
         private readonly DbPreferencesService _dbPreferencesService = new DbPreferencesService();
-        private readonly DbService _dbService = new DbService();
-        private readonly List<SDirectory> _imageDirectories = new List<SDirectory>();
-
         private readonly ImageProcessingService _imageProcessingService = new ImageProcessingService();
-        private int _deviationGenerosity;
+        private readonly DbService _dbService = new DbService();
 
+        /// <summary>
+        /// <see cref="_imageDirectories"/> holds list of all matched directories
+        /// <see cref="_dirList"/> holds list of regular directories
+        /// <see cref="_randomDirList"/> holds list of random directories
+        /// </summary>
+        private readonly List<SDirectory> _imageDirectories = new List<SDirectory>();
         private List<SImage> _dirList;
-
-        private Preferences _preferences;
         private List<SImage> _randomDirList;
+
+        /// <summary>
+        /// preferences values to be used during the matching process
+        /// </summary>
+        private Preferences _preferences;
         private int _runs;
         private int _sequence;
+        private int _deviationGenerosity;
 
         public MatchingService()
         {
@@ -30,7 +40,8 @@ namespace OpenTimelapseSort.DataServices
 
         /// <summary>
         ///     MatchImages()
-        ///     kicks of the right sorting process depending on <see cref="_preferences" />
+        ///     kicks off the sorting process depending on the choices in <see cref="_preferences" />
+        ///     resets all crucial lists, pointers and values
         /// </summary>
         /// <param name="imageList"></param>
         /// <returns>
@@ -47,7 +58,86 @@ namespace OpenTimelapseSort.DataServices
             _imageDirectories.Clear();
             _sequence = 0;
 
-            return !_preferences.UseAutoDetectInterval ? SortImagesAuto(imageList) : SortImages(imageList);
+            return !_preferences.UseManualSettings ? SortImagesAuto(imageList) : SortImages(imageList);
+        }
+
+        /// <summary>
+        ///     SortImagesAuto()
+        ///     sorts images according to their luminance and color
+        ///     calls <see cref="WithinSameShot" /> to determine visual data and comparison values
+        ///     calls <see cref="CreateDirAsync" /> to create a regular directory
+        ///     calls <see cref="HandleLastElement" /> to add the lists last element to a directory
+        ///     calls <see cref="CompleteDirectories" /> to actually write all sorted directories
+        /// </summary>
+        /// <param name="imageList"></param>
+        /// <returns></returns>
+        private List<SDirectory> SortImagesAuto(List<SImage> imageList)
+        {
+            for (var i = 1; i < imageList.Count; i++)
+            {
+                var lastItem = i < imageList.Count - 1 ? imageList[i + 1] : imageList[i];
+                if (WithinSameShot(imageList[i], lastItem) &&
+                    BelongToEachOther(imageList[i], lastItem))
+                {
+                    _dirList.Add(imageList[i - 1]);
+                }
+                else
+                {
+                    if (_dirList.Count >= _runs)
+                    {
+                        _ = CreateDirAsync();
+                        // for some reason List.Clear() did not work properly
+                        _dirList = new List<SImage>();
+                    }
+
+                    _randomDirList.Add(imageList[i - 1]);
+                }
+            }
+
+            HandleLastElement(imageList);
+            _ = CompleteDirectories();
+
+            return _imageDirectories;
+        }
+
+        /// <summary>
+        ///     SortImages()
+        ///     sorts images according to their interval and deviation
+        ///     calls <see cref="WithinSameSequence" /> to determine visual data and comparison values
+        ///     calls <see cref="CreateDirAsync" /> to create a regular directory
+        ///     calls <see cref="HandleLastElement" /> to add the lists last element to a directory
+        ///     calls <see cref="CompleteDirectories" /> to actually write all sorted directories
+        /// </summary>
+        /// <param name="imageList"></param>
+        /// <returns></returns>
+        public List<SDirectory> SortImages(List<SImage> imageList)
+        {
+            for (var i = 1; i < imageList.Count; i++)
+            {
+                var preD = imageList[i].FileTime - imageList[i - 1].FileTime;
+                var curD = i < imageList.Count - 1 ? imageList[i + 1].FileTime - imageList[i].FileTime : preD;
+
+                if (WithinSameSequence(curD, preD))
+                {
+                    _dirList.Add(imageList[i - 1]);
+                }
+                else
+                {
+                    if (_dirList.Count >= _runs)
+                    {
+                        _ = CreateDirAsync();
+                        // for some reason List.Clear() did not work properly
+                        _dirList = new List<SImage>();
+                    }
+
+                    _randomDirList.Add(imageList[i - 1]);
+                }
+            }
+
+            HandleLastElement(imageList);
+            _ = CompleteDirectories();
+
+            return _imageDirectories;
         }
 
         /// <summary>
@@ -107,45 +197,6 @@ namespace OpenTimelapseSort.DataServices
         }
 
         /// <summary>
-        ///     SortImagesAuto()
-        ///     sorts images according to their luminance and color
-        ///     calls <see cref="WithinSameShot" /> to determine visual data and comparison values
-        ///     calls <see cref="CreateDirAsync" /> to create a regular directory
-        ///     calls <see cref="HandleLastElement" /> to add the lists last element to a directory
-        ///     calls <see cref="CompleteDirectories" /> to actually write all sorted directories
-        /// </summary>
-        /// <param name="imageList"></param>
-        /// <returns></returns>
-        private List<SDirectory> SortImagesAuto(List<SImage> imageList)
-        {
-            for (var i = 1; i < imageList.Count; i++)
-            {
-                var lastItem = i < imageList.Count - 1 ? imageList[i + 1] : imageList[i];
-                if (WithinSameShot(imageList[i], lastItem) &&
-                    BelongToEachOther(imageList[i], lastItem))
-                {
-                    _dirList.Add(imageList[i - 1]);
-                }
-                else
-                {
-                    if (_dirList.Count >= _runs)
-                    {
-                        _ = CreateDirAsync();
-                        _dirList = new List<SImage>();
-                        //dirList.Clear();
-                    }
-
-                    _randomDirList.Add(imageList[i - 1]);
-                }
-            }
-
-            HandleLastElement(imageList);
-            _ = CompleteDirectories();
-
-            return _imageDirectories;
-        }
-
-        /// <summary>
         ///     HandleLastElement()
         ///     adds the last element of the provided list in <see cref="imageList" />
         ///     to a corresponding directory
@@ -173,62 +224,22 @@ namespace OpenTimelapseSort.DataServices
             {
                 _randomDirList.AddRange(_dirList);
                 await CreateRandomDirAsync();
+                // for some reason List.Clear() did not work properly
                 _randomDirList = new List<SImage>();
-                //randomDirList.Clear();
             }
             else if (_randomDirList.Count > 0)
             {
                 await CreateRandomDirAsync();
+                // for some reason List.Clear() did not work properly
                 _randomDirList = new List<SImage>();
-                //randomDirList.Clear();
             }
 
             if (_dirList.Count >= _runs)
             {
                 await CreateDirAsync();
+                // for some reason List.Clear() did not work properly
                 _dirList = new List<SImage>();
-                //dirList.Clear();
             }
-        }
-
-        /// <summary>
-        ///     SortImages()
-        ///     sorts images according to their interval and deviation
-        ///     calls <see cref="WithinSameSequence" /> to determine visual data and comparison values
-        ///     calls <see cref="CreateDirAsync" /> to create a regular directory
-        ///     calls <see cref="HandleLastElement" /> to add the lists last element to a directory
-        ///     calls <see cref="CompleteDirectories" /> to actually write all sorted directories
-        /// </summary>
-        /// <param name="imageList"></param>
-        /// <returns></returns>
-        public List<SDirectory> SortImages(List<SImage> imageList)
-        {
-            for (var i = 1; i < imageList.Count; i++)
-            {
-                var preD = imageList[i].FileTime - imageList[i - 1].FileTime;
-                var curD = i < imageList.Count - 1 ? imageList[i + 1].FileTime - imageList[i].FileTime : preD;
-
-                if (WithinSameSequence(curD, preD))
-                {
-                    _dirList.Add(imageList[i - 1]);
-                }
-                else
-                {
-                    if (_dirList.Count >= _runs)
-                    {
-                        _ = CreateDirAsync();
-                        _dirList = new List<SImage>();
-                        //dirList.Clear();
-                    }
-
-                    _randomDirList.Add(imageList[i - 1]);
-                }
-            }
-
-            HandleLastElement(imageList);
-            _ = CompleteDirectories();
-
-            return _imageDirectories;
         }
 
         /// <summary>
@@ -241,8 +252,8 @@ namespace OpenTimelapseSort.DataServices
             var name = Path.GetFileName(Path.GetDirectoryName(_randomDirList[0].Origin)) ?? "Default";
             var uniqueIdentifier = Guid.NewGuid().ToString();
             var sanitizedName = name.Length > 15
-                ? name.Substring(0, 9) + _sequence + "R"
-                : name + _sequence + "R";
+                ? name.Substring(0, 9) + _sequence + "RND-"
+                : name + _sequence + "RND-";
 
             sanitizedName += uniqueIdentifier.Substring(0, 4);
 
@@ -316,7 +327,7 @@ namespace OpenTimelapseSort.DataServices
 
                 await _dbService.UpdateCurrentImportAsync(import);
             }
-            else
+            else // create a new import if none exists
             {
                 import = new SImport
                 {

@@ -70,7 +70,7 @@ namespace OpenTimelapseSort.Views
             var tutorial = new Tutorial();
             tutorial.Show();
         }
-
+        
         /// <summary>
         ///     CloseApplication()
         ///     closes the application on button click

@@ -19,10 +19,10 @@ namespace OpenTimelapseSort.DataServices
 
         /// <summary>
         ///     CopyFiles()
-        ///     Actually copies the matched directories to their destination
-        ///     Creates a new directory if mainDirectoryPath does not point to valid file location
-        ///     Sets <see cref="SDirectory.Target" /> attribute to the actual new location
-        ///     Calls <see cref="_dbService" /> to save the just copied files into the database
+        ///     copies the matched directories to their destination
+        ///     creates a new directory if mainDirectoryPath does not point to valid file location
+        ///     sets <see cref="SDirectory.Target" /> attribute to the actual new location
+        ///     calls <see cref="_dbService" /> to save the just copied files into the database
         /// </summary>
         public async Task<List<SDirectory>> CopyFiles(
             List<SDirectory> currentDirectories, string path, ErrorMessage setErrorMessage)
@@ -34,6 +34,7 @@ namespace OpenTimelapseSort.DataServices
             {
                 foreach (var directory in currentDirectories)
                 {
+                    // assemble path from target path and the directories name
                     var destination = path + @"\" + directory.Name;
                     directory.Target = path;
                     Directory.CreateDirectory(destination);
@@ -48,7 +49,7 @@ namespace OpenTimelapseSort.DataServices
                     await _dbService.UpdateDirectoryAsync(directory);
                 }
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException) // thrown when e.g. sys files are copied
             {
                 setErrorMessage("Cannot write to this folder.");
                 foreach (var directory in currentDirectories)

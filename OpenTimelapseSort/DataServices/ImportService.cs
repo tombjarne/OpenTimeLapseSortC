@@ -16,8 +16,9 @@ namespace OpenTimelapseSort.DataServices
         public delegate void ErrorMessage(string errorMessage);
 
         /// <summary>
-        /// Import()
-        /// Collects all files of a specified directory from a maximum depth of 2
+        ///     Import()
+        ///     collects all files of a specified directory from a maximum depth of 2
+        ///     returns all files found as a List
         /// </summary>
         /// <param name="origin"></param>
         /// <param name="setErrorMessage"></param>
@@ -36,6 +37,8 @@ namespace OpenTimelapseSort.DataServices
 
                     if (Directory.Exists(file))
                     {
+                        // if current file is a directory, iterate through it
+
                         var subDirImages = Directory.GetFiles(file);
                         var subDirInfo = new FileInfo(subDirImages[i]);
                         var subDirLength = Directory.EnumerateFiles(file).ToList().Count();
@@ -53,7 +56,7 @@ namespace OpenTimelapseSort.DataServices
                     }
                 }
             }
-            catch
+            catch (Exception)
             {
                 setErrorMessage("The directory did not contain any files.");
             }

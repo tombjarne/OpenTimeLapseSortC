@@ -4,17 +4,17 @@ namespace OpenTimelapseSort.Models
 {
     internal class Preferences
     {
-        [Key] 
-        public int Id { get; set; }
-        public bool UseAutoDetectInterval { get; set; }
+        [Key]
+        public int Id { get; set; } // unique Id - always 1
+        public bool UseManualSettings { get; set; }
         public double SequenceInterval { get; set; }
         public int SequenceIntervalGenerosity { get; set; }
         public int SequenceImageCount { get; set; }
 
-        public Preferences(bool useAutoDetectInterval, double sequenceInterval,
+        public Preferences(bool useManualSettings, double sequenceInterval,
             int sequenceIntervalGenerosity, int sequenceImageCount)
         {
-            UseAutoDetectInterval = useAutoDetectInterval;
+            UseManualSettings = useManualSettings;
             SequenceInterval = sequenceInterval;
             SequenceIntervalGenerosity = sequenceIntervalGenerosity;
             SequenceImageCount = sequenceImageCount;
